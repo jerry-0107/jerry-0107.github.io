@@ -4,7 +4,7 @@
     <meta charest=utf-8>
     <title>跨年</title>
   </head>
-  <body>
+  <body onload='update();'>
     <h1>跨年</h1>
     <div id='1'></div><br>
      <div id='2'></div><br>
@@ -19,14 +19,30 @@
     
     
     <script>
-    var dat = new Date,
+      function update()
+      {    var dat = new Date,
         year = dat.getFullYear(),
         month = dat.getMonth(),
-        date = dat.getDate();
+        date = dat.getDate(),
+          h = dat.getHours(),
+          m = dat..getMinutes(),
+          s = dat.getSeconds();　
+       
+       
+       
+       
+       
      document.getElementById('1').innerHTML = year;
-     document.getElementById('2').innerHTML = month;
+     document.getElementById('2').innerHTML = (month+1);
     document.getElementById('3').innerHTML = date;
-    
+       
+       
+       
+       
+            document.getElementById('4').innerHTML = h;
+     document.getElementById('5').innerHTML = m;
+    document.getElementById('6').innerHTML = s;
+      }
     
     
     </script>
