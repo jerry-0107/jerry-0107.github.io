@@ -21,10 +21,11 @@
     <script>
     var dat = new Date,
         year = dat.getFullYear(),
-        date = dat.getMonth;
+        month = dat.getMonth(),
+        date = dat.getDate();
      document.getElementById('1').innerhtml = year;
-       document.getElementById('2')=month;
-    
+     document.getElementById('2').innerhtml = month;
+    document.getElementById('3').innerhtml = date;
     
     
     
