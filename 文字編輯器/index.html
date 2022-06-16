@@ -553,7 +553,8 @@
 
 
             // physicalKeyboardHighlight: true,
-            preventMouseDownDefault: true
+            preventMouseDownDefault: true,
+            autoUseTouchEvents: true
         });
 
         /**
@@ -698,6 +699,8 @@
             localStorage.setItem("TextEditor_Setting", true);
             localStorage.setItem("TextEditor_Setting_Keyboard_show", true);
             localStorage.setItem("TextEditor_Setting_Theme", "white");
+            $("#Setting_Keyboard_show").attr("checked", true);
+            $("#Setting_Theme").attr("checked", true)
         } else {
 
             if (localStorage.getItem("TextEditor_Setting_Keyboard_show") == "false") {
