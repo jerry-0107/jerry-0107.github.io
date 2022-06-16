@@ -1,0 +1,260 @@
+.flex {
+    display: flex;
+  }
+[border-top]{
+  border-top: 1px solid #000000;
+}
+  .radio input[type="radio"] {
+    display: none;
+  }
+
+  .checkbox input[type="checkbox"] {
+    display: none;
+  }
+
+  .radio input:checked+.button {
+    background: #3296d4;
+    color: #fff;
+    cursor: default;
+  }
+
+  .checkbox input:checked+.button {
+    background: #3296d4;
+    color: #fff;
+    cursor: pointer;
+
+  }
+
+  .radio .button,
+  .checkbox .button {
+    display: inline-block;
+
+
+    margin: 0 0.5vw 0.5vw 0;
+    padding: 0.25vw 0.5vw;
+    background: #f7f7f7;
+    color: #333;
+    cursor: pointer;
+    border: 1px solid #8b8b8b;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .radio .button:hover,
+  .checkbox .button:hover {
+    background-color: #bbb;
+    color: #fff;
+  }
+
+  .radio .round,
+  .checkbox .round {
+    border-radius: 5px;
+  }
+
+
+
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    border-radius: 2px;
+    width: 200px;
+    height: 3px;
+    /*background-image:-webkit-linear-gradient(left ,#f22 0%,#f22 50%,#fff 50%, #fff 100%);
+     */
+    box-shadow: inset rgb(125, 208, 233) 0 0 5px;
+    outline: none;
+    transition: .1s;
+  }
+
+  input[type="range"]:not([disabled])::-webkit-slider-thumb {
+    -webkit-appearance: none;
+
+    width: 10px;
+    height: 10px;
+    background: var(--bs-primary);
+    border-radius: 50%;
+    transition: .1s;
+
+  }
+
+  input[type="range"][disabled]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+
+    width: 10px;
+    height: 10px;
+    background-color: rgb(82, 82, 82);
+    border-radius: 50%;
+    transition: .1s;
+
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover,
+  input[type="range"]::-webkit-slider-thumb:active {
+    width: 16px;
+    height: 16px;
+  }
+
+
+
+  .box,
+  *[box] {
+    border: 1px solid #333333;
+  }
+
+  #menu {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100px;
+    z-index: 9999 !important;
+    background-color: rgb(255, 255, 255);
+    display: none;
+    border-radius: 5px;
+    border: rgb(26, 26, 26) 1px solid;
+    /*  box-shadow: #525252 0px 15px 12px 0px;
+*/
+  }
+
+  .menu-item {
+    border-bottom: 1px solid #000;
+    user-select: none;
+
+
+
+  }
+
+  .menu-item-last {
+    border: none;
+
+  }
+
+  .menu-item:hover {
+    background-color: rgb(141, 141, 141);
+    color: #f7f7f7;
+
+  }
+
+  .menu-item>input:hover {
+    box-shadow: none;
+  }
+
+  .menu-item-hidden {
+    display: none;
+  }
+
+
+  input[type=text],
+  input[type=number],
+  input[data-jscolor],
+  select {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+
+  }
+
+  .menu-item-no-hover:hover {
+    background-color: rgb(255, 255, 255);
+
+  }
+
+  .jscolor-picker>*,
+  .jscolor-picker>*:not(.jscolor-palette-sample)>*:not(.jscolor-palette-sample) {
+    border-radius: 5px !important;
+
+
+  }
+
+  .helper>* {
+    display: inline-block;
+
+  }
+
+  .nav-link.active {
+    background-color: #a69cff !important;
+    color: #fff !important;
+
+
+  }
+
+  .tab-content>* {
+    min-height: 3vw;
+  }
+
+  body,.offcanvas-header,.offcanvas-body {
+    transition: background-color 3s ,color 3s;
+  }
+
+  #loading {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bs-primary);
+    float: right;
+    top: 0;
+    right: 0;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s;
+    z-index: 99999;
+  }
+
+  .btn-file {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+  }
+
+  .tab-pan {
+    height: 17% !important;
+    max-height: 17% !important;
+  }
+  textarea{
+        resize: both;
+  }
+
+  textarea,input[type=text],select,input[type=password]{
+    border-radius: 5px;
+    box-shadow: 0px 2px 12px #686868;
+    transition: box-shadow 0.8s;  
+
+  }
+  textarea:focus-visible,input[type=text]:focus-visible,select:focus-visible,input[type=password]:focus-visible{
+    box-shadow: none;
+    transition: box-shadow 0.8s;
+  
+
+    outline-color:  var(--bs-primary) ;
+  }
+  select{
+    height: 28px;
+  }
+#csvtool-select,#jsontool-select{box-shadow: none !important;}
+
+
+body {
+  height:100%;
+  width:99%;
+  border-collapse:collapse;
+  display : table;
+}
+
+.foot {
+  display : table-row;
+  vertical-align : bottom;
+  height : 1px;
+}
