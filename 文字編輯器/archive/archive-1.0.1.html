@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>文字編輯器-v1.0.1</title>
+    <link href="../src/img/icon.png" rel="shortcut icon" />
+
+    <script src="../src/lib/jquery/jquery-3.6.0.js"></script>
+    <script src="../src/lib/bootstrap -v5/js/bootstrap.js"></script>
+    <link href="../src/lib/bootstrap -v5/css/bootstrap.css" rel="stylesheet">
+    <script src="../src/lib/bootstrap -v5/js/bootstrap.min.js"></script>
+
+    <script src="../src/lib/simple-keyboard -v3.4/simple-keyboard/build/index.js"></script>
+    <link rel="stylesheet" href="../src/lib/simple-keyboard -v3.4/simple-keyboard/build/css/index.css">
+
+    <script src="v1.0.1/src/lib/archive.1.0.1.func.js"></script>
+
+    <script src="../src/lib/UndoRedo.js -v1.2.0/src/UndoRedo.js"></script>
+    <script src="../src/lib/FileSaver.js/FileSaver.js"></script>
+    <script src="v1.0.1/src/lib/archive.1.0.1.Cur.js"></script>
+    <script src="../src/lib/vconsole-3.14.6/package/dist/vconsole.min.js"></script>
+
+
+    <script src="../src/lib/Toast -v1.1/Toast.js"></script>
+    <link href="../src/lib/Toast -v1.1/Toast.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="v1.0.1/src/style/archive-1.0.1.style.css">
+</head>
+
+<body style="margin: 8px;">
+
+    <!---------------Loading-UI----------------->
+    <div id="loading">
+
+        <img src="../src/img/icon.png" style="max-width: 15vw; ">
+
+
+    </div>
+    <noscript>
+        <div class="alert alert-danger" role="alert">
+            本程式需要JavaScript才能正確執行，請先開啟JavaScript!
+        </div>
+        <style>
+            nav,
+            button,
+            input,
+            .tab-content {
+                display: none;
+            }
+        </style>
+    </noscript>
+
+
+
+
+    <center style="user-select:none ;" ondblclick="rename_for_modal()" id="filename-display-center">
+        <span id="unsaved-mark"></span><span title="連按兩下以重新命名"
+            class="file-name rename-display">未命名.txt</span>&nbsp;-文字編輯器 v1.0.1
+    </center>
+    <center>
+        <div class="alert alert-warning" onclick="$(this).hide()">注意:這是文字編輯器v1.0.1的存檔，前往<a href="../index.html" onclick="$(this).attr('href','../index.html?data='+encodeURIComponent(textarea.val().replace(/\n/g,'<!b>').replace(/\t/g,'<!t>').replace(/ /g,'<!s>'))+'&file-name='+encodeURIComponent(filename))" title="請勿使用新分頁開啟此連結">這裡</a>體驗新功能(你的變更不會遺失，請放心前往)</div>
+    </center>
+    <!--<center>
+            <input type="text" style="display: none;" id="rename-center" placeholder="重新命名...">
+            <select id="file-sec-name-center" style="display: none;">
+                <option value=".txt">.txt</option>
+                <option value=".csv">.csv</option>
+                </option>
+            </select>
+            <button class="btn " title="確定" style="display: none;" id="rename-center-closebtn"
+                onclick="Rename();$('#rename-center').hide();$('#file-sec-name-center').hide();$(this).hide()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-check-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                    <path
+                        d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
+                </svg>
+            </button><span id="rename-center-tooltip"></span>
+        </center>-->
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+
+            <button class="nav-link " id="nav-0-tab" type="button" role="button" aria-selected="false"
+                style="background-color: #0099ff; color:#fff;" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+
+                檔案
+            </button>
+
+
+
+            <button class="nav-link active" id="nav-1-tab" data-bs-toggle="tab" data-bs-target="#nav-1" type="button"
+                role="tab" aria-controls="nav-1" aria-selected="true">
+                編輯
+
+            </button>
+
+
+            <button class="nav-link" id="nav-6-tab" data-bs-toggle="tab" data-bs-target="#nav-6" type="button"
+                role="tab" aria-controls="nav-6" aria-selected="false">
+                檢視
+            </button>
+        </div>
+    </nav>
+
+
+    <div class="tab-content" id="nav-tabContent" style="width: 100%; border-bottom: 1px solid #333;">
+        <div class="tab-pane fade show active" id="nav-1" role="tabpanel" aria-labelledby="nav-1-tab">
+            <div style="display:flex ; user-select: none;">
+                <div style="text-align: center;">
+                    <span style="font-size:1.25em;">動作</span><br>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" title="復原"
+                        class="bi bi-arrow-counterclockwise black-svg" viewBox="0 0 16 16" id="undo">
+                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z" />
+                        <path
+                            d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" title="取消復原"
+                        class="bi bi-arrow-clockwise black-svg" viewBox="0 0 16 16" id="redo">
+                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                        <path
+                            d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                    </svg>
+                </div>
+
+                <div class="vh" style="margin-top: 2.5px; margin-left: 5px; margin-right: 5px;">
+                    <center> <img src="../src/img/vh-50.png"></center>
+                </div>
+                <div style="text-align: center; ">
+                    <span style="font-size:1.25em;">csv功能</span><br>
+                    <div style="display: flex;">
+                        新增<select id="csvtool-select">
+                            <option value="row">行(↲)</option>
+                            <option value="col">列( , )</option>
+                        </select>
+                        <button class="btn " title="確定" style="padding-top: 0; padding-bottom: 0;" onclick="                            
+                        if($('#csvtool-select').val() == 'col'){
+                            textarea.val(textarea.val()+',')}
+                        else{textarea.val(textarea.val()+'\n')};
+                        if(filename.includes('.txt')||filename.includes('.json')){
+                            Toast.toast('請將檔案另存成.csv檔案',5000)
+                        }
+                        use_csvtools = true;
+                        dirty();
+                        txtHistory.record(textarea.val())
+                         ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                style="margin-top:0 ;" class="bi bi-check-circle black-svg" viewBox="0 0 16 16"
+                                id="preview">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                <path
+                                    d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
+                            </svg>
+                        </button>
+
+
+                    </div>
+                </div>
+                <div class="vh" style="margin-top: 2.5px; margin-left: 5px; margin-right: 5px;">
+                    <center> <img src="../src/img/vh-50.png"></center>
+                </div>
+
+                <div style="text-align: center; ">
+                    <span style="font-size:1.25em;">json功能</span><br>
+                    <div style="display: flex;">
+                        新增<select id="jsontool-select">
+                            <option value="花括號">花括號{...}</option>
+                            <option value='中括號'>中括號[...]</option>
+                            <option value='小括號'>小括號(...)</option>
+                            <option value='引號'>引號"..."</option>
+                            <option value='冒號'>冒號 :</option>
+                            <option value='逗號'>逗號 ,</option>
+                        </select>
+                        <button class="btn" title="確定" style="padding-top: 0; padding-bottom: 0;" onclick="                            
+                        json_write()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                style="margin-top:0 ;" class="bi bi-check-circle black-svg" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                <path
+                                    d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
+                            </svg>
+                        </button>
+
+
+                    </div>
+                </div>
+                <div class="vh" style="margin-top: 2.5px; margin-left: 5px; margin-right: 5px;">
+                    <center> <img src="../src/img/vh-50.png"></center>
+                </div>
+                <div style="text-align: center; ">
+                    <span style="font-size:1.25em;">實驗性功能</span><br>
+                    <div style="display: flex;">
+                        <button id="LabBtn" class="btn " title="確定" style="padding-top: 0; padding-bottom: 0;" onclick="                            
+                            LabAlert()">
+                            語音辨識&nbsp;
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-mic black-svg" viewBox="0 0 16 16" title="語音辨識">
+                                <path
+                                    d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z" />
+                                <path
+                                    d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0v5zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z" />
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+                </div>
+                <div class="vh" style="margin-top: 2.5px; margin-left: 5px; margin-right: 5px;">
+                    <center> <img src="../src/img/vh-50.png"></center>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="tab-pane fade" id="nav-6" role="tabpanel" aria-labelledby="nav-6-tab">
+
+
+            <div style="display:flex ; user-select: none;">
+                <div style="text-align: center;">
+                    <span style="font-size:1.25em;">全螢幕</span><br>
+                    <svg xmlns="http://www.w3.org/2000/svg" id="preview" onclick="
+                        is_preview = true;            
+                        $('#simple-keyboard-set').hide();
+                        $('#nav-tab').hide();
+                        $('#nav-tabContent').hide();
+                        $('#filename-display-center').hide();
+                        Toast.toast('按下ESC以退出全螢幕',5000);
+                        $('#EscPreviewMode').show();
+                        textarea.css('width', window.innerWidth -30 + 'px');
+                        textarea.css('height', window.innerHeight -80 + 'px');" width="25" height="25"
+                        fill="currentColor" class="bi bi-zoom-in black-svg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z" />
+                        <path
+                            d="M10.344 11.742c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1 6.538 6.538 0 0 1-1.398 1.4z" />
+                        <path fill-rule="evenodd"
+                            d="M6.5 3a.5.5 0 0 1 .5.5V6h2.5a.5.5 0 0 1 0 1H7v2.5a.5.5 0 0 1-1 0V7H3.5a.5.5 0 0 1 0-1H6V3.5a.5.5 0 0 1 .5-.5z" />
+                    </svg>
+                </div>
+                <!--<a href="src/preview.html" onclick="this.href='src/preview.html?text='+textarea.val().replace(/\n|\r\n|\r/g, '\B').replace(/\t/g,'\S\S\S\S')">NEW　PAGE</a>
+                    -->
+                <div class="vh" style="margin-top: 2.5px; margin-left: 5px; margin-right: 5px;">
+                    <center> <img src="../src/img/vh-50.png"></center>
+                </div>
+                <div style="text-align: center;">
+                    <span style="font-size:1.25em;">閱讀模式</span><br>
+                    <svg id="reading" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                        class="bi bi-book black-svg" viewBox="0 0 16 16"
+                        onclick="
+                        is_reading = true;            
+                        $('#simple-keyboard-set').hide();
+                        $('#nav-tab').hide();
+                        $('#nav-tabContent').hide();
+                        $('#filename-display-center').hide();
+                        textarea.hide();
+                        $('.foot').hide();
+                        Toast.toast('按下ESC以退出閱讀模式',5000);
+                        $('#EscReadingMode').show();
+                        $('#read-container').show();
+                        $('#read-container').html(textarea.val().replace(/\n/g,'<br>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;&nbsp;'))">
+                        <path
+                            d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    <center>
+        <textarea style="margin-top: 5px;" id="textarea" 
+        onfocus="$('#System_Statue').html('正在輸入')"
+        oninput="$('#System_Statue').html('正在輸入');txtHistory.record(textarea.val());$('#WordCount').html(checkTextLength(this))"
+        onblur="$('#System_Statue').html('就緒');$('#WordCount').html(checkTextLength(this))" 
+        onchange=" txtHistory.record(textarea.val());$('#WordCount').html(checkTextLength(this))"></textarea>
+        <br><a href="#" id="EscPreviewMode" style="display: none;">退出全螢幕(Esc)</a>
+
+
+    </center>
+    <div id="simple-keyboard-set" style="margin-top:0.6em ;">
+        
+    <div class="flex">
+        
+        <center><input type="text" id="simple-keyboard-input" style="padding: 2px;">
+        <button class="btn" title="插入" style="padding-top: 0; padding-bottom: 0;" onclick="                            
+                      
+// to get the position of the cursor
+// select all from the starting point to the cursor position ignoring line 5 and 6
+str1 = textarea.val().substr(0,_textarea.selectionStart);
+str2 = textarea.val().substr(_textarea.selectionEnd)
+textarea.val(str1+$('#simple-keyboard-input').val()+str2)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="margin-top:0 ;"
+                class="bi bi-check-circle black-svg" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path
+                    d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
+            </svg>
+        </button>(請先指定一點，再按下按鍵)</center>
+    </div>
+    <p></p>
+    <div class="simple-keyboard" style="display: block;"></div>
+</div>
+    <div id="read-container">
+
+    </div>
+
+    <div style="width: 100%;">
+
+        <div class="foot">狀態:<span id="System_Statue">就緒</span>&nbsp;<span id="WordCount">0</span>個字</div>
+        <p> </p>
+        <div style="width: 100%;">
+            <center><a href="#" id="EscReadingMode" style="display: none;">退出閱讀模式(Esc)</a></center>
+        </div>
+    </div>
+    <!-------------------------Modal & offcanvas------------------------------>
+
+    <div style="width: 100%;" class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample"
+        aria-labelledby="offcanvasExampleLabel">
+
+
+        <div class="offcanvas-body">
+
+            <h1 style="margin-left: 10px;">
+                <button type="button" class=" btn-no-outline btn black-svg" data-bs-dismiss="offcanvas"
+                    aria-label="Close" onclick="$(this).css('outline','0')" onfocus="$(this).css('outline','0')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
+                        class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
+                    </svg>
+                </button>
+            </h1>
+            <div class="d-flex align-items-start">
+                <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
+                        data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home"
+                        aria-selected="true">
+                        <h2>
+                            <center>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                                    class="bi bi-file-earmark nav-svg" viewBox="0 0 16 16">
+                                    <path
+                                        d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z" />
+                                </svg>
+                            </center>
+
+                            <b>常用</b>
+                        </h2>
+                    </button>
+                    <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill"
+                        data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile"
+                        aria-selected="false">
+                        <h2>
+                            <center>
+
+                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50 " fill="currentColor"
+                                    class="bi bi-gear nav-svg " viewBox="0 0 16 16">
+                                    <path
+                                        d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                                    <path
+                                        d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                                </svg>
+
+                            </center>
+                            <b>設定</b>
+                        </h2>
+                    </button>
+
+                </div>
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                        aria-labelledby="v-pills-home-tab">
+                        <h3>檔案</h3>
+                        <div id="file-list">
+
+                            <div onclick="PopupAlert('新增專案','如未儲存現有專案，變更將遺失<p>是否新增?</p>','dismiss','NewProject()')"
+                                data-bs-dismiss="offcanvas" style="
+                display: inline-block; text-align: center; border-radius: 5px; 
+                border: 1px solid rgb(59, 59, 59); padding:  15px; user-select: none;
+                margin: 2px; cursor: pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path
+                                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                </svg>
+                                <p></p>
+                                <h5>新增</h5>
+
+                            </div>
+
+                            <div onclick="upload()" data-bs-dismiss="offcanvas" style=" display: inline-block; text-align: center; 
+                                border-radius: 5px; border: 1px solid rgb(59, 59, 59); padding:  15px; user-select: none;
+                                margin: 2px; cursor: pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-folder2-open" viewBox="0 0 16 16">
+                                    <path
+                                        d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14V3.5zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5V6zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7H1.633z" />
+                                </svg>
+                                <p></p>
+                                <h5>開啟</h5>
+
+                            </div>
+
+                            <div onclick="download()" data-bs-dismiss="offcanvas" style="
+                display: inline-block; text-align: center; border-radius: 5px; 
+                border: 1px solid rgb(59, 59, 59); padding:  15px; user-select: none;
+                margin: 2px; cursor: pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-download " viewBox="0 0 16 16">
+                                    <path
+                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                    <path
+                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                                </svg>
+                                <p></p>
+                                <h5>下載</h5>
+
+                            </div>
+
+
+                        </div>
+
+
+
+
+
+
+
+
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
+                        aria-labelledby="v-pills-profile-tab">
+                        <h3>設定</h3>
+                        <div style="margin-left: 2em">
+                            <h4>鍵盤</h4>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="Setting_Keyboard_show"
+                                    onclick='            
+                                if(this.checked){
+                                    $(".simple-keyboard").show();
+                                    localStorage.setItem("TextEditor_Setting_Keyboard_show","true")
+                    
+                                }else{
+                                    $(".simple-keyboard").hide();
+                                    localStorage.setItem("TextEditor_Setting_Keyboard_show","false")
+                                }'>
+                                <label class="form-check-label" for="Setting_Keyboard_show">顯示虛擬鍵盤</label>
+                            </div>
+                            <h4 style="margin-top: 1em;">黑夜模式</h4>
+                            <div>
+                                <!-- <select id="Setting_Theme" onchange="
+                                localStorage.setItem('TextEditor_Setting_Theme',$(this).val());
+                                console.log(localStorage.getItem('TextEditor_Setting_Theme'));
+                                if($(this).val() == 'black'){
+                                    $('body,textarea').css('background-color','#000');
+            $('body,textarea').css('color','#fff');
+            $('.simple-keyboard,.hg-button').css('background-color','#000');
+            $('.offcanvas,.modal-body,.modal-header,.modal-footer').css('background-color','#000');
+            $('svg,button,.modal-body,.modal-header,.modal-footer,.hg-button').css('color','#fff');
+            $('.btn-close').css('filter','invert(1) grayscale(100%) brightness(200%)');
+                                }else if($(this).val() == 'system_UI' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+                                    $('body,textarea').css('background-color','#000');
+            $('body,textarea').css('color','#fff');
+            $('.simple-keyboard,.hg-button').css('background-color','#fff');
+           
+            $('.offcanvas,.modal-body,.modal-header,.modal-footer').css('background-color','#fff');
+            $('button,.modal-body,.modal-header,.modal-footer,.hg-button').css('color','#000');
+            $('.btn-close').css('filter','invert(1) grayscale(100%) brightness(200%)');
+                                }else{
+                                    $('body,textarea').css('background-color','#fff');
+            $('body,textarea,svg:not(.nav-svg)').css('color','#000');
+ $('.simple-keyboard').css('background-color','#ececec')
+            $('.hg-button').css('background-color','#fff');
+            $('.offcanvas,.modal-body,.modal-header,.modal-footer').css('background-color','#fff');
+            $('.nav-link').css('color','#0d6efd');
+            $('#nav-0-tab').css('color','#fff')
+            $('button,.modal-body,.modal-header,.modal-footer,.hg-button').css('color','#000');
+            $('.btn-close').css('filter','none');
+                                }
+                                " onload="$(this).val(localStorage.getItem('TextEditor_Setting_Theme'))">
+                                    <option value="system_UI">系統UI</option>
+                                    <option value="white">白天</option>
+                                    <option value="black">黑夜</option>
+                                </select>-->
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="Setting_Theme"
+                                        onclick="
+                                    
+                                    if(this.checked){
+                                        localStorage.setItem('TextEditor_Setting_Theme','black');
+                                        darkMode()
+                                    }else{
+                                        localStorage.setItem('TextEditor_Setting_Theme','white');
+                                        lightMode()
+                                    }
+                                    
+                                    
+                                    ">
+                                    <label class="form-check-label" for="Setting_Theme">使用黑夜模式</label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <h3>關於</h3>
+
+                        <div class="flex" style="user-select: none;">
+
+                            <img src="../src/img/icon.png" style="max-height:50px;max-width: 50px;" id="logo-img">
+                            <pre>
+<div class="alert alert-warning">新版本:<a href="../index.html" onclick="$(this).attr('href','../index.html?data='+encodeURIComponent(textarea.val().replace(/\n/g,'<!b>').replace(/\t/g,'<!t>').replace(/ /g,'<!s>'))+'&file-name='+encodeURIComponent(filename))">v1.0.2</a>，<a href="../index.html" onclick="$(this).attr('href','../index.html?data='+encodeURIComponent(textarea.val().replace(/\n/g,'<!b>').replace(/\t/g,'<!t>').replace(/ /g,'<!s>'))+'&file-name='+encodeURIComponent(filename))">立即前往</a>以體驗新功能!</div>
+ 文字編輯器 - v1.0.1
+ Jerry - 2022.6
+
+ 更新:
+ v1.0.1 -- 修正錯誤
+                            </pre>
+                        </div>
+
+
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+
+        //def
+        const textarea = $("#textarea");
+        const _textarea = document.querySelector('#textarea');
+
+        const input = $("#simple-keyboard-input");
+        const _input = document.querySelector("#simple-keyboard-input");
+
+
+        let Keyboard = window.SimpleKeyboard.default;
+
+        let keyboard = new Keyboard({
+            onChange: input => onChange(input),
+            onKeyPress: button => onKeyPress(button),
+            onKeyReleased: button => $('#System_Statue').html('就緒'),
+            newLineOnEnter: true,
+            tabCharOnTab: true,
+            useMouseEvents: true,
+            //useButtonTag: true,
+            // debug:true,
+
+            display: {
+                '{bksp}': '←backspace',
+                '{enter}': '↲ enter',
+                '{tab}': "Tab",
+                '{shift}': "Shift",
+                '{lock}': "Caps Lock",
+                '{space}': " "
+
+
+            },
+            layout: {
+                default: [
+                    "` 1 2 3 4 5 6 7 8 9 0 - = {bksp}",
+                    "{tab} q w e r t y u i o p [ ] \\",
+                    "{lock} a s d f g h j k l ; ' {enter}",
+                    "{shift} z x c v b n m , . / {shift}",
+                    ".com @ {space}"
+                ],
+                shift: [
+                    "~ ! @ # $ % ^ & * ( ) _ + {bksp}",
+                    "{tab} Q W E R T Y U I O P { } |",
+                    '{lock} A S D F G H J K L : " {enter}',
+                    "{shift} Z X C V B N M < > ? {shift}",
+                    ".com @ {space}"
+                ],
+                caps: [
+                    "` 1 2 3 4 5 6 7 8 9 0 - = {bksp}",
+                    "{tab} Q W E R T Y U I O P [ ] \\",
+                    "{lock} A S D F G H J K L ; ' {enter}",
+                    "{shift} Z X C V B N M , . / {shift}",
+                    ".com @ {space}"
+                ]
+            },
+
+
+            // physicalKeyboardHighlight: true,
+            preventMouseDownDefault: true
+        });
+
+        /**
+        * Update simple-keyboard when input is changed directly
+        */
+        _input.addEventListener("input", event => {
+            keyboard.setInput(event.target.value);
+
+        });
+
+        console.log(keyboard);
+
+        function onChange(input) {
+
+            console.log(input)
+
+
+            _input.value = (input);
+            console.log(input)
+
+
+            textarea.focus()
+
+            $('#System_Statue').html('正在輸入');
+
+
+
+
+            txtHistory.record(textarea.val())
+
+        }
+        function onKeyPress(button) {
+            console.log("Button pressed", button);
+
+
+            if (button === "{shift}" || button === "{lock}") {
+                 handleShift(); 
+                 if (localStorage.getItem("TextEditor_Setting_Theme") == "black") {
+                    $(".simple-keyboard").css("background-color", "#353535");
+            $(".hg-button").css("background", "#121212");
+            $(".hg-button").css("color", "#ecf2f8");
+            }
+                
+                
+                }
+            if (button === "{bksp}") {
+                if (is_uploaded_file) {
+
+                    //keyboard.setInput(textarea.val());
+
+
+
+
+                    let str = textarea.val().substr(0, _textarea.selectionStart),
+                        str2 = textarea.val().substr(_textarea.selectionStart);
+                    textarea.val(str.substr(0, str.length - 1) + str2)
+                    keyboard.setCaretPosition(_textarea.selectionStart, _textarea.selectionEnd);
+                    textarea.selectRange(_textarea.selectionEnd - 1)
+
+                }
+            }
+            if (button === "{enter}") {
+                str1 = textarea.val().substr(0,_textarea.selectionStart);
+str2 = textarea.val().substr(_textarea.selectionEnd)
+textarea.val(str1+$('#simple-keyboard-input').val()+str2) } 
+               /* if (button === "{tab}") { textarea.val(textarea.val() + "\t"); $("#textarea").focus(); } else
+                    if (button === "{bksp}") { textarea.val(textarea.val().substring(0, textarea.val().length - 1)); $("#textarea").focus(); } else
+                        if (button === "{shift}" || button === "{lock}") { handleShift(); } else
+                            if (button === "{space}") {
+                                if ($("#textarea").val().length !== 0) {
+                                    $("#textarea").val($("#textarea").val() + ' ')
+                                } else {
+                                    $("#textarea").val(' ')
+                                }
+                                dirty()
+                            }
+                            else if (button !== "{tab}" && button !== "{space}" && button !== "{enter}" && button !== "{lock}" && button !== "{shift}" && button !== "{bksp}") {
+                                if ($("#textarea").val().length !== 0) {
+                                    $("#textarea").val($("#textarea").val() + button)
+                                } else {
+                                    $("#textarea").val(button)
+                                }
+                                dirty()
+                            }*/
+
+
+        }
+
+        function handleShift() {
+            let currentLayout = keyboard.options.layoutName;
+            let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+            keyboard.setOptions({
+                layoutName: shiftToggle
+            });
+        }
+
+    </script>
+        <div class="modal fade " id="Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        id="modal-close-btn"></button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modal-esc-btn">
+                        取消
+                    </button>
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" id="modal-enter-btn">
+                        確定
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-------------------------Main-script------------------------------------>
+    <script>
+
+
+        textarea.css('width', window.innerWidth - 30 + 'px');
+        textarea.css('height', window.innerHeight - 480 + 'px');
+
+        var filename = $(".rename-display").html(),
+            use_csvtools = false,
+            use_jsontools = false,
+            is_preview = false,
+            is_reading = false,
+            is_uploaded_file = false;
+        //dirty
+        textarea.on('input', function () {
+            dirty()
+        });
+        textarea.on('change', function () {
+            dirty()
+        })
+
+
+
+        //--------BeforeUnload--Alert---------//
+        function dirty() {
+            window.isDirty = true;
+
+        }
+        window.addEventListener("beforeunload", function (e) {
+            if (window.isDirty) {
+                (e || window.event).returnValue = ""; // Gecko + IE
+                return ""; // Gecko + Webkit, Safari, Chrome etc.
+            }
+
+            return undefined;
+        });
+
+        //------------remame---------//
+        function Rename() {
+            if ($('#rename-center').val() == '') {
+                filename = '未命名' + $('#file-sec-name-center').val();
+                $('.file-name').html(filename); $('#rename-center').hide(); $('#file-sec-name-center').hide(); $('#rename-center-closebtn').hide();
+
+                rename_istoggle = false;
+            } else if ($('#rename-center').val().includes('\ ') || $('#rename-center').val().includes('/') || $('#rename-center').val().includes('<') || $('#rename-center').val().includes('>') || $('#rename-center').val().includes('&') || $('#rename-center').val().includes(':')) {
+                Toast.toast('檔案名稱無效', 5000);
+
+            } else {
+                filename = $('#rename-center').val() + $('#file-sec-name-center').val();
+                $('.file-name').html(filename); $('#rename-center').hide(); $('#file-sec-name-center').hide(); $('#rename-center-closebtn').hide();
+
+                rename_istoggle = false;
+            }
+        }
+
+        //----------------------setting+localstorage-------------------------//
+
+
+        if (localStorage.getItem("TextEditor_Setting") == null) {
+            $(".simple-keyboard").show();
+            localStorage.setItem("TextEditor_Setting", true);
+            localStorage.setItem("TextEditor_Setting_Keyboard_show", true);
+            localStorage.setItem("TextEditor_Setting_Theme", "white");
+        } else {
+
+            if (localStorage.getItem("TextEditor_Setting_Keyboard_show") == "false") {
+                $("#simple-keyboard-set").hide();
+                $("#Setting_Keyboard_show").attr("checked", false)
+
+            } else {
+                $("#simple-keyboard-set").show();
+                $("#Setting_Keyboard_show").attr("checked", true)
+            }
+
+            if (localStorage.getItem("TextEditor_Setting_Theme") == "black") {
+
+
+                darkMode()
+                $("#Setting_Theme").attr("checked", true)
+            } else {
+                lightMode()
+                $("#Setting_Theme").attr("checked", false)
+            }
+
+
+
+        }
+
+        function darkMode() {
+            $("body").css("background-color", "#000");
+            $("body").css("color", "#fff");
+
+            $(".offcanvas").css("background-color", "#000");
+
+            $(".black-svg").css("color", "#fff");
+
+            $("textarea").css("background-color", "#000");
+            $("textarea").css("color", "#fff");
+
+            $(".offcanvas-body").css("background-color", "#000");
+            $(".offcanvas-body").css("color", "#fff");
+
+            $("input[type=text]").css("background-color", "#000");
+            $("input[type=text]").css("color", "#fff");
+
+            $("#LabBtn").css("color", "#fff");
+
+            $(".modal-header").css("color", "#fff")
+            $(".modal-body").css("color", "#fff");
+            $(".modal-footer").css("color", "#fff");
+            $(".modal-header").css("background-color", "#000");
+            $(".modal-body").css("background-color", "#000");
+            $(".modal-footer").css("background-color", "#000");
+            $('.btn-close').css('filter', 'invert(1) grayscale(100%) brightness(200%)');
+
+            $(".simple-keyboard").css("background-color", "#353535");
+            $(".hg-button").css("background", "#121212");
+            $(".hg-button").css("color", "#ecf2f8");
+
+            $('select').css("color", "#fff");
+            $("select").css("background-color", "#000");
+
+
+
+
+        }
+        function lightMode() {
+
+            $("body").css("background-color", "#fff");
+            $("body").css("color", "#000");
+
+            $(".offcanvas").css("background-color", "#fff");
+
+            $(".black-svg").css("color", "#000");
+
+            $("textarea").css("background-color", "#fff");
+            $("textarea").css("color", "#000");
+
+            $(".offcanvas-body").css("background-color", "#fff");
+            $(".offcanvas-body").css("color", "#000");
+
+            $("input[type=text]").css("background-color", "#fff");
+            $("input[type=text]").css("color", "#000");
+
+            $("#LabBtn").css("color", "#000");
+
+            $(".modal-header").css("color", "#000")
+            $(".modal-body").css("color", "#000");
+            $(".modal-footer").css("color", "#000");
+            $(".modal-header").css("background-color", "#fff");
+            $(".modal-body").css("background-color", "#fff");
+            $(".modal-footer").css("background-color", "#fff");
+            $('.btn-close').css('filter', 'none');
+
+            $(".simple-keyboard").css("background-color", "#ececec");
+            $(".hg-button").css("background-color", "#fff");
+            $(".hg-button").css("color", "#000");
+
+            $('select').css("color", "#000");
+            $("select").css("background-color","#fff" );
+        }
+
+
+    </script>
+
+
+
+    <!--------------------------------undoredo--------------------------------------->
+    <script>
+        // Require the library function
+        var txtHistory = new window.UndoRedojs(5)
+
+
+        // Add event listener for inputs on the textarea
+        textarea.on('input', () => {
+            // Check if the new textarea value is different
+            if (txtHistory.current() !== textarea.value) {
+                console.log('different')
+                // Check for pastes, auto corrects..
+                if ((textarea.val().length - txtHistory.current().length) > 1 || (textarea.val().length - txtHistory.current().length) < -1 || (textarea.val().length - txtHistory.current().length) === 0) {
+                    // Record the textarea value and force to bypass cooldown
+                    txtHistory.record(textarea.val(), true)
+                    // Check for single key press, single chacacter paste..
+                } else {
+                    // Record the textarea value
+                    txtHistory.record(textarea.val())
+                }
+            }
+        })
+        // Some browsers will auto-fill the textarea again after reloading, this will deal with that
+        setTimeout(() => {
+            if (textarea.val()) txtHistory.record(textarea.val(), true)
+        }, 100)
+        // The undo button
+        document.querySelector("#undo").addEventListener('click', () => {
+            if (txtHistory.undo(true) !== undefined) {
+                textarea.val(txtHistory.undo())
+            }
+        })
+        // The redo button
+        document.querySelector("#redo").addEventListener('click', () => {
+            if (txtHistory.redo(true) !== undefined) {
+                textarea.val(txtHistory.redo())
+            }
+        })
+
+
+
+    </script>
+    <!------------------------------Modal+Ctrl----------------------------->
+    <div class="modal fade " id="Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        id="modal-close-btn"></button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modal-esc-btn">
+                        取消
+                    </button>
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" id="modal-enter-btn">
+                        確定
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function PopupAlert(title, body, escCallBack, enterCallBack, closeButtonStatue) {
+            let _Modal = new bootstrap.Modal(document.getElementById('Modal'));
+            $('.modal-title').html('');
+            $('.modal-body').html('');
+            $('#modal-esc-btn').removeAttr('onclick');
+            $('#modal-enter-btn').removeAttr('onclick');
+            $('#modal-esc-btn').removeAttr('disabled');
+            $('#modal-enter-btn').removeAttr('disabled');
+            $('#modal-enter-btn').show();
+            $('#modal-esc-btn').show();
+            $(".modal-backdrop").remove();
+            $("#modal-close-btn").show();
+
+            //------------------------------------------------//
+
+            $('.modal-title').html(title);
+            $('.modal-body').html(body);
+
+            if (escCallBack == 'dismiss') {/**/ }
+            else if (escCallBack == 'x') { $('#modal-esc-btn').hide(); console.log("23") }
+            else { $('#modal-esc-btn').attr('onclick', escCallBack); }
+
+            if (enterCallBack == 'dismiss') {/**/ }
+            else if (enterCallBack == 'x') { $('#modal-enter-btn').hide(); console.log("23") }
+            else { $('#modal-enter-btn').attr('onclick', enterCallBack); }
+
+            if (closeButtonStatue == undefined || closeButtonStatue == true) {
+                $("#modal-close-btn").show()
+
+            } else {
+
+                $("#modal-close-btn").hide()
+            }
+
+
+            _Modal.toggle();
+
+            if (localStorage.getItem("TextEditor_Setting_Theme") == "black") {
+                $("textarea").css("background-color", "#000");
+                $("textarea").css("color", "#fff");
+                $("input[type=text]").css("background-color", "#000");
+                $("input[type=text]").css("color", "#fff");
+                $('select').css("color", "#fff");
+                $("select").css("background-color", "#000");
+            }
+            document.querySelector(".modal-backdrop.fade.show").addEventListener("click", function () {
+                $('.modal-backdrop').hide()
+            })
+        }
+    </script>
+
+    <!-------------------------------------dev mode-------------------------------------------->
+    <script src="v1.0.1/src/lib/archive.1.0.1.devMode.js"></script>
+    <!------------------------------KeyCode + Toggle --------------------------------->
+
+
+    <script>
+        var rename_istoggle = false
+        document.onkeydown = function (e) {
+            if (e.keyCode == 27 && is_preview) {
+
+                is_preview = !is_preview;
+                if (localStorage.getItem("TextEditor_Setting_Keyboard_show") !== "false") {
+                    /*$(".simple-keyboard").hide();
+                    $("#Setting_Keyboard_show").attr("checked", false)*/
+                    $(".simple-keyboard").show();
+                    $("#Setting_Keyboard_show").attr("checked", true)
+
+                }
+                $('#nav-tab').show();
+                $('#nav-tabContent').show();
+                $('#filename-display-center').show();
+                Toast.toast('已經退出全螢幕模式', 5000);
+                textarea.css('width', window.innerWidth - 30 + 'px');
+                textarea.css('height', window.innerHeight - 480 + 'px');
+                $('#EscPreviewMode').hide();
+
+
+
+            } else
+                if (e.keyCode == 27 && is_reading) {
+
+                    is_reading = !is_reading;
+                    if (localStorage.getItem("TextEditor_Setting_Keyboard_show") !== "false") {
+                        /*$(".simple-keyboard").hide();
+                        $("#Setting_Keyboard_show").attr("checked", false)*/
+                        $(".simple-keyboard").show();
+                        $("#Setting_Keyboard_show").attr("checked", true)
+
+                    }
+                    $('#nav-tab').show();
+                    textarea.show()
+                    $('#nav-tabContent').show();
+                    $('#filename-display-center').show();
+                    Toast.toast('已經退出閱讀模式', 5000);
+
+
+                    $('.foot').show()
+                    $("#read-container").hide();
+                    $('#EscReadingMode').hide();
+
+                }
+        }
+        $('.modal-backdrop.fade.show').on('click', function () {
+            $('.modal-backdrop').hide()
+        });
+
+        $("#EscPreviewMode").on('click', function () {
+            is_preview = !is_preview;
+            if (localStorage.getItem("TextEditor_Setting_Keyboard_show") !== "false") {
+                /*$(".simple-keyboard").hide();
+                $("#Setting_Keyboard_show").attr("checked", false)*/
+                $("#simple-keyboard-set").show();
+                $("#Setting_Keyboard_show").attr("checked", true)
+
+            }
+            $('#nav-tab').show();
+            $('#nav-tabContent').show();
+            $('#filename-display-center').show();
+            Toast.toast('已經退出全螢幕模式', 5000);
+            textarea.css('width', window.innerWidth - 30 + 'px');
+            textarea.css('height', window.innerHeight - 480 + 'px');
+            $('#EscPreviewMode').hide();
+
+        });
+        $("#EscReadingMode").on('click', function () {
+            is_reading = !is_reading;
+            if (localStorage.getItem("TextEditor_Setting_Keyboard_show") !== "false") {
+                /*$(".simple-keyboard").hide();
+                $("#Setting_Keyboard_show").attr("checked", false)*/
+                $("#simple-keyboard-set").show();
+                $("#Setting_Keyboard_show").attr("checked", true)
+
+            }
+            $('#nav-tab').show();
+            $('#nav-tabContent').show();
+            $('#filename-display-center').show();
+            Toast.toast('已經退出閱讀模式', 5000);
+
+            $('.foot').show();
+            textarea.show()
+
+            $("#read-container").hide();
+            $('#EscReadingMode').hide();
+
+        })
+    </script>
+    <script>
+
+        /*  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && localStorage.getItem('TextEditor_Setting_Theme') == 'black') {
+              $("body,textarea").css("background-color", "#000");
+              $("body,textarea").css("color", "#fff");
+  
+              $(".simple-keyboard,.hg-button").css("background-color", "#000");
+              $(".offcanvas,.modal-body,.modal-header,.modal-footer").css("background-color", "#000");
+  
+              $("svg,button,.modal-body,.modal-header,.modal-footer,.hg-button").css("color", "#fff");
+              $('.btn-close').css('filter', 'invert(1) grayscale(100%) brightness(200%)');
+  
+  
+  
+          }*/
+    </script>
+    <!-------------------------Loading-Ctrl---------------------------------->
+    <script>
+        function delay(n) {
+            return new Promise(function (resolve) {
+                setTimeout(resolve, n * 1000);
+            });
+        }
+        var
+            _Offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasExample'))
+        async function myAsyncFunction() {
+
+
+
+            await delay(2);
+            $('#loading').css('opacity', '0');
+            await delay(0.5);
+            $('#loading').css('display', 'none');
+            _Offcanvas.show();
+
+
+
+        }
+
+
+        window.onload =
+            myAsyncFunction();
+
+
+    </script>
+</body>
+
+</html>
