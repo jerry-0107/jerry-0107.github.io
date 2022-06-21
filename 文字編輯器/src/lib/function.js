@@ -32,7 +32,7 @@ function rename_for_modal(submit) {
 
     if (submit !== "submit") {
 
-        PopupAlert("重新命名", "請在下方重新命名<br>目前名稱:<span class='file-name'></span><br><input id='rename-center' type='text' placeholder='重新命名...'>&nbsp;<select id='file-sec-name-center'><option value='.txt'>.txt</option><option value='.csv'>.csv</option><option value='.json'>.json</option></select>", "dismiss", "rename_for_modal('submit');")
+        PopupAlert("重新命名", "請在下方重新命名<br>目前名稱:<span class='file-name'></span><br><input id='rename-center' type='text' placeholder='重新命名...'>&nbsp;<select id='file-sec-name-center'><option value='.txt'>.txt</option><option value='.csv'>.csv</option><option value='.json'>.json</option><option value=''>(不指定)</option></select>", "dismiss", "rename_for_modal('submit');")
     } else {
         console.log("submit");
         console.log($('#file-sec-name-center').val())
@@ -355,3 +355,17 @@ document.addEventListener('keydown', e => {
     }
   });
 
+  (function ($) {
+    $.UrlParam = function (name) {
+      //宣告正規表達式
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      /*
+       * window.location.search 獲取URL ?之後的參數(包含問號)
+       * substr(1) 獲取第一個字以後的字串(就是去除掉?號)
+       * match(reg) 用正規表達式檢查是否符合要查詢的參數
+      */
+      var r = window.location.search.substr(1).match(reg);
+      //如果取出的參數存在則取出參數的值否則回穿null
+      if (r != null) return (r[2]); return null;
+    }
+  })(jQuery);
