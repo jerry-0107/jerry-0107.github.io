@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>文字編輯器</title>
+    <meta name="google-site-verification" content="J-8i4mnKrt1XV9zkfYUb6ug8cx7nYcK8412jOy1SPBg" />
     <link href="src/img/icon.png" rel="shortcut icon" />
 
     <script src="src/lib/jquery/jquery-3.6.0.js"></script>
@@ -20,6 +21,9 @@
     <script src="src/lib/FileSaver.js/FileSaver.js"></script>
     <script src="src/lib/setCursor.js"></script>
     <script src="src/lib/vconsole-3.14.6/package/dist/vconsole.min.js"></script>
+
+
+    <link rel="stylesheet" href="src/lib/intro.js/package/introjs.css">
 
 
     <script src="src/lib/Toast -v1.1/Toast.js"></script>
@@ -267,21 +271,21 @@
         </div>
     </div>
     <center>
-        <textarea style="margin-top: 5px;" id="textarea" 
-        onfocus="$('#System_Statue').html('正在輸入');$('#WordCount').html(checkTextLength(this));"
-        oninput="$('#System_Statue').html('正在輸入');txtHistory.record(textarea.val());$('#WordCount').html(checkTextLength(this))"
-        onblur="$('#System_Statue').html('就緒');$('#WordCount').html(checkTextLength(this))" 
-        onchange=" txtHistory.record(textarea.val());$('#WordCount').html(checkTextLength(this))"></textarea>
+        <textarea style="margin-top: 5px;" id="textarea"
+            onfocus="$('#System_Statue').html('正在輸入');$('#WordCount').html(checkTextLength(this));"
+            oninput="$('#System_Statue').html('正在輸入');txtHistory.record(textarea.val());$('#WordCount').html(checkTextLength(this))"
+            onblur="$('#System_Statue').html('就緒');$('#WordCount').html(checkTextLength(this))"
+            onchange=" txtHistory.record(textarea.val());$('#WordCount').html(checkTextLength(this))"></textarea>
         <br><a href="#" id="EscPreviewMode" style="display: none;">退出全螢幕(Esc)</a>
 
 
     </center>
     <div id="simple-keyboard-set" style="margin-top:0.6em ;">
-        
-    <div class="flex">
-        
-        <center><input type="text" id="simple-keyboard-input" style="padding: 2px;">
-        <button class="btn" title="插入" style="padding-top: 0; padding-bottom: 0;" onclick="                            
+
+        <div class="flex">
+
+            <center><input type="text" id="simple-keyboard-input" style="padding: 2px;">
+                <button class="btn" title="插入" style="padding-top: 0; padding-bottom: 0;" onclick="                            
                       
 // to get the position of the cursor
 
@@ -289,24 +293,26 @@
 str1 = textarea.val().substr(0,_textarea.selectionStart);
 str2 = textarea.val().substr(_textarea.selectionEnd)
 textarea.val(str1+$('#simple-keyboard-input').val()+str2)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="margin-top:0 ;"
-                class="bi bi-check-circle black-svg" viewBox="0 0 16 16">
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                <path
-                    d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
-            </svg>
-        </button>(請先指定一點，再按下按鍵)</center>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        style="margin-top:0 ;" class="bi bi-check-circle black-svg" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                        <path
+                            d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
+                    </svg>
+                </button>(請先指定一點，再按下按鍵)
+            </center>
+        </div>
+        <p></p>
+        <div class="simple-keyboard" style="display: block;"></div>
     </div>
-    <p></p>
-    <div class="simple-keyboard" style="display: block;"></div>
-</div>
     <div id="read-container">
 
     </div>
 
     <div style="width: 100%;">
 
-        <div class="foot">狀態:<span id="System_Statue">就緒</span>&nbsp;&nbsp;<span id="WordCount">0</span>個字(包含中文和英文)</div>
+        <div class="foot">狀態:<span id="System_Statue">就緒</span>&nbsp;&nbsp;<span id="WordCount">0</span>個字(包含中文和英文)
+        </div>
         <p> </p>
         <div style="width: 100%;">
             <center><a href="#" id="EscReadingMode" style="display: none;">退出閱讀模式(Esc)</a></center>
@@ -321,7 +327,7 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2)">
         <div class="offcanvas-body">
 
             <h1 style="margin-left: 10px;">
-                <button type="button" class=" btn-no-outline btn black-svg" data-bs-dismiss="offcanvas"
+                <button type="button" id="intro-3" class=" btn-no-outline btn black-svg" data-bs-dismiss="offcanvas"
                     aria-label="Close" onclick="$(this).css('outline','0')" onfocus="$(this).css('outline','0')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
                         class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
@@ -374,9 +380,8 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2)">
                         <div id="file-list">
 
                             <div onclick="
-                                PopupAlert('新增專案','如未儲存現有專案，變更將遺失<p>是否新增?</p>','dismiss','NewProject()')
-                                _Offcanvas.isShowing = false;"
-                                data-bs-dismiss="offcanvas" style="
+                                NewProject()
+                                _Offcanvas.isShowing = false;" data-bs-dismiss="offcanvas" style="
                 display: inline-block; text-align: center; border-radius: 5px; 
                 border: 1px solid rgb(59, 59, 59); padding:  15px; user-select: none;
                 margin: 2px; cursor: pointer;">
@@ -410,16 +415,53 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2)">
                 display: inline-block; text-align: center; border-radius: 5px; 
                 border: 1px solid rgb(59, 59, 59); padding:  15px; user-select: none;
                 margin: 2px; cursor: pointer;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-file-earmark-post" viewBox="0 0 16 16">
-                                    <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
-                                    <path d="M4 6.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-7zm0-3a.5.5 0 0 1 .5-.5H7a.5.5 0 0 1 0 1H4.5a.5.5 0 0 1-.5-.5z"/>
-                                  </svg>
-                        <p></p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-file-earmark-post" viewBox="0 0 16 16">
+                                    <path
+                                        d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z" />
+                                    <path
+                                        d="M4 6.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-7zm0-3a.5.5 0 0 1 .5-.5H7a.5.5 0 0 1 0 1H4.5a.5.5 0 0 1-.5-.5z" />
+                                </svg>
+                                <p></p>
                                 <h5>儲存</h5>
                                 <small>(Ctrl + S)</small>
-                                
+
 
                             </div>
+                            <br>
+
+                            <!-- <h3>說明</h3>
+                            <div onclick="
+                            _Offcanvas.isShowing = false;
+                            introJs().setOptions({
+  steps: [{
+    title: 'Welcome',
+    intro: 'Hello World! 👋'
+  },
+  {
+    intro: 'rgeeg'
+  },
+  {
+    element: document.querySelector('.bi-file'),
+    intro: 'This step focuses on an element'
+  }]
+}).start();" data-bs-dismiss="offcanvas" style="
+                                display: inline-block; text-align: center; border-radius: 5px; 
+                                border: 1px solid rgb(59, 59, 59); padding:  15px; user-select: none;
+                                margin: 2px; cursor: pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-file-earmark-post" viewBox="0 0 16 16">
+                                    <path
+                                        d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z" />
+                                    <path
+                                        d="M4 6.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-7zm0-3a.5.5 0 0 1 .5-.5H7a.5.5 0 0 1 0 1H4.5a.5.5 0 0 1-.5-.5z" />
+                                </svg>
+                                <p></p>
+                                <h5>儲存</h5>
+                                <small>(Ctrl + S)</small>
+
+
+                            </div>-->
 
 
                         </div>
@@ -526,12 +568,14 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2)">
  更新:
  v1.0.2 -- 新增功能:快速鍵
            (某些瀏覽器無法使用)
+           
            修正錯誤
 
- v1.0.1 -- 修正錯誤
+
+v1.0.1 -- 修正錯誤
                             </pre>
                         </div>
-
+                        <a hidden href="archive/archive-1.0.1.html" id="archive-1.0.1">1.0.1</a>
 
 
 
@@ -631,7 +675,7 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2)">
 
 
 
-     
+
 
         }
         function onKeyPress(button) {
@@ -639,48 +683,49 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2)">
 
 
             if (button === "{shift}" || button === "{lock}") {
-                 handleShift(); 
-                 if (localStorage.getItem("TextEditor_Setting_Theme") == "black") {
+                handleShift();
+                if (localStorage.getItem("TextEditor_Setting_Theme") == "black") {
                     $(".simple-keyboard").css("background-color", "#353535");
-            $(".hg-button").css("background", "#121212");
-            $(".hg-button").css("color", "#ecf2f8");
-            }
-                
-                
+                    $(".hg-button").css("background", "#121212");
+                    $(".hg-button").css("color", "#ecf2f8");
                 }
+
+
+            }
             if (button === "{bksp}") {
-input.val(input.val().substring(0,input.val().length - 1)); $("#textarea").focus(); 
+                input.val(input.val().substring(0, input.val().length - 1)); $("#textarea").focus();
             }
             if (button === "{enter}") {
-                str1 = textarea.val().substr(0,_textarea.selectionStart);
-str2 = textarea.val().substr(_textarea.selectionEnd)
-textarea.val(str1+$('#simple-keyboard-input').val()+str2) } 
+                str1 = textarea.val().substr(0, _textarea.selectionStart);
+                str2 = textarea.val().substr(_textarea.selectionEnd)
+                textarea.val(str1 + $('#simple-keyboard-input').val() + str2)
+            }
 
-               /* if (button === "{tab}") { textarea.val(textarea.val() + "\t"); $("#textarea").focus(); } else
-                     else
-                        if (button === "{shift}" || button === "{lock}") { handleShift(); } else
-                            if (button === "{space}") {
+            /* if (button === "{tab}") { textarea.val(textarea.val() + "\t"); $("#textarea").focus(); } else
+                  else
+                     if (button === "{shift}" || button === "{lock}") { handleShift(); } else
+                         if (button === "{space}") {
 
-                                if ($("#textarea").val().length !== 0) {
-                                    $("#textarea").val($("#textarea").val() + ' ')
-                                } else {
-                                    $("#textarea").val(' ')
-                                }
-                                dirty()
+                             if ($("#textarea").val().length !== 0) {
+                                 $("#textarea").val($("#textarea").val() + ' ')
+                             } else {
+                                 $("#textarea").val(' ')
+                             }
+                             dirty()
 
-                            }
+                         }
 
-                            else if (button !== "{tab}" && button !== "{space}" && button !== "{enter}" && button !== "{lock}" && button !== "{shift}" && button !== "{bksp}") {
-                                if ($("#textarea").val().length !== 0) {
-                                    $("#textarea").val($("#textarea").val() + button)
-                                } else {
-                                    $("#textarea").val(button)
-                                }
-                                dirty()
+                         else if (button !== "{tab}" && button !== "{space}" && button !== "{enter}" && button !== "{lock}" && button !== "{shift}" && button !== "{bksp}") {
+                             if ($("#textarea").val().length !== 0) {
+                                 $("#textarea").val($("#textarea").val() + button)
+                             } else {
+                                 $("#textarea").val(button)
+                             }
+                             dirty()
 
 
 
-                            }*/
+                         }*/
 
 
         }
@@ -695,7 +740,7 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2) }
         }
 
     </script>
-        <div class="modal fade " id="Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade " id="Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
             <div class="modal-content">
@@ -751,14 +796,14 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2) }
             if (window.isDirty) {
                 (e || window.event).returnValue = ""; // Gecko + IE
                 return ""; // Gecko + Webkit, Safari, Chrome etc.
-      
+
             }
 
             return undefined;
         });
 
-        //------------remame---------//
-        function Rename() {
+        //------------remame(xxx)---------//
+        /*function Rename() {
             if ($('#rename-center').val() == '') {
                 filename = '未命名' + $('#file-sec-name-center').val();
                 $('.file-name').html(filename); $('#rename-center').hide(); $('#file-sec-name-center').hide(); $('#rename-center-closebtn').hide();
@@ -773,7 +818,7 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2) }
 
                 rename_istoggle = false;
             }
-        }
+        }*/
 
         //----------------------setting+localstorage-------------------------//
 
@@ -879,7 +924,7 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2) }
             $(".hg-button").css("color", "#000");
 
             $('select').css("color", "#000");
-            $("select").css("background-color","#fff" );
+            $("select").css("background-color", "#fff");
         }
 
 
@@ -1118,20 +1163,22 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2) }
   
           }*/
     </script>
+    <!---intro-->
+
 
     <!-------------------------Loading-Ctrl---------------------------------->
-    <script>   
-     //load data from old verion--------//     
-     if($.UrlParam("data") !== null){
-       // Toast.toast('正在轉換檔案',3000);
-            textarea.val(decodeURIComponent($.UrlParam("data").replace(/%3C!b%3E/g,"\n").replace(/%3C!t%3E/g,"    ").replace(/%3C!s%3E/g," ")));
-            filename =decodeURIComponent( $.UrlParam("file-name"))
+    <script>
+        //load data from old verion--------//     
+        if ($.UrlParam("data") !== null) {
+            // Toast.toast('正在轉換檔案',3000);
+            textarea.val(decodeURIComponent($.UrlParam("data").replace(/%3C!b%3E/g, "\n").replace(/%3C!t%3E/g, "    ").replace(/%3C!s%3E/g, " ")));
+            filename = decodeURIComponent($.UrlParam("file-name"))
             $(".file-name").html(filename)
             txtHistory.record(textarea.val());
-            Toast.toast('成功轉換檔案，繼續編輯:<br>'+filename,5500);
+            Toast.toast('成功轉換檔案，繼續編輯:<br>' + filename, 5500);
             $('#WordCount').html(checkTextLength(textarea));
             dirty()
-        }  
+        }
 
 
         function delay(n) {
@@ -1140,11 +1187,11 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2) }
             });
         }
         const
-        _Offcanvas = {};
+            _Offcanvas = {};
         _Offcanvas.canvas = new bootstrap.Offcanvas(document.getElementById('offcanvasExample'))
         _Offcanvas.isShowing = false;
         async function myAsyncFunction() {
-      
+
 
 
 
@@ -1156,7 +1203,7 @@ textarea.val(str1+$('#simple-keyboard-input').val()+str2) }
             _Offcanvas.isShowing = true;
 
 
-           
+
 
 
 
