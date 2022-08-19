@@ -40,9 +40,9 @@
     <center>
         <h1>網站維護中</h1>
         <h3><span class=app-name >App</span> 正在維護</h3>
-        <h5>請等一下再回來</h5>
+        <h5>請等一下再回來<span class="end-time"></span></h5>
         <pre>
-http Error 503        
+http Error 503 (Service Unavailable)     
         </pre>
         
     
@@ -75,6 +75,9 @@ http Error 503
       
       if($.UrlParam("app") !== null){
         $(".app-name").text($.UrlParam("app"))
+      }
+      if($.UrlParam("end-time") !== null){
+        $(".end-time").text("預計上線時間:"+$.UrlParam("end-time"))
       }
       
       
