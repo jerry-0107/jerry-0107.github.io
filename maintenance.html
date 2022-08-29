@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +7,7 @@
     <link rel="shortcut icon" href="/icon/favicon.ico" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title網站維護中</title>
+    <title>網站維護中</title>
     <meta name="google-site-verification" content="ufrA26T5KMQ5TkSwY6HqQ0tJCCCcoCAXf8uhfxT1ljY" />
     <!--BS CSS-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -40,7 +41,10 @@
     <center>
         <h1>網站維護中</h1>
         <h3><span class=app-name >App</span> 正在維護</h3>
-        <h5>請等一下再回來<span class="end-time"></span></h5>
+        <h5>請等一下再回來</h5>
+        <h5>
+        <span class="end-time"></span>
+        </h5>
         <pre>
 http Error 503 (Service Unavailable)
         </pre>
@@ -73,11 +77,20 @@ http Error 503 (Service Unavailable)
     }
 })(jQuery);
       
-      if($.UrlParam("app") !== null){
+      if($.UrlParam("app-name") !== null){
         $(".app-name").text($.UrlParam("app"))
       }
+      else{
+        $("center").html(`
+        <h1>這個網頁無法正常運作</h1>
+        <p>
+            <pre class="text-danger">
+網頁參數無效   
+            </pre>
+        </p>`)
+      }
       if($.UrlParam("end-time") !== null){
-        $(".end-time").text("，預計上線時間:"+$.UrlParam("end-time"))
+        $(".end-time").text("預計上線時間:"+$.UrlParam("end-date")+" "+$.UrlParam("end-time")+" "+$.UrlParam("end-timezone"))
       }
       
       
@@ -92,3 +105,14 @@ http Error 503 (Service Unavailable)
 </body>
 
 </html>
+
+<!--
+
+============API============
+end-date       結束日期
+end-time       結束時間
+end-timezone   結束時間的時區
+app-name       專案名稱 *
+
+ex.https://jerry20201230.github.io/maintenance.html   ?app=Myapp   &end-date=2022/8/15   &end-time=00:00   &end-timezone=UTC
+-->
