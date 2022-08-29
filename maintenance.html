@@ -83,10 +83,8 @@ http Error 503 (Service Unavailable)
       else{
         $("center").html(`
         <h1>這個網頁無法正常運作</h1>
-        <p>
-            <pre class="text-danger">
-網頁參數無效   
-            </pre>
+        <p class="text-danger">
+           網頁參數無效   
         </p>`)
       }
       if($.UrlParam("end-time") !== null){
