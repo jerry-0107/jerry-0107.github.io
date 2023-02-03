@@ -75,7 +75,7 @@
             $("#percent").text((number_data.length / 10000) * 100)
 
             $("#success-total").text(success_data.length)
-            $("#success-percent").text((success_data.length / number_data.length) * 100)
+            $("#success-percent").text((success_data.length / number_data.length))
 
             $("#prog1").css("width",(number_data.length / 10000) * 100+"%").attr("aria-valuenow",(number_data.length / 10000) * 100)
         } else {
@@ -117,7 +117,7 @@
                 $("#prog1").css("width",(number_data.length / 10000) * 100+"%").attr("aria-valuenow",(number_data.length / 10000) * 100)
 
                 $("#success-total").text(success_data.length)
-                $("#success-percent").text((success_data.length / number_data.length) * 100)
+                $("#success-percent").text((success_data.length / number_data.length))
             } else {
                 alert("數字重複!")
             }
