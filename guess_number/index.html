@@ -34,9 +34,11 @@
           </div>
         <button class="btn btn-success" onclick="addnum()">新增</button>
     </div>
-    <p></p>
+    <p>共猜了<span id="total">N/A</span>個數字 完成<span id="percent">0</span>%</p>
     <h2>輸出</h2>
-    <ul class="list-group" id="output" data-count="0"></ul>
+    <ul class="list-group" id="output" data-count="0"
+    style="    max-height: 487px;
+    overflow-y: scroll;"></ul>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
         integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
         crossorigin='anonymous'></script>
@@ -59,6 +61,8 @@
                     $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${number_data[i]}</li>`)
                 }
             }
+            $("#total").text(number_data.length)
+            $("#percent").text(1000/number_data.length)
             
         } else {
             localStorage.setItem("rnum", JSON.stringify({ number: [], success: [] }))
@@ -90,8 +94,12 @@
                     $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${$("#input").val()}</li>`)
                     success_data.push($("#input").val())
                 }
+                
                 number_data.push($("#input").val())
                 localStorage.setItem("rnum",JSON.stringify({"number":number_data,"success":success_data}))
+
+                $("#total").text(number_data.length)
+                $("#percent").text(1000/number_data.length)
             } else {
                 alert("數字重複!")
             }
