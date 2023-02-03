@@ -35,9 +35,17 @@
         <button class="btn btn-success" onclick="addnum()">新增</button>
     </div>
     <p>共猜了<span id="total">N/A</span>個數字 猜中了<span id="success-total">N/A</span>個數字<br>完成率<span id="percent">0</span>%
-        正確率<span id="success-percent">0</span>%</p>
+        正確率<span id="success-percent">0</span>%
+
+    <div class="progress" style="height: 3px;" >
+        <div class="progress-bar" role="progressbar" id="prog1" style="width: 25%;"
+            aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    </p>
+
+
     <h2>輸出</h2>
-    <ul class="list-group" id="output" data-count="0" style="max-height: 457px;
+    <ul class="list-group" id="output" data-count="0" style="max-height: 430px;
     overflow-y: scroll;"></ul>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
         integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
@@ -64,11 +72,12 @@
                 }
             }
             $("#total").text(number_data.length)
-            $("#percent").text((number_data.length / 1000) * 100)
+            $("#percent").text((number_data.length / 10000) * 100)
 
             $("#success-total").text(success_data.length)
             $("#success-percent").text((success_data.length / number_data.length) * 100)
 
+            $("#prog1").css("width",(number_data.length / 10000) * 100+"%").attr("aria-valuenow",(number_data.length / 10000) * 100)
         } else {
             localStorage.setItem("rnum", JSON.stringify({ number: [], success: [] }))
         }
@@ -104,7 +113,8 @@
                 localStorage.setItem("rnum", JSON.stringify({ "number": number_data, "success": success_data }))
 
                 $("#total").text(number_data.length)
-                $("#percent").text((number_data.length / 1000) * 100)
+                $("#percent").text((number_data.length / 10000) * 100)
+                $("#prog1").css("width",(number_data.length / 10000) * 100+"%").attr("aria-valuenow",(number_data.length / 10000) * 100)
 
                 $("#success-total").text(success_data.length)
                 $("#success-percent").text((success_data.length / number_data.length) * 100)
