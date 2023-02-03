@@ -54,9 +54,9 @@
             success_data = JSON.parse(localStorage.getItem("rnum")).success
             for(let i=0;i<number_data.length;i++){
                 if(success_data.includes(number_data[i])){
-                    $("#output").append(`<li class="list-group-item bg-success" data-type="success">${$("#input").val()}</li>`)
+                    $("#output").append(`<li class="list-group-item bg-success" data-type="success">${number_data[i]}</li>`)
                 }else{
-                    $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${$("#input").val()}</li>`)
+                    $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${number_data[i]}</li>`)
                 }
             }
             
