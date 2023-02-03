@@ -64,10 +64,10 @@
                 }
             }
             $("#total").text(number_data.length)
-            $("#percent").text((number_data.length / 1000) * 100)
+            $("#percent").text(Math.round(number_data.length / 1000) * 100)
 
             $("#success-total").text(success_data.length)
-            $("#success-percent").text((success_data.length / number_data.length) * 100)
+            $("#success-percent").text(Math.round(success_data.length / number_data.length) * 100)
 
         } else {
             localStorage.setItem("rnum", JSON.stringify({ number: [], success: [] }))
@@ -104,10 +104,10 @@
                 localStorage.setItem("rnum", JSON.stringify({ "number": number_data, "success": success_data }))
 
                 $("#total").text(number_data.length)
-                $("#percent").text((number_data.length / 1000) * 100)
+                $("#percent").text(Math.round(number_data.length / 1000) * 100)
 
                 $("#success-total").text(success_data.length)
-                $("#success-percent").text((success_data.length / number_data.length) * 100)
+                $("#success-percent").text(Math.round(success_data.length / number_data.length) * 100)
             } else {
                 alert("數字重複!")
             }
