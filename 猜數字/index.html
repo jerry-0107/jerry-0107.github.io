@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜數字0000-9999</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css'
+        integrity='sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=='
+        crossorigin='anonymous' />
+    <link rel='stylesheet'
+        href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css'
+        integrity='sha512-YFENbnqHbCRmJt5d+9lHimyEMt8LKSNTMLSaHjvsclnZGICeY/0KYEeiHwD1Ux4Tcao0h60tdcMv+0GljvWyHg=='
+        crossorigin='anonymous' />
+        <style>
+
+        </style>
+</head>
+
+<body class="m-3">
+    <h1>猜數字</h1>
+    <h2>輸入</h2>
+    <div class="d-flex mb-1">
+        <button class="btn btn-primary me-1" onclick="getnum()">建議</button>
+        <input id="input" type="number" class="me-1 form-control" style="width: fit-content " placeholder="輸入數字">
+
+        <div class="btn-group me-1" role="group" >
+            <input type="radio" class="btn-check" name="btnradio" id="success" >
+            <label class="btn btn-outline-success" for="success">成功</label>
+          
+            <input type="radio" class="btn-check" name="btnradio" id="failed" checked>
+            <label class="btn btn-outline-secondary" for="failed">失敗</label>
+          </div>
+        <button class="btn btn-success" onclick="addnum()">新增</button>
+    </div>
+    <p></p>
+    <h2>輸出</h2>
+    <ul class="list-group" id="output" data-count="0"></ul>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
+        integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
+        crossorigin='anonymous'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js' integrity='sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g==' crossorigin='anonymous'></script>
+
+    <script>
+        /*
+        number:[]
+        success:[]
+        
+        */
+        var number_data,success_data;
+        if (localStorage.getItem("rnum")) {
+            number_data = JSON.parse(localStorage.getItem("rnum")).number
+            success_data = JSON.parse(localStorage.getItem("rnum")).success
+            for(let i=0;i<number_data.length;i++){
+                if(success_data.includes(number_data[i])){
+                    $("#output").append(`<li class="list-group-item bg-success" data-type="success">${$("#input").val()}</li>`)
+                }else{
+                    $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${$("#input").val()}</li>`)
+                }
+            }
+            
+        } else {
+            localStorage.setItem("rnum", JSON.stringify({ number: [], success: [] }))
+        }
+
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        function IfStrIsBlank(str) {
+            let _arr = str.split(" ")
+            for (i = 0; i < _arr.length; i++) {
+
+                if (_arr[i] !== " " && _arr[i] !== "") {
+                    return false
+                }
+            }
+
+            return true
+        }
+
+        function addnum() {
+            if (!number_data.includes($("#input").val())) {
+
+                if(!document.getElementById("success").checked){
+                    $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${$("#input").val()}</li>`)
+                }else{
+                    $("#output").append(`<li class="list-group-item bg-success" data-type="success">${$("#input").val()}</li>`)
+                    success_data.push($("#input").val())
+                }
+                number_data.push($("#input").val())
+                localStorage.setItem("rnum",JSON.stringify({"number":number_data,"success":success_data}))
+            } else {
+                alert("數字重複!")
+            }
+        }
+        function getnum() {
+            var n = getRandomInt(0, 9999),
+                result = 1;
+            while (result == 0) {
+                if (number_data.includes(n)) {
+                    result = 0
+                } else {
+                    n = getRandomInt(0, 9999)
+                }
+            }
+            $("#input").val(n)
+        }
+    </script>
+</body>
+
+</html>
