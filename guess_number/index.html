@@ -34,10 +34,10 @@
         </div>
         <button class="btn btn-success" onclick="addnum()">新增</button>
     </div>
-    <p>共猜了<span id="total">N/A</span>個數字 猜中了<span id="success-total">N/A</span>個數字 完成率<span id="percent">0</span>%
+    <p>共猜了<span id="total">N/A</span>個數字 猜中了<span id="success-total">N/A</span>個數字<br>完成率<span id="percent">0</span>%
         正確率<span id="success-percent">0</span>%</p>
     <h2>輸出</h2>
-    <ul class="list-group" id="output" data-count="0" style="    max-height: 487px;
+    <ul class="list-group" id="output" data-count="0" style="max-height: 457px;
     overflow-y: scroll;"></ul>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
         integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
@@ -64,10 +64,10 @@
                 }
             }
             $("#total").text(number_data.length)
-            $("#percent").text(Math.round(number_data.length / 1000) * 100)
+            $("#percent").text((number_data.length / 1000) * 100)
 
             $("#success-total").text(success_data.length)
-            $("#success-percent").text(Math.round(success_data.length / number_data.length) * 100)
+            $("#success-percent").text((success_data.length / number_data.length) * 100)
 
         } else {
             localStorage.setItem("rnum", JSON.stringify({ number: [], success: [] }))
@@ -104,10 +104,10 @@
                 localStorage.setItem("rnum", JSON.stringify({ "number": number_data, "success": success_data }))
 
                 $("#total").text(number_data.length)
-                $("#percent").text(Math.round(number_data.length / 1000) * 100)
+                $("#percent").text((number_data.length / 1000) * 100)
 
                 $("#success-total").text(success_data.length)
-                $("#success-percent").text(Math.round(success_data.length / number_data.length) * 100)
+                $("#success-percent").text((success_data.length / number_data.length) * 100)
             } else {
                 alert("數字重複!")
             }
