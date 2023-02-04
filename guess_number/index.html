@@ -80,30 +80,38 @@
         success:[]
         
         */
-        var number_data, success_data;
+        var number_data, success_data,current_success;
         if (localStorage.getItem("rnum")) {
             number_data = JSON.parse(localStorage.getItem("rnum")).number
             success_data = JSON.parse(localStorage.getItem("rnum")).success
-            for (let i = 0; i < number_data.length; i++) {
+            /*for (let i = 0; i < number_data.length; i++) {
                 if (success_data.includes(number_data[i])) {
                     $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${number_data[i]}</li>`)
                 } else {
                  //   $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${number_data[i]}</li>`)
                 }
+            }**/
+
+            for(i=0;i<success_data.length;i++){
+                if(success_data[i] !== null){
+                    $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${success_data[i]}</li>`)
+                    current_success = i
+                }
+
             }
-            $("#output").append(`<li class="list-group-item text-bg-dark" data-type="divider">---上次結尾 共${number_data.length}個數字 ${success_data.length}個成功數字---</li>`)
+            $("#output").append(`<li class="list-group-item text-bg-dark" data-type="divider">---上次結尾 共${number_data.length}個數字 ${current_success}個成功數字---</li>`)
             $("#total").text(number_data.length)
             let per = (number_data.length / 10000) * 100
             $("#percent").text(per.toFixed(2) + "%")
             $("#prog1").css("width", Number(per.toFixed(2)) + "%").attr("aria-valuenow", (number_data.length / 10000) * 100)
 
 
-            $("#success-total").text(success_data.length)
+            $("#success-total").text(current_success)
 
-            if (Number((number_data.length / success_data.length).toFixed(2)) <= 222.20) {
-                $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-success")
-            } else if (Number((number_data.length / success_data.length).toFixed(2)) > 222.20) {
-                $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-secondary")
+            if (Number((number_data.length / scurrent_success).toFixed(2)) <= 222.20) {
+                $("#nowavg").text(`${(number_data.length / current_success).toFixed(2)}`).attr("class", "badge text-bg-success")
+            } else if (Number((number_data.length / current_success).toFixed(2)) > 222.20) {
+                $("#nowavg").text(`${(number_data.length / current_success).toFixed(2)}`).attr("class", "badge text-bg-secondary")
             }
 
         } else {
@@ -155,7 +163,7 @@
                         $("#percent").text(per.toFixed(2) + "%")
                         $("#prog1").css("width", Number(per.toFixed(2)) + "%").attr("aria-valuenow", (number_data.length / 10000) * 100)
 
-                        $("#success-total").text(success_data.length)
+                        $("#success-total").text(current_success)
 
                         if (success_data.includes(number_data[number_data.length - 1])) {
                             $("#lastdata").html(`${number_data[number_data.length - 1]} (成功)`).attr("class", "badge text-bg-primary")
@@ -163,10 +171,10 @@
                             $("#lastdata").html(`${number_data[number_data.length - 1]} (失敗)`).attr("class", "badge text-bg-secondary")
                         }
 
-                        if (Number((number_data.length / success_data.length).toFixed(2)) <= 222.20) {
-                            $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-success")
-                        } else if (Number((number_data.length / success_data.length).toFixed(2)) > 222.20) {
-                            $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-secondary")
+                        if (Number((number_data.length / current_success).toFixed(2)) <= 222.20) {
+                            $("#nowavg").text(`${(number_data.length / current_success).toFixed(2)}`).attr("class", "badge text-bg-success")
+                        } else if (Number((number_data.length / current_success).toFixed(2)) > 222.20) {
+                            $("#nowavg").text(`${(number_data.length / current_success).toFixed(2)}`).attr("class", "badge text-bg-secondary")
                         }
 
 
