@@ -23,7 +23,11 @@
     <h2>輸入</h2>
     <div class="d-flex mb-1">
         <button class="btn btn-primary me-1" onclick="getnum()">建議</button>
-        <input id="input" type="number" class="me-1 form-control" style="width: fit-content " placeholder="輸入數字">
+        <input id="input" type="number" class="me-1 form-control" style="width: fit-content " placeholder="輸入數字"
+        
+        oninput="checknum()"
+        onblur="chechnum()"
+        onfocus="checknum()">
 
         <div class="btn-group me-1" role="group">
             <input type="radio" class="btn-check" name="btnradio" id="success">
@@ -34,6 +38,7 @@
         </div>
         <button class="btn btn-success" onclick="addnum()">新增</button>
     </div>
+    <p><span id="search">輸入數字以搜尋...</span></p>
     <p>共猜了<span id="total">N/A</span>個數字 猜中了<span id="success-total">N/A</span>個數字<br>完成率<span id="percent">0</span>%
         正確率<span id="success-percent">0</span>%
 
@@ -126,13 +131,27 @@
             var n = getRandomInt(0, 9999),
                 result = 1;
             while (result == 0) {
-                if (number_data.includes(n)) {
+                if (number_data.includes(n) || number_data.includes(n.toString())) {
                     result = 0
                 } else {
                     n = getRandomInt(0, 9999)
                 }
             }
             $("#input").val(n)
+            checknum()
+        }
+
+        function checknum(){
+            n = $("#input").val()
+            if(number_data.includes(n) || number_data.includes(n.toString())){
+                if(success_data.includes(n)){
+                    $("#search").html(`<i class="bi bi-check-circle-fill text-success"></i> ${n} - 數字已經存在 (成功)`)
+                }else{
+                    $("#search").html(`<i class="bi bi-x-circle-fill text-secondary"></i> ${n} - 數字已經存在 (失敗)`)
+                }
+            }else{
+                $("#search").html(`<i class="bi bi-app text-primary"></i> ${n} - 數字不存在`)
+            }
         }
     </script>
 </body>
