@@ -32,8 +32,8 @@
             <input type="radio" class="btn-check" name="btnradio" id="failed" checked>
             <label class="btn btn-outline-secondary" for="failed">失敗</label>
         </div>
-        <button class="btn btn-success me-1" onclick="addnum('ui')">新增</button>
-        <button class="btn btn-primary me-1" onclick="getnum()">建議+新增現有</button>
+
+        <button class="btn btn-primary me-1" onclick="getnum()">建議新數字+新增現有數字</button>
     </div>
     <p><span id="search">輸入數字以搜尋...</span></p>
     <p>共猜了<span id="total" class="badge text-bg-primary">N/A</span>個數字 猜中了<span id="success-total"
@@ -44,7 +44,7 @@
         上一筆資料:<span id="lastdata" class="badge text-bg-primary">N/A</span>
     </p>
     <p>
-        理論平均值: 每<span id="total" class="badge text-bg-primary">222.22</span>個數字/1個成功
+        理論平均值: 每<span id="total" class="badge text-bg-primary">222.20</span>個數字/1個成功
         <br>當前平均值: 每<span id="nowavg" class="badge text-bg-primary">N/A</span>個數字/1個成功
     </p>
     <div class="progress" style="height: 16px;">
@@ -94,9 +94,9 @@
 
             $("#success-total").text(success_data.length)
 
-            if (Number((number_data.length / success_data.length).toFixed(2)) <= 222.22) {
+            if (Number((number_data.length / success_data.length).toFixed(2)) <= 222.20) {
                 $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-success")
-            } else if (Number((number_data.length / success_data.length).toFixed(2)) > 222.22) {
+            } else if (Number((number_data.length / success_data.length).toFixed(2)) > 222.20) {
                 $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-secondary")
             }
 
@@ -157,9 +157,9 @@ if((p === ui && confirm("確定新增此數字?你可能按錯了!!")) || !p){
                         $("#lastdata").html(`${number_data[number_data.length - 1]} (失敗)`).attr("class", "badge text-bg-secondary")
                     }
 
-                    if (Number((number_data.length / success_data.length).toFixed(2)) <= 222.22) {
+                    if (Number((number_data.length / success_data.length).toFixed(2)) <= 222.20) {
                         $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-success")
-                    } else if (Number((number_data.length / success_data.length).toFixed(2)) > 222.22) {
+                    } else if (Number((number_data.length / success_data.length).toFixed(2)) > 222.20) {
                         $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-secondary")
                     }
 
