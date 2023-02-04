@@ -44,8 +44,8 @@
         上一筆資料:<span id="lastdata" class="badge text-bg-primary">N/A</span>
     </p>
     <p>
-        理論平均值: 每<span id="total" class="badge text-bg-primary">222.20</span>個數字/1個成功
-        <br>當前平均值: 每<span id="nowavg" class="badge text-bg-primary">N/A</span>個數字/1個成功
+        理論平均值: 每<span id="total" class="badge text-bg-primary">222.20</span>個數字/1個成功數字
+        <br>當前平均值: 每<span id="nowavg" class="badge text-bg-primary">N/A</span>個數字/1個成功數字
     </p>
     <div class="progress" style="height: 16px;">
         <div class="progress-bar" role="progressbar" id="prog1" style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
@@ -85,7 +85,7 @@
                     $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${number_data[i]}</li>`)
                 }
             }
-            $("#output").append(`<li class="list-group-item text-bg-dark" data-type="divider">---上次結尾---</li>`)
+            $("#output").append(`<li class="list-group-item text-bg-dark" data-type="divider">---上次結尾 共${number_data.length}個數字 ${success_data}個成功數字---</li>`)
             $("#total").text(number_data.length)
             let per = (number_data.length / 10000) * 100
             $("#percent").text(per.toFixed(2) + "%")
@@ -123,7 +123,7 @@
 
         function addnum(p) {
 
-if((p === ui && confirm("確定新增此數字?你可能按錯了!!")) || !p){
+if((p === "ui" && confirm("確定新增此數字?你可能按錯了!!")) || !p){
             if ($("#input").val() == "") {
                 alert("請勿空白")
             } else {
