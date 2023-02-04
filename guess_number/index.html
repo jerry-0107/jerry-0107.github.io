@@ -22,7 +22,7 @@
     <h1>猜數字</h1>
     <h2>輸入</h2>
     <div class="d-flex mb-1">
-        <button class="btn btn-primary me-1" onclick="getnum()">建議</button>
+        
         <input id="input" type="number" class="me-1 form-control" style="width: fit-content " placeholder="輸入數字"
         
         oninput="checknum()"
@@ -36,7 +36,8 @@
             <input type="radio" class="btn-check" name="btnradio" id="failed" checked>
             <label class="btn btn-outline-secondary" for="failed">失敗</label>
         </div>
-        <button class="btn btn-success" onclick="addnum()">新增</button>
+        <button class="btn btn-success me-1" onclick="addnum()">新增</button>
+        <button class="btn btn-primary me-1" onclick="getnum()">建議+新增現有</button>
     </div>
     <p><span id="search">輸入數字以搜尋...</span></p>
     <p>共猜了<span id="total">N/A</span>個數字 猜中了<span id="success-total">N/A</span>個數字<br>完成率<span id="percent">0</span>%
@@ -126,8 +127,13 @@
             } else {
                 alert("數字重複!")
             }
+            checknum()
         }
         function getnum() {
+            if($("#input").val()!==""){
+                addnum()
+            }
+
             var n = getRandomInt(0, 9999),
                 result = 1;
             while (result == 0) {
