@@ -32,7 +32,7 @@
             <input type="radio" class="btn-check" name="btnradio" id="failed" checked>
             <label class="btn btn-outline-secondary" for="failed">失敗</label>
         </div>
-        <button class="btn btn-success me-1" onclick="addnum()">新增</button>
+        <button class="btn btn-success me-1" onclick="addnum('ui')">新增</button>
         <button class="btn btn-primary me-1" onclick="getnum()">建議+新增現有</button>
     </div>
     <p><span id="search">輸入數字以搜尋...</span></p>
@@ -121,8 +121,9 @@
             return true
         }
 
-        function addnum() {
+        function addnum(p) {
 
+if((p === ui && confirm("確定新增此數字?你可能按錯了!!")) || !p){
             if ($("#input").val() == "") {
                 alert("請勿空白")
             } else {
@@ -168,6 +169,7 @@
                     alert("數字重複!")
                 }
                 checknum()
+            }
             }
         }
         function getnum() {
