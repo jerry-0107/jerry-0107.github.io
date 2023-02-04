@@ -77,6 +77,7 @@
                 }
             }
             $("#total").text(number_data.length)
+            let per = (number_data.length / 10000) * 100
             $("#percent").text(per.toFixed(2) + "%")
             $("#prog1").css("width", Number(per.toFixed(2)) + "%").attr("aria-valuenow", (number_data.length / 10000) * 100)
 
