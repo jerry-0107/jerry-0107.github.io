@@ -64,7 +64,7 @@
         <hr>
     </p>
 
-    <h2>輸出</h2>
+    <h2>輸出(成功)</h2>
     <ul class="list-group" id="output" data-count="0" style="max-height: 300px;
     overflow-y: scroll;"></ul>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
@@ -88,7 +88,7 @@
                 if (success_data.includes(number_data[i])) {
                     $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${number_data[i]}</li>`)
                 } else {
-                    $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${number_data[i]}</li>`)
+                 //   $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${number_data[i]}</li>`)
                 }
             }
             $("#output").append(`<li class="list-group-item text-bg-dark" data-type="divider">---上次結尾 共${number_data.length}個數字 ${success_data.length}個成功數字---</li>`)
@@ -141,7 +141,7 @@
                     if (!number_data.includes(thenum)) {
 
                         if (!document.getElementById("success").checked) {
-                            $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${thenum}</li>`)
+                          //  $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${thenum}</li>`)
                         } else {
                             $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${thenum}</li>`)
                             success_data.push(thenum)
