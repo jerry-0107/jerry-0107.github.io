@@ -177,7 +177,7 @@ if((p === "ui" && confirm("確定新增此數字?你可能按錯了!!")) || !p){
                 addnum()
             }
 
-            var n = getRandomInt(0, 9999) + getRandomInt(-10, 10)
+            var n = Math.abs(getRandomInt(0, 9999) + getRandomInt(-10, 10) - getRandomInt(-20,220))
 
             $("#input").val(n)
             checknum()
@@ -203,9 +203,15 @@ if((p === "ui" && confirm("確定新增此數字?你可能按錯了!!")) || !p){
 
         function prnum() {
             n = $("#input").val()
+            if(n.length<4){
             for (i = 0; i < (4 - n.length); i++) {
                 n = "0" + n
             }
+            }
+            else{
+                n = n.substr(1)
+            }
+
             $("#input").val(n)
         }
     </script>
