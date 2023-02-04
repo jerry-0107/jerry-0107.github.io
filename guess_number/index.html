@@ -129,53 +129,53 @@
 
         function addnum(p) {
 
-if((p === "ui" && confirm("確定新增此數字?你可能按錯了!!")) || !p){
-            if ($("#input").val() == "") {
-                alert("請勿空白")
-            } else {
-
-                var thenum = $("#input").val()
-                thenum = Number(thenum).toString()
-
-
-                if (!number_data.includes(thenum)) {
-
-                    if (!document.getElementById("success").checked) {
-                        $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${thenum}</li>`)
-                    } else {
-                        $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${thenum}</li>`)
-                        success_data.push(thenum)
-                    }
-
-                    number_data.push(thenum)
-                    localStorage.setItem("rnum", JSON.stringify({ "number": number_data, "success": success_data }))
-
-                    let per = (number_data.length / 10000) * 100
-                    $("#total").text(number_data.length)
-                    $("#percent").text(per.toFixed(2) + "%")
-                    $("#prog1").css("width", Number(per.toFixed(2)) + "%").attr("aria-valuenow", (number_data.length / 10000) * 100)
-
-                    $("#success-total").text(success_data.length)
-
-                    if (success_data.includes(number_data[number_data.length - 1])) {
-                        $("#lastdata").html(`${number_data[number_data.length - 1]} (成功)`).attr("class", "badge text-bg-primary")
-                    } else {
-                        $("#lastdata").html(`${number_data[number_data.length - 1]} (失敗)`).attr("class", "badge text-bg-secondary")
-                    }
-
-                    if (Number((number_data.length / success_data.length).toFixed(2)) <= 222.20) {
-                        $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-success")
-                    } else if (Number((number_data.length / success_data.length).toFixed(2)) > 222.20) {
-                        $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-secondary")
-                    }
-
-
-
+            if ((p === "ui" && confirm("確定新增此數字?你可能按錯了!!")) || !p) {
+                if ($("#input").val() == "") {
+                    alert("請勿空白")
                 } else {
-                    alert("數字重複!")
+
+                    var thenum = $("#input").val()
+                    thenum = Number(thenum).toString()
+
+
+                    if (!number_data.includes(thenum)) {
+
+                        if (!document.getElementById("success").checked) {
+                            $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${thenum}</li>`)
+                        } else {
+                            $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${thenum}</li>`)
+                            success_data.push(thenum)
+                        }
+
+                        number_data.push(thenum)
+                        localStorage.setItem("rnum", JSON.stringify({ "number": number_data, "success": success_data }))
+
+                        let per = (number_data.length / 10000) * 100
+                        $("#total").text(number_data.length)
+                        $("#percent").text(per.toFixed(2) + "%")
+                        $("#prog1").css("width", Number(per.toFixed(2)) + "%").attr("aria-valuenow", (number_data.length / 10000) * 100)
+
+                        $("#success-total").text(success_data.length)
+
+                        if (success_data.includes(number_data[number_data.length - 1])) {
+                            $("#lastdata").html(`${number_data[number_data.length - 1]} (成功)`).attr("class", "badge text-bg-primary")
+                        } else {
+                            $("#lastdata").html(`${number_data[number_data.length - 1]} (失敗)`).attr("class", "badge text-bg-secondary")
+                        }
+
+                        if (Number((number_data.length / success_data.length).toFixed(2)) <= 222.20) {
+                            $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-success")
+                        } else if (Number((number_data.length / success_data.length).toFixed(2)) > 222.20) {
+                            $("#nowavg").text(`${(number_data.length / success_data.length).toFixed(2)}`).attr("class", "badge text-bg-secondary")
+                        }
+
+
+
+                    } else {
+                        alert("數字重複!")
+                    }
+                    checknum()
                 }
-                checknum()
-            }
             }
         }
         function getnum() {
@@ -183,7 +183,7 @@ if((p === "ui" && confirm("確定新增此數字?你可能按錯了!!")) || !p){
                 addnum()
             }
 
-            var n = Math.abs(getRandomInt(0, 9999) + getRandomInt(-10, 10) - getRandomInt(-20,220))
+            var n = Math.abs(getRandomInt(0, 9999) + getRandomInt(-10, 10) - getRandomInt(-20, 220))
 
             $("#input").val(n)
             checknum()
@@ -209,15 +209,16 @@ if((p === "ui" && confirm("確定新增此數字?你可能按錯了!!")) || !p){
 
         function prnum() {
             n = $("#input").val()
-            if(n.length<4 && !document.getElementById("flexSwitchCheckDefault")){
-            for (i = 0; i < (4 - n.length); i++) {
-                n = "0" + n
+            if (!document.getElementById("flexSwitchCheckDefault")) {
+                if (n.length < 4) {
+                    for (i = 0; i < (4 - n.length); i++) {
+                        n = "0" + n
+                    }
+                }
+                else {
+                    n = n.substr(1)
+                }
             }
-            }
-            else{
-                n = n.substr(1)
-            }
-
             $("#input").val(n)
         }
     </script>
