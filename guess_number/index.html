@@ -42,6 +42,7 @@
         <button class="btn btn-primary me-1" onclick="getnum()">建議新數字+新增現有數字</button>
     </div>
     <p><span id="search">輸入數字以搜尋...</span></p>
+    
     <p>共猜了<span id="total" class="badge text-bg-primary">N/A</span>個數字 猜中了<span id="success-total"
             class="badge text-bg-success">N/A</span>個數字
 
@@ -108,7 +109,7 @@
 
             $("#success-total").text(current_success)
 
-            if (Number((number_data.length / scurrent_success).toFixed(2)) <= 222.20) {
+            if (Number((number_data.length / current_success).toFixed(2)) <= 222.20) {
                 $("#nowavg").text(`${(number_data.length / current_success).toFixed(2)}`).attr("class", "badge text-bg-success")
             } else if (Number((number_data.length / current_success).toFixed(2)) > 222.20) {
                 $("#nowavg").text(`${(number_data.length / current_success).toFixed(2)}`).attr("class", "badge text-bg-secondary")
@@ -151,8 +152,12 @@
                         if (!document.getElementById("success").checked) {
                           //  $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${thenum}</li>`)
                         } else {
-                            $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${thenum}</li>`)
-                            success_data.push(thenum)
+                            if(confirm(`確定 ${thenum} 是成功數字嗎?`)){
+                                $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${thenum}</li>`)
+                                success_data.push(thenum)
+                            }else{
+                                //---//
+                            }
                         }
 
                         number_data.push(thenum)
