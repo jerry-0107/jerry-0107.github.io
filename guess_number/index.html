@@ -199,7 +199,7 @@
                     $("#search").html(`<i class="bi bi-x-circle-fill text-secondary"></i> ${n} - 數字已經存在 (失敗)`)
                 }
             } else {
-                $("#search").html(`<i class="bi bi-question-circle-fill"></i> ${n} - 數字不存在`)
+                $("#search").html(`<i class="bi bi-question-circle-fill text-primary"></i> ${n} - 數字不存在`)
             }
 
             if (n.length < 4) {
@@ -211,8 +211,13 @@
             n = $("#input").val()
             if (!document.getElementById("flexSwitchCheckDefault")) {
                 if (n.length < 4) {
-                    for (i = 0; i < (5 - n.length); i++) {
-                        n = "0" + n
+                    if(n.length == 3){
+                        n = n + "0"
+                    }else if(n.length == 2){
+                        n = n + "00"
+                    }
+                    else if(n.length == 1){
+                        n = n + "000"
                     }
                 }
                 else {
