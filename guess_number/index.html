@@ -209,7 +209,7 @@
 
         function prnum() {
             n = $("#input").val()
-            if (!document.getElementById("flexSwitchCheckDefault")) {
+            if (!document.getElementById("flexSwitchCheckDefault").checked) {
                 for (i = 0; i < (4 - n.length); i++) {
                     n = "0" + n
                 }
