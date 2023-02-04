@@ -210,19 +210,10 @@
         function prnum() {
             n = $("#input").val()
             if (!document.getElementById("flexSwitchCheckDefault")) {
-                if (n.length < 4) {
-                    if(n.length == 3){
-                        n = n + "0"
-                    }else if(n.length == 2){
-                        n = n + "00"
-                    }
-                    else if(n.length == 1){
-                        n = n + "000"
-                    }
+                for (i = 0; i < (4 - n.length); i++) {
+                    n = "0" + n
                 }
-                else {
-                    n = n.substr(1)
-                }
+
             }
             $("#input").val(n)
         }
