@@ -29,7 +29,16 @@
 </head>
 
 <body class="m-3">
-    <h2>數字表(非即時)</h2>
+    <div class="sticky-top">
+        <h2>數字表(非即時)</h2>
+        <div class="progress" style="height: 16px;">
+            <div class="progress-bar" role="progressbar" id="prog1" style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
+                aria-valuemax="100">
+                <span id="percent">N/A</span>
+            </div>
+        </div>
+    </div>
+    
     <table class="table table-bordered border-dark" id="display-table">
 
     </table>
@@ -214,6 +223,10 @@
                             $(`#${num}`).attr("class","bg-secondary")
                         }
                     }
+                    let per = (number_data.length / 10000) * 100
+
+                        $("#percent").text(per.toFixed(2) + "%")
+                        $("#prog1").css("width", Number(per.toFixed(2)) + "%").attr("aria-valuenow", (number_data.length / 10000) * 100)
 
                     localStorage.setItem("rnum", JSON.stringify({ "number": number_data, "success": success_data }))
                 }
