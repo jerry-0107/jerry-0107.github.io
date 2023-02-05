@@ -13,6 +13,13 @@
         href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css'
         integrity='sha512-YFENbnqHbCRmJt5d+9lHimyEMt8LKSNTMLSaHjvsclnZGICeY/0KYEeiHwD1Ux4Tcao0h60tdcMv+0GljvWyHg=='
         crossorigin='anonymous' />
+
+    <style>
+        tr,
+        td {
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body class="m-3">
@@ -67,12 +74,12 @@
                 for (let i = 0; i < 20; i++) {
                     if (number_data.includes(num.toString())) {
                         if (success_data.includes(num.toString())) {
-                            output = output + `<td class="text-bg-success" onclick="edit(${num})">${num}</td>`
+                            output = output + `<td class="text-bg-success" id="${num}" onclick="edit(${num})">${num}</td>`
                         } else {
-                            output = output + `<td class="bg-secondary"  onclick="edit(${num})">${num}</td>`
+                            output = output + `<td class="bg-secondary" id="${num}"  onclick="edit(${num})">${num}</td>`
                         }
                     } else {
-                        output = output + `<td class=""  onclick="edit(${num})">${num}</td>`
+                        output = output + `<td class="" id="${num}"  onclick="edit(${num})">${num}</td>`
                     }
                     num++
                 }
@@ -135,51 +142,87 @@
                     if (success_data.includes(n)) {
                         PopupAlert({
                             title: `${num} - 內容`,
-                            body: `
-                <i class="bi bi-check-circle-fill text-success"></i> ${num} - 數字已經存在 (成功)
-                <h1 id="num"></h1>
-                `,
-                            escCallBack: "x",
+                            body: `<h1 id="num"></h1><i class="bi bi-check-circle-fill text-success"></i> ${num} - 數字已經存在 (成功)<div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
+                            escCallBack: "dismiss",
                             enterCallBack: "dismiss"
                         })
                     } else {
                         PopupAlert({
                             title: `${num} - 內容`,
-                            body: `
-                <i class="bi bi-x-circle-fill text-secondary"></i> ${n} - 數字已經存在 (失敗)
-                <h1 id="num"></h1>
-                `,
-                            escCallBack: "x",
+                            body: `<h1 id="num"></h1><i class="bi bi-x-circle-fill text-secondary"></i> ${n} - 數字已經存在 (失敗)<div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
+                            escCallBack: "dismiss",
                             enterCallBack: "dismiss"
                         })
                     }
                 } else {
                     PopupAlert({
                         title: `${num} - 內容`,
-                        body: `
-                <i class="bi bi-question-circle-fill text-primary"></i> ${n} - 數字尚未查詢過
-                <h1 id="num"></h1>
-                `,
-                        escCallBack: "x",
+                        body: `<h1 id="num"></h1><i class="bi bi-question-circle-fill text-primary"></i> ${n} - 數字尚未查詢過<div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
+                        escCallBack: "dismiss",
                         enterCallBack: "dismiss"
                     })
                 }
-            }
-            if (num.length < 4) {
-                if (num.length == 3) {
-                    $("#num").text("0" + num)
+                if (num.length < 4) {
+                    if (num.length == 3) {
+                        $("#num").text("0" + num)
 
-                } else if (num.length == 2) {
-                    $("#num").text("00" + num)
-                } else if(num.length == 1) {
-                    $("#num").text("000" + num)
+                    } else if (num.length == 2) {
+                        $("#num").text("00" + num)
+                    } else if (num.length == 1) {
+                        $("#num").text("000" + num)
+                    }
+
+                } else {
+                    $("#num").text(num)
+                }
+            } else {
+                if (opt == "callback") {
+                    var thenum = num
+                    thenum = Number(thenum).toString()
+
+
+                    if (!number_data.includes(thenum)) {
+
+                        if (!document.getElementById("success").checked) {
+                            $(`#${num}`).attr("class","bg-secondary")
+                        } else {
+                            if (confirm(`確定 ${thenum} 是成功數字嗎?`)) {
+                                // $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${thenum}</li>`)
+                                $(`#${num}`).attr("class","text-bg-success")
+                                success_data.push(thenum)
+                            } else {
+                                //---//
+                            }
+                        }
+
+                        number_data.push(thenum)
+
+                    } else if (number_data.includes(thenum)) {
+                        if (document.getElementById("success").checked && !success_data.includes(thenum)) {
+                            if (confirm(`確定 ${thenum} 是成功數字嗎?`)) {
+                                success_data.push(thenum)
+                                $(`#${num}`).attr("class","text-bg-success")
+                            }
+                        } else if (!document.getElementById("success").ckecked && success_data.includes(thenum)) {
+                            success_data = removeItemOnce(success_data,thenum)
+                            $(`#${num}`).attr("class","bg-secondary")
+                        }
+                    }
+
+                    localStorage.setItem("rnum", JSON.stringify({ "number": number_data, "success": success_data }))
                 }
 
-            }else{
-                $("#num").text(num)
             }
+        }
 
-        }    
+
+        function removeItemOnce(arr, value) {
+            var index = arr.indexOf(value);
+            if (index > -1) {
+                arr.splice(index, 1);
+            }
+            return arr;
+        }
     </script>
 </body>
 
