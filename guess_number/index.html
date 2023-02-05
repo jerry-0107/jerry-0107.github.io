@@ -156,6 +156,8 @@
                             if(confirm(`確定 ${thenum} 是成功數字嗎?`)){
                                 $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${thenum}</li>`)
                                 success_data.push(thenum)
+                                current_success++
+
                             }else{
                                 //---//
                             }
