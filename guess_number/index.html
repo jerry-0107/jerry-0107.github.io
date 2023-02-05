@@ -96,10 +96,11 @@
             for(i=0;i<success_data.length;i++){
                 if(success_data[i] !== null){
                     $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${success_data[i]}</li>`)
-                    current_success ++
+                    
                 }
 
             }
+            current_success = success_data.length
             $("#output").append(`<li class="list-group-item text-bg-dark" data-type="divider">---上次結尾 共${number_data.length}個數字 ${current_success}個成功數字---</li>`)
             $("#total").text(number_data.length)
             let per = (number_data.length / 10000) * 100
