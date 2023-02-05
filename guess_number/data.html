@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>數字表</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css'
+        integrity='sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=='
+        crossorigin='anonymous' />
+    <link rel='stylesheet'
+        href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css'
+        integrity='sha512-YFENbnqHbCRmJt5d+9lHimyEMt8LKSNTMLSaHjvsclnZGICeY/0KYEeiHwD1Ux4Tcao0h60tdcMv+0GljvWyHg=='
+        crossorigin='anonymous' />
+</head>
+
+<body>
+    <h2>數字表(非即時)</h2>
+    <table class="table table-bordered border-dark" id="display-table">
+
+    </table>
+
+
+
+
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
+        integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
+        crossorigin='anonymous'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js'
+        integrity='sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g=='
+        crossorigin='anonymous'></script>
+
+    <script>
+        var number_data, success_data,current_success;
+        if (localStorage.getItem("rnum")) {
+            number_data = JSON.parse(localStorage.getItem("rnum")).number
+            success_data = JSON.parse(localStorage.getItem("rnum")).success
+            var output = ""
+            var num = 0
+            for (let i = 0; i < 500; i++) {
+                output = `<tr>`
+                for (let i = 0; i < 20; i++) {
+                    if(number_data.includes(num.toString())){
+                        if(success_data.includes(num.toString())){
+                            output = output + `<td class="text-bg-success">${num}</td>`
+                        }else{
+                            output = output + `<td class="bg-secondary">${num}</td>`
+                        }
+                    }else{
+                        output = output + `<td class="">${num}</td>`
+                    }
+                    num++
+                }
+                output = output + "</tr>"
+                $("#display-table").append(output)           
+            }
+        }else{
+
+        }
+
+    </script>
+</body>
+
+</html>
