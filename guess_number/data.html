@@ -166,20 +166,18 @@
                 }
             }
             if (num.length < 4) {
-                for (i = 0; i < (4 - n.length); i++) {
-                    n = "0" + n
-                }
-                if (num.length < 4) {
-                    for (i = 0; i < (4 - n.length); i++) {
-                        n = "0" + n
-                    }
+                if (num.length == 3) {
+                    $("#num").text("0" + num)
 
+                } else if (num.length == 2) {
+                    $("#num").text("00" + num)
+                } else if(num.length == 1) {
+                    $("#num").text("000" + num)
                 }
+
+            }else{
                 $("#num").text(num)
-
             }
-
-
 
         }    
     </script>
