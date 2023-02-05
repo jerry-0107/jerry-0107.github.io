@@ -22,7 +22,30 @@
     </table>
 
 
+    <div class="modal fade " id="Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        id="modal-close-btn"></button>
+                </div>
+                <div class="modal-body">
 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modal-esc-button">
+                        取消
+                    </button>
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" id="modal-enter-button">
+                        確定
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
@@ -33,7 +56,7 @@
         crossorigin='anonymous'></script>
 
     <script>
-        var number_data, success_data,current_success;
+        var number_data, success_data, current_success;
         if (localStorage.getItem("rnum")) {
             number_data = JSON.parse(localStorage.getItem("rnum")).number
             success_data = JSON.parse(localStorage.getItem("rnum")).success
@@ -42,24 +65,107 @@
             for (let i = 0; i < 500; i++) {
                 output = `<tr>`
                 for (let i = 0; i < 20; i++) {
-                    if(number_data.includes(num.toString())){
-                        if(success_data.includes(num.toString())){
-                            output = output + `<td class="text-bg-success">${num}</td>`
-                        }else{
-                            output = output + `<td class="bg-secondary">${num}</td>`
+                    if (number_data.includes(num.toString())) {
+                        if (success_data.includes(num.toString())) {
+                            output = output + `<td class="text-bg-success" onclick="edit(${num})">${num}</td>`
+                        } else {
+                            output = output + `<td class="bg-secondary"  onclick="edit(${num})">${num}</td>`
                         }
-                    }else{
-                        output = output + `<td class="">${num}</td>`
+                    } else {
+                        output = output + `<td class=""  onclick="edit(${num})">${num}</td>`
                     }
                     num++
                 }
                 output = output + "</tr>"
-                $("#display-table").append(output)           
+                $("#display-table").append(output)
             }
-        }else{
+        } else {
 
         }
 
+        function PopupAlert(par) {
+            console.log(par)
+            let _Modal = new bootstrap.Modal(document.getElementById('Modal'));
+            $('.modal-title').html('');
+            $('.modal-body').html('');
+            $('#modal-esc-btn').removeAttr('onclick');
+            $('#modal-enter-btn').removeAttr('onclick');
+            $('#modal-esc-btn').removeAttr('disabled');
+            $('#modal-enter-btn').removeAttr('disabled');
+            $('#modal-enter-btn').show();
+            $('#modal-esc-btn').show();
+            $(".modal-backdrop").remove();
+            $("#modal-close-btn").show();
+
+            //------------------------------------------------//
+
+            $('.modal-title').html(par.title);
+            $('.modal-body').html(par.body);
+
+            if (par.escCallBack == 'dismiss') { $('#modal-esc-btn').show(); }
+            else if (par.escCallBack == 'x') { $('#modal-esc-button').hide(); }
+            else { $('#modal-esc-button').attr('onclick', par.escCallBack); }
+
+            if (par.enterCallBack == 'dismiss') { $('#modal-enter-btn').show(); }
+            else if (par.enterCallBack == 'x') { $('#modal-enter-button').hide(); }
+            else { $('#modal-enter-button').attr('onclick', par.enterCallBack); }
+
+
+
+            if (par.closeButtonStatue == undefined || par.closeButtonStatue == true) {
+                $("#modal-close-btn").show()
+
+            } else {
+
+                $("#modal-close-btn").hide()
+            }
+
+
+            _Modal.toggle();
+
+
+        }
+
+        function edit(num, opt) {
+
+            num = num.toString()
+
+            if(!opt){
+            if (number_data.includes(n) || number_data.includes(n.toString())) {
+                if (success_data.includes(n)) {
+                    PopupAlert({
+                        title: `${num} - 內容`,
+                        body: `
+                <i class="bi bi-check-circle-fill text-success"></i> ${num} - 數字已經存在 (成功)
+                `,
+                        escCallBack: "x",
+                        enterCallBack: "dismiss"
+                    })
+                } else {
+                    PopupAlert({
+                        title: `${num} - 內容`,
+                        body: `
+                <i class="bi bi-x-circle-fill text-secondary"></i> ${n} - 數字已經存在 (失敗)
+                `,
+                        escCallBack: "x",
+                        enterCallBack: "dismiss"
+                    })
+                }
+            } else {
+                PopupAlert({
+                    title: `${num} - 內容`,
+                    body: `
+                <i class="bi bi-question-circle-fill text-primary"></i> ${n} - 數字尚未查詢過
+                `,
+                    escCallBack: "x",
+                    enterCallBack: "dismiss"
+                })
+            }
+        }
+
+
+
+        }    
     </script>
 </body>
 
