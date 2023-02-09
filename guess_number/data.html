@@ -204,11 +204,11 @@
                     if (!number_data.includes(thenum)) {
 
                         if (!document.getElementById("success").checked) {
-                            $(`#${num}`).attr("class","bg-secondary")
+                            $(`#${num}`).attr("class","bg-secondary bg-gradient")
                         } else {
                             if (confirm(`確定 ${thenum} 是成功數字嗎?`)) {
                                 // $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${thenum}</li>`)
-                                $(`#${num}`).attr("class","text-bg-success")
+                                $(`#${num}`).attr("class","text-bg-success bg-gradient")
                                 success_data.push(thenum)
                             } else {
                                 //---//
@@ -221,11 +221,11 @@
                         if (document.getElementById("success").checked && !success_data.includes(thenum)) {
                             if (confirm(`確定 ${thenum} 是成功數字嗎?`)) {
                                 success_data.push(thenum)
-                                $(`#${num}`).attr("class","text-bg-success")
+                                $(`#${num}`).attr("class","text-bg-success bg-gradient")
                             }
                         } else if (!document.getElementById("success").ckecked && success_data.includes(thenum)) {
                             success_data = removeItemOnce(success_data,thenum)
-                            $(`#${num}`).attr("class","bg-secondary")
+                            $(`#${num}`).attr("class","bg-secondary bg-gradient")
                         }
                     }
                     let per = (number_data.length / 10000) * 100
