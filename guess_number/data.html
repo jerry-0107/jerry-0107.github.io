@@ -162,14 +162,14 @@
                     if (success_data.includes(n)) {
                         PopupAlert({
                             title: `${num} - 內容`,
-                            body: `<h1 id="num"></h1><span><i class="bi bi-check-circle-fill text-success"></i> ${num} - 數字已經存在 (成功)</span><br><div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
+                            body: `<h1 id="num"></h1><br><span><i class="bi bi-check-circle-fill text-success"></i> ${num} - 數字已經存在 (成功)</span><br><div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
                             escCallBack: "dismiss",
                             enterCallBack: `edit(${n},'callback')`
                         })
                     } else {
                         PopupAlert({
                             title: `${num} - 內容`,
-                            body: `<h1 id="num"></h1><span><i class="bi bi-x-circle-fill text-secondary"></i> ${n} - 數字已經存在 (失敗)</span><br><div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
+                            body: `<h1 id="num"></h1><br><span><i class="bi bi-x-circle-fill text-secondary"></i> ${n} - 數字已經存在 (失敗)</span><br><div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
                             escCallBack: "dismiss",
                             enterCallBack: `edit(${n},'callback')`
                         })
@@ -177,7 +177,7 @@
                 } else {
                     PopupAlert({
                         title: `${num} - 內容`,
-                        body: `<h1 id="num"></h1><span><i class="bi bi-question-circle-fill text-primary"></i> ${n} - 數字尚未查詢過</span><br><div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
+                        body: `<h1 id="num"></h1><br><span><i class="bi bi-question-circle-fill text-primary"></i> ${n} - 數字尚未查詢過</span><br><div class="btn-group me-1" role="group"><input type="radio" class="btn-check" name="btnradio" id="success"><label class="btn btn-outline-success" for="success">成功</label><input type="radio" class="btn-check" name="btnradio" id="failed" checked><label class="btn btn-outline-secondary" for="failed">失敗</label></div>`,
                         escCallBack: "dismiss",
                         enterCallBack: `edit(${n},'callback')`
                     })
