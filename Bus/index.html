@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <!--time-->
+    <script>
+        var
+            NowDate = new Date(),
+            year = NowDate.getFullYear(),
+            month = (NowDate.getMonth() + 1),
+            date = NowDate.getDate(),
+            day = NowDate.getDay(), //星期
+            hour = NowDate.getHours(),
+            minute = NowDate.getMinutes(),
+            sec = NowDate.getSeconds(),
+            thistime;
+
+        function getTime(params) {
+
+            year = NowDate.getFullYear()
+            month = (NowDate.getMonth() + 1)
+            date = NowDate.getDate()
+            day = NowDate.getDay() //星期
+            hour = NowDate.getHours()
+            minute = NowDate.getMinutes()
+            sec = NowDate.getSeconds()
+            if (month < 10) {
+                month = '0' + month
+            }
+
+            if (day < 10) {
+                day = '0' + day
+            }
+            if (hour < 10) {
+                hour = '0' + hour
+            }
+            if (minute < 10) {
+                minute = '0' + minute
+            }
+            if (sec < 10) {
+                sec = '0' + sec
+            }
+            setTimeout('getTime()', 1000);
+        }
+    </script>
+</head>
+
+<body onload="getTime()">
+
+    <div style="margin: 3px;" hidden>
+        <h2 id="head-title"></h2>
+        <small>更新時間:<small id="weather-update">---</small></small>
+        <div style="text-align: center;" class="">
+            <table id="weather-table" class=" table table-bordered table-hover" style="text-align: center; ">
+                <thead>
+
+                    <tr>
+
+                        <th>地區</th>
+                        <th>時間 1</th>
+                        <th>時間 2</th>
+                        <th>時間 3</th>
+                    </tr>
+                    <tr>
+                        <th colspan="5" id="weather-placeholder">無資料</th>
+                    </tr>
+                </thead>
+                <tbody id="weather-tbody">
+
+                </tbody>
+            </table>
+        </div>
+        <p></p>
+
+
+        <input type="button" value="重新抓取" class="btn btn-primary" id="reflash-btn">
+        <span id="weather-info"></span>
+    </div>
+
+
+
+    <div style="margin: 3px;">
+        <h2 id="head-title">YouBike</h2>
+        <small>更新時間:<small id="Ubike-update">---</small></small>
+        <div style="text-align: center;" class="">
+            <table id="Ubike-table" class=" table table-bordered table-hover" style="text-align: center; ">
+                <thead>
+
+                    <tr>
+
+                        <th>站點</th>
+                        <th>可還空位</th>
+                        <th>2.0</th>
+                        <th>2.0E</th>
+                        <th>共計</th>
+                    </tr>
+                </thead>
+                <tbody id="Ubike-tbody">
+
+                </tbody>
+            </table>
+        </div>
+        <p></p>
+
+
+        <input type="button" value="重新抓取" class="btn btn-primary" id="reflash-btn-2">
+        <span id="Ubike-info"></span>
+    </div>
+
+
+
+    <div style="margin: 3px;">
+        <h2 id="head-title">公車</h2>
+        <small>更新時間:<small id="BUS-update">---</small></small>
+        <div style="text-align: center;" class="">
+            <h3>文化新村</h3>
+            <table id="BUS-table" class=" table table-bordered table-hover" style="text-align: center; ">
+                <thead>
+                    <tr>
+                        <th>站點</th>
+                        <th>可還空位</th>
+                        <th>2.0</th>
+                        <th>2.0E</th>
+                        <th>共計</th>
+                    </tr>
+                </thead>
+                <tbody id="BUS-tbody">
+
+                </tbody>
+            </table>
+        </div>
+        <p></p>
+
+
+        <input type="button" value="重新抓取" class="btn btn-primary" id="reflash-btn-2">
+        <span id="BUS-info"></span>
+    </div>
+
+
+
+
+
+
+
+
+
+    <!--BS JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+    <!--Jquery-->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'
+        integrity='sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=='
+        crossorigin='anonymous'></script>
+
+    <!--Main script-->
+    <script>
+        var dom = {
+            "weather_placeholder": $("#weather-placeholder"),
+            "weather_updata_time": $("#weather-update"),
+            "weather_table": $("#weather-table"),
+            "reflash_btn": $("#reflash-btn"),
+            "weather_tbody": $("#weather-tbody"),
+            "head_title": $("#head-title")
+        }
+
+
+        //ajax part
+        /* $.ajax({
+             url:"https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-F29A34D9-5547-4A00-BA43-CDA0C1416940",
+             method:"GET",
+             dataType:"json",
+           //  data:
+ 
+                 success: function(res) { writeWeather(res) },
+                 error: function (err) { console.log(err) },
+         });
+ 
+         function writeWeather(res) {
+             console.log(res)
+             dom.weather_placeholder.hide()
+             dom.head_title.html(res.records.datasetDescription)
+             for(i=0;i< res.records.location.length;i++){
+                 if(res.records.location[i].locationName == "臺中市"){
+               dom.weather_tbody.append(`
+               <tr>
+                 <td>${res.records.location[i].locationName}</td>
+                 <td>${res.records.location[i].weatherElement[0].time[0].parameter.parameterName}</td>
+                 <td>${res.records.location[i].weatherElement[0].time[1].parameter.parameterName}</td>
+                 <td>${res.records.location[i].weatherElement[0].time[2].parameter.parameterName}</td>
+               </tr>
+               `)
+             }
+         }
+             
+         }
+ 
+ 
+ */
+        $.ajax({
+            url: "https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/Taichung/PassThrough/Station/1237?%24top=30&%24format=JSON",
+            method: "GET",
+            dataType: "json",
+            success: function (res) {
+                console.log(res)
+                for(i=0;i<res.length;i++){
+                    console.log(res[i].RouteName.Zh_tw)
+                    console.log(res[i].PlateNumb)
+                }
+                
+            }
+        })
+
+        $.ajax({
+            url: "https://datacenter.taichung.gov.tw/swagger/OpenData/9af00e84-473a-4f3d-99be-b875d8e86256",
+            method: "GET",
+            dataType: "json",
+            //  data:
+
+            success: function (res) {
+                console.log(res)
+                $("#Ubike-tbody").html(" ")
+                for (i = 0; i < res.retVal.length; i++) {
+                    //console.log(i)
+                    //console.log(res.retVal[i])
+                    if (res.retVal[i].ar == "吉林二街38號" || res.retVal[i].sna == "YouBike2.0_弘文高中"  || res.retVal[i].sna.includes("弘福公園") || res.retVal[i].sna.includes("綠空廊道(祥和路)") || res.retVal[i].sna.includes("豐栗安和路106巷口")) {
+                        console.log(res.retVal[i])
+                        $("#Ubike-tbody").append(`
+                            <tr>
+                <td>${res.retVal[i].sna.split("_")[1]}</td>
+                <td>${res.retVal[i].bemp}</td>
+                <td>${res.retVal[i].sbi_detail.yb2}</td>
+                <td>${res.retVal[i].sbi_detail.eyb}</td>
+                <td>${res.retVal[i].sbi}</td>
+              </tr>
+                            
+                            `)
+
+                    }
+                  
+                }
+            },
+
+            error: function (err) { console.log(err) },
+        })
+
+    </script>
+</body>
+
+</html>
