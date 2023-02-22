@@ -5,91 +5,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Today</title>
-    
+    <title>大眾運輸</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <!--time-->
     <script>
-        var
-            NowDate = new Date(),
-            year = NowDate.getFullYear(),
-            month = (NowDate.getMonth() + 1),
-            date = NowDate.getDate(),
-            day = NowDate.getDay(), //星期
-            hour = NowDate.getHours(),
-            minute = NowDate.getMinutes(),
-            sec = NowDate.getSeconds(),
-            thistime;
 
-        function getTime(params) {
-
-            year = NowDate.getFullYear()
-            month = (NowDate.getMonth() + 1)
-            date = NowDate.getDate()
-            day = NowDate.getDay() //星期
-            hour = NowDate.getHours()
-            minute = NowDate.getMinutes()
-            sec = NowDate.getSeconds()
-            if (month < 10) {
-                month = '0' + month
-            }
-
-            if (day < 10) {
-                day = '0' + day
-            }
-            if (hour < 10) {
-                hour = '0' + hour
-            }
-            if (minute < 10) {
-                minute = '0' + minute
-            }
-            if (sec < 10) {
-                sec = '0' + sec
-            }
-            setTimeout('getTime()', 1000);
-        }
     </script>
 </head>
 
-<body onload="getTime()" class="m-3">
-
-    <div style="margin: 3px;" hidden>
-        <h2 id="head-title"></h2>
-        <small>更新時間:<small id="weather-update">---</small></small>
-        <div style="text-align: center;" class="">
-            <table id="weather-table" class=" table table-bordered table-hover" style="text-align: center; ">
-                <thead>
-
-                    <tr>
-
-                        <th>地區</th>
-                        <th>時間 1</th>
-                        <th>時間 2</th>
-                        <th>時間 3</th>
-                    </tr>
-                    <tr>
-                        <th colspan="5" id="weather-placeholder">無資料</th>
-                    </tr>
-                </thead>
-                <tbody id="weather-tbody">
-
-                </tbody>
-            </table>
-        </div>
-        <p></p>
-
-
-        <input type="button" value="重新抓取" class="btn btn-primary" id="reflash-btn">
-        <span id="weather-info"></span>
+<body class="m-3">
+    <div class="sticky-top bg-light p-3">
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="auto_refresh" checked onclick='
+            auto_refresh = !auto_refresh
+            if(!auto_refresh){
+                $("#refresh_prog").text("更新暫停中").addClass("bg-secondary")
+                       
+            }else{
+                AsyncFunction()
+            }'>
+        <label class="form-check-label" for="auto_refresh">自動刷新</label>
+    </div>
+    <div class="progress">
+        <div id="refresh_prog" class="progress-bar" role="progressbar" aria-label="auto refresh process"
+            style="width: 25%"></div>
     </div>
 
-
-
-    <div style="margin: 3px;">
+    更新時間: <span id="update-time">---</span>
+</div>
+    <div class="m-3">
         <h2 id="head-title">YouBike</h2>
-        <small>更新時間:<small id="Ubike-update">---</small></small>
+
         <div style="text-align: center;" class="">
             <table id="Ubike-table" class=" table table-bordered table-hover">
                 <thead>
@@ -114,135 +64,284 @@
                 </tbody>
             </table>
         </div>
-        <p></p>
-
-
-        <input type="button" value="重新抓取" class="btn btn-primary" id="reflash-btn-2">
-        <span id="Ubike-info"></span>
     </div>
+    <hr>
 
 
-
-   <!--iv style="margin: 3px;">
+    <div class="m-3">
         <h2 id="head-title">公車</h2>
-        <small>更新時間:<small id="BUS-update">---</small></small>
-        <div style="text-align: center;" class="">
-            <h3>文化新村</h3>
-            <table id="BUS-table" class=" table table-bordered table-hover" style="text-align: center; ">
-                <thead>
-                    <tr>
-                        <th>站點</th>
-                        <th>可還空位</th>
-                        <th>2.0</th>
-                        <th>2.0E</th>
-                        <th>共計</th>
-                    </tr>
-                </thead>
-                <tbody id="BUS-tbody">
-
-                </tbody>
-            </table>
+        <div>
+            <select id="BUS-select" class="form-select me-1" style="width:fit-content"
+                onblur="refreshAllApi();refresh_sec = 31">
+                <option value="文化新村">文化新村</option>
+                <option value="弘文中學">弘文中學</option>
+                <option value="栗林車站">栗林車站</option>
+                <option value="中山祥和路口">中山祥和路口</option>
+                <option value="寶熊漁樂碼頭">寶熊漁樂碼頭</option>
+                <option value="潭子車站">潭子車站</option>
+                <option value="豐原車站">豐原車站</option>
+            </select>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="show" id="show_all_bus" checked onclick="refreshAllApi();refresh_sec = 31">
+                <label class="form-check-label" for="show_all_bus">
+                    顯示所有公車資料
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="show" id="no_duplicate_data"  onclick="refreshAllApi();refresh_sec = 31">
+                <label class="form-check-label" for="no_duplicate_data">
+                    同路線資料不重複
+                </label>
+            </div>
         </div>
-        <p></p>
+        <div style="text-align: center;" class="">
+            <h3 id="BUS-station">請選擇...</h3>
+            <div class="d-flex">
+                <div style="width: 50%;" class="m-1">
+                    <h5>去程</h5>
+                    <table id="BUS-table-0" class=" table table-bordered table-hover" style="text-align: center; ">
+                        <thead>
+                            <tr>
+                                <th>路線</th>
+                                <th>抵達時間</th>
+                            </tr>
+                        </thead>
+                        <tbody id="BUS-tbody-0">
+
+                        </tbody>
+                    </table>
+                </div>
+                <div style="width:50%" class="m-1">
+                    <div>
+                        <h5>回程</h5>
+                        <table id="BUS-table-1" class=" table table-bordered table-hover" style="text-align: center; ">
+                            <thead>
+                                <tr>
+                                    <th>路線</th>
+                                    <th>抵達時間</th>
+                                </tr>
+                            </thead>
+                            <tbody id="BUS-tbody-1">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <p></p>
+
+        </div>
 
 
-        <input type="button" value="重新抓取" class="btn btn-primary" id="reflash-btn-2">
-        <span id="BUS-info"></span>
-    </div>
--->
+        <div hidden id="req_header"></div>
+
+        <!--BS JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+            crossorigin="anonymous"></script>
+        <!--Jquery-->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'
+            integrity='sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=='
+            crossorigin='anonymous'></script>
+
+        <!--Main script-->
+        <script>
+
+
+            var tdxLogin = {
+                grant_type: "client_credentials",
+                client_id: "jerry20200815-905e4c2d-f4f9-42dd",
+                client_secret: "df5c085e-f262-4258-b1d6-518e40138f71"
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token",
+                crossDomain: true,
+                dataType: 'JSON',
+                data: tdxLogin,
+                async: false,
+                success: function (data) {
+                 //   console.log(data);
+                    $("#req_header").text(JSON.stringify(data))
+                },
+                error: function (xhr, textStatus, thrownError) {
+
+                }
+            });
 
 
 
+            //date -> formated str (y/m/d)
+            //time -> formated str (h:m:s)
+            //pack -> {year,month,date,day,hour,minute,second}
+            function getTime(type) {
+                var DATE = new Date(),
+                    year = DATE.getFullYear(),
+                    mont = DATE.getMonth() + 1,
+                    date = DATE.getDate(),
+                    day = DATE.getDay(),
+                    //--------------------//
+                    hour = DATE.getHours(),
+                    mins = DATE.getMinutes(),
+                    secs = DATE.getSeconds();
 
+                if (type == "date") {
+                    return `${year} / ${mont} / ${date}`
+                } else
+                    if (type == "time") {
+                        return `${hour > 9 ? hour : '0' + hour} : ${mins > 9 ? mins : '0' + mins} : ${secs > 9 ? secs : '0' + secs}`
+                    } else
+                        if (type == "pack") {
+                            let par = {
+                                "year": year,
+                                "month": mont,
+                                "date": date,
+                                "day": day,
+                                "hour": hour > 9 ? hour : '0' + hour,
+                                "minute": mins > 9 ? mins : '0' + mins,
+                                "second": secs > 9 ? secs : '0' + secs
+                            }
 
+                            return par
+                        }
+            }
 
+            function delay(n) {
+                return new Promise(function (resolve) {
+                    setTimeout(resolve, n * 1000);
+                });
+            }
 
+            var auto_refresh = true,
+                refresh_sec = 31;
+            AsyncFunction()
+            refreshAllApi()
+            async function AsyncFunction() {
+                while (true) {
+                    if (auto_refresh) {
+                        if (refresh_sec > 0) {
+                            refresh_sec = refresh_sec - 1
 
-    <!--BS JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
-        crossorigin="anonymous"></script>
-    <!--Jquery-->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'
-        integrity='sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=='
-        crossorigin='anonymous'></script>
+                            $("#refresh_prog").css("width", (refresh_sec * 3.3) + "%").text(refresh_sec).removeClass("bg-secondary")
+                            await delay(1)
 
-    <!--Main script-->
-    <script>
-        var dom = {
-            "weather_placeholder": $("#weather-placeholder"),
-            "weather_updata_time": $("#weather-update"),
-            "weather_table": $("#weather-table"),
-            "reflash_btn": $("#reflash-btn"),
-            "weather_tbody": $("#weather-tbody"),
-            "head_title": $("#head-title")
-        }
+                        } else {
+                            await refreshAllApi()
+                            refresh_sec = 31
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
 
-
-        //ajax part
-        /* $.ajax({
-             url:"https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-F29A34D9-5547-4A00-BA43-CDA0C1416940",
-             method:"GET",
-             dataType:"json",
-           //  data:
- 
-                 success: function(res) { writeWeather(res) },
-                 error: function (err) { console.log(err) },
-         });
- 
-         function writeWeather(res) {
-             console.log(res)
-             dom.weather_placeholder.hide()
-             dom.head_title.html(res.records.datasetDescription)
-             for(i=0;i< res.records.location.length;i++){
-                 if(res.records.location[i].locationName == "臺中市"){
-               dom.weather_tbody.append(`
-               <tr>
-                 <td>${res.records.location[i].locationName}</td>
-                 <td>${res.records.location[i].weatherElement[0].time[0].parameter.parameterName}</td>
-                 <td>${res.records.location[i].weatherElement[0].time[1].parameter.parameterName}</td>
-                 <td>${res.records.location[i].weatherElement[0].time[2].parameter.parameterName}</td>
-               </tr>
-               `)
-             }
-         }
-             
-         }
- 
- 
- */
-        $.ajax({
-            url: "https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/City/Taichung/PassThrough/Station/1237?%24format=JSON",
-            method: "GET",
-            dataType: "json",
-            success: function (res) {
+            function readBusData(res) {
                 console.log(res)
-               // let status_arr =  [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運']
+                //console.log($(".bus-loding"))
+                if($(".bus-loading").length>0){                        
+                    $("#BUS-tbody-0").html(" ")
+                        $("#BUS-tbody-1").html(" ")
+                       // console.log("cleared")
+                    }
+                // let status_arr =  [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運']
                 for (i = 0; i < res.length; i++) {
-                   // if(res[i].PlateNumb !== ""){
-                    console.log(res[i].Direction+" "+ res[i].RouteName.Zh_tw +" "+ res[i].PlateNumb+" "+res[i].StopStatus)
-                    console.log()
+
+                    if (res[i].PlateNumb !== "") {
+                       // console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
+                        
+                       if(document.getElementById("no_duplicate_data").checked){
+                        $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].EstimateTime / 60)}</td></tr>`)
+                       }else{
+                        for (r = 0; r < res[i].Estimates.length; r++) {
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].Estimates[r].EstimateTime / 60)}</td></tr>`)
+                        }
+                       }
+                       
+                    }
+
+                    if (document.getElementById("show_all_bus").checked) {
+                        if (res[i].StopStatus === 3) {
+                       //     console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
+                            console.log()
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>末班車已過站</td></tr>`)
+                        }
+                        if (res[i].StopStatus === 1) {
+                         //   console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
+                            console.log()
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>尚未發車</td></tr>`)
+                        }
+                        if (res[i].StopStatus === 2) {
+                           // console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
+                            console.log()
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>不停靠此站</td></tr>`)
+                        }
+                        if (res[i].StopStatus === 4) {
+                            //console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
+                            console.log()
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>今日不營運</td></tr>`)
+                        }
+                    }
+
+                    // if(res[i].PlateNumb !== ""){
+
                     //}
                 }
-
+                $("#update-time").text(getTime("time"))
             }
-        })
 
-        $.ajax({
-            url: "https://datacenter.taichung.gov.tw/swagger/OpenData/9af00e84-473a-4f3d-99be-b875d8e86256",
-            method: "GET",
-            dataType: "json",
-            //  data:
+            async function refreshAllApi() {
 
-            success: function (res) {
-                console.log(res)
-                 $("#Ubike-tbody").html(" ")
-                for (i = 0; i < res.retVal.length; i++) {
-                    //console.log(i)
-                    //console.log(res.retVal[i])
-                    if (res.retVal[i].ar == "吉林二街38號" || res.retVal[i].sna == "YouBike2.0_弘文高中" || res.retVal[i].sna.includes("弘福公園") || res.retVal[i].sna.includes("綠空廊道(祥和路)") || res.retVal[i].sna.includes("豐栗安和路106巷口")) {
-                        console.log(res.retVal[i])
-                        $("#Ubike-tbody").append(`
+
+                var Bus_stops = ["文化新村", "弘文中學", "中山祥和路口", "寶熊漁樂碼頭", "栗林車站", "潭子車站", "豐原車站"]
+                var stops_code = [[1237, 1238], [1254, 1255], [4199, 4200], [1306, 1307], [1258, 1259], [1300, 1301], [2845, 2846]]
+                
+                $("#BUS-tbody-0").html(`<tr class="bus-loading"><td colspan="2"><div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 資料讀取中...</td></tr>`)
+                $("#BUS-tbody-1").html(`<tr class="bus-loading"><td colspan="2"><div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 資料讀取中...</td></tr>`)
+                $("#Ubike-loading").html(`<td colspan="5"><div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 資料讀取中...</td>`)
+                let accesstoken = JSON.parse($("#req_header").text());
+
+                $("#BUS-station").text($("#BUS-select").val())
+                $.ajax({
+                    url: `https://tdx.transportdata.tw/api/advanced/v2/Bus/EstimatedTimeOfArrival/City/Taichung/PassThrough/Station/${stops_code[Bus_stops.indexOf($("#BUS-select").val())][0]}?%24format=JSON`,
+                    method: "GET",
+                    dataType: "json",
+                    headers: {
+                        "authorization": "Bearer " + accesstoken.access_token,
+                    },
+                    success: function (res) {
+                        readBusData(res)
+                    }
+                })
+                $.ajax({
+                    url: `https://tdx.transportdata.tw/api/advanced/v2/Bus/EstimatedTimeOfArrival/City/Taichung/PassThrough/Station/${stops_code[Bus_stops.indexOf($("#BUS-select").val())][1]}?%24format=JSON`,
+                    method: "GET",
+                    dataType: "json",
+                    headers: {
+                        "authorization": "Bearer " + accesstoken.access_token,
+                    },
+                    success: function (res) {
+                        readBusData(res)
+                    }
+                })
+                $.ajax({
+                    url: "https://datacenter.taichung.gov.tw/swagger/OpenData/9af00e84-473a-4f3d-99be-b875d8e86256",
+                    method: "GET",
+                    dataType: "json",
+                    //  data:
+
+                    success: function (res) {
+                    
+                        $("#update-time").text(getTime("time"))
+                        $("#Ubike-tbody").html(" ")
+                        for (i = 0; i < res.retVal.length; i++) {
+                            //console.log(i)
+                            //console.log(res.retVal[i])
+                            if (res.retVal[i].ar == "吉林二街38號" || res.retVal[i].sna == "YouBike2.0_弘文高中" || res.retVal[i].sna.includes("弘福公園") || res.retVal[i].sna.includes("綠空廊道(祥和路)") || res.retVal[i].sna.includes("豐栗安和路106巷口")) {
+                               
+                                $("#Ubike-tbody").append(`
                             <tr>
                 <td>${res.retVal[i].sna.split("_")[1]}</td>
                 <td>${res.retVal[i].bemp}</td>
@@ -253,15 +352,17 @@
                             
                             `)
 
-                    }
+                            }
 
-                }
-            },
+                        }
+                    },
 
-            error: function (err) { $("#Uboke-loading").html(`<td colspan="5">無法取得資料</td>`) },
-        })
+                    error: function (err) { $("#Uboke-loading").html(`<td colspan="5">無法取得資料</td>`) },
+                })
 
-    </script>
+            }
+
+        </script>
 </body>
 
 </html>
