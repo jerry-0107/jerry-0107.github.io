@@ -123,6 +123,7 @@
                                             <tr>
                                                 <th>路線</th>
                                                 <th>抵達時間</th>
+                                                <th>車牌號碼</th>
                                             </tr>
                                         </thead>
                                         <tbody id="BUS-tbody-0">
@@ -139,6 +140,7 @@
                                                 <tr>
                                                     <th>路線</th>
                                                     <th>抵達時間</th>
+                                                    <th>車牌號碼</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="BUS-tbody-1">
@@ -276,10 +278,10 @@
                         // console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
 
                         if (document.getElementById("no_duplicate_data").checked) {
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].EstimateTime / 60)}</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].EstimateTime / 60)}</td><td>${res[i].PlateNumb}</td></tr>`)
                         } else {
                             for (r = 0; r < res[i].Estimates.length; r++) {
-                                $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].Estimates[r].EstimateTime / 60)}</td></tr>`)
+                                $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].Estimates[r].EstimateTime / 60)}</td><td>${res[i].Estimates[r].PlateNumb}</td></tr>`)
                             }
                         }
 
@@ -289,22 +291,22 @@
                         if (res[i].StopStatus === 3) {
                             //     console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>末班車已過站</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>末班車已過站</td><td>無資料</td></tr>`)
                         }
                         if (res[i].StopStatus === 1) {
                             //   console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>尚未發車</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>尚未發車</td><td>無資料</td></tr>`)
                         }
                         if (res[i].StopStatus === 2) {
                             // console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>不停靠此站</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>不停靠此站</td><td>無資料</td></tr>`)
                         }
                         if (res[i].StopStatus === 4) {
                             //console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>今日不營運</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>今日不營運</td><td>無資料</td></tr>`)
                         }
                     }
 
