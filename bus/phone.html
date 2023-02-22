@@ -297,7 +297,7 @@
                         if (res[i].StopStatus === 3) {
                             //     console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>末班車已過</td><td>無資料</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>末班已過</td><td>無資料</td></tr>`)
                         }
                         if (res[i].StopStatus === 1) {
                             //   console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
@@ -307,12 +307,12 @@
                         if (res[i].StopStatus === 2) {
                             // console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>此站不停靠</td><td>無資料</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>此站不停</td><td>無資料</td></tr>`)
                         }
                         if (res[i].StopStatus === 4) {
                             //console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>今日不營運</td><td>無資料</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>今日不開</td><td>無資料</td></tr>`)
                         }
                     }
 
