@@ -36,32 +36,36 @@
         </div>
 
         更新時間: <span id="update-time">---</span>
-
-        <div>
-            <h5>選擇公車資料:</h5>
-            <select id="BUS-select" class="form-select me-1" style="width:fit-content"
-                onblur="refreshAllApi();refresh_sec = 31">
-                <option value="文化新村">文化新村</option>
-                <option value="弘文中學">弘文中學</option>
-                <option value="栗林車站">栗林車站</option>
-                <option value="中山祥和路口">中山祥和路口</option>
-                <option value="寶熊漁樂碼頭">寶熊漁樂碼頭</option>
-                <option value="潭子車站">潭子車站</option>
-                <option value="豐原車站">豐原車站</option>
-            </select>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="show" id="show_all_bus" checked
-                    onclick="refreshAllApi();refresh_sec = 31">
-                <label class="form-check-label" for="show_all_bus">
-                    顯示所有公車資料
-                </label>
+        <div class="d-flex">
+            <div>
+                <h5>選擇公車資料:</h5>
+                <select id="BUS-select" class="form-select me-1" style="width:fit-content"
+                    onblur="refreshAllApi();refresh_sec = 31">
+                    <option value="文化新村">文化新村</option>
+                    <option value="弘文中學">弘文中學</option>
+                    <option value="栗林車站">栗林車站</option>
+                    <option value="中山祥和路口">中山祥和路口</option>
+                    <option value="寶熊漁樂碼頭">寶熊漁樂碼頭</option>
+                    <option value="潭子車站">潭子車站</option>
+                    <option value="豐原車站">豐原車站</option>
+                </select>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="show" id="show_all_bus" checked
+                        onclick="refreshAllApi();refresh_sec = 31">
+                    <label class="form-check-label" for="show_all_bus">
+                        顯示所有公車資料
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="show" id="no_duplicate_data"
+                        onclick="refreshAllApi();refresh_sec = 31">
+                    <label class="form-check-label" for="no_duplicate_data">
+                        同路線資料不重複
+                    </label>
+                </div>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="show" id="no_duplicate_data"
-                    onclick="refreshAllApi();refresh_sec = 31">
-                <label class="form-check-label" for="no_duplicate_data">
-                    同路線資料不重複
-                </label>
+            <div class="p-5">
+                <h3 id="clock">時間顯示</h3>
             </div>
         </div>
     </div>
@@ -254,7 +258,7 @@
                     if (auto_refresh) {
                         if (refresh_sec > 0) {
                             refresh_sec = refresh_sec - 1
-
+                            $("#clock").text(`${getTime("time").split(" ")[0]}${getTime("time").split(" ")[1]}${getTime("time").split(" ")[2]}${getTime("time").split(" ")[3]}${getTime("time").split(" ")[4]}`)
                             $("#refresh_prog").css("width", (refresh_sec * 3.3) + "%").text(refresh_sec).removeClass("bg-secondary")
                             await delay(1)
 
@@ -297,7 +301,7 @@
                         if (res[i].StopStatus === 3) {
                             //     console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>末班已過</td><td>無資料</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-secondary"><td>${res[i].RouteName.Zh_tw}</td><td>末班已過</td><td>無資料</td></tr>`)
                         }
                         if (res[i].StopStatus === 1) {
                             //   console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
@@ -307,12 +311,12 @@
                         if (res[i].StopStatus === 2) {
                             // console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>此站不停</td><td>無資料</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-secondary"><td>${res[i].RouteName.Zh_tw}</td><td>此站不停</td><td>無資料</td></tr>`)
                         }
                         if (res[i].StopStatus === 4) {
                             //console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
                             console.log()
-                            $("#BUS-tbody-" + res[i].Direction).append(`<tr><td>${res[i].RouteName.Zh_tw}</td><td>今日不開</td><td>無資料</td></tr>`)
+                            $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-secondary"><td>${res[i].RouteName.Zh_tw}</td><td>今日不開</td><td>無資料</td></tr>`)
                         }
                     }
 
@@ -372,16 +376,16 @@
                             //console.log(res.retVal[i])
                             if (res.retVal[i].ar == "吉林二街38號" || res.retVal[i].sna == "YouBike2.0_弘文高中" || res.retVal[i].sna.includes("弘福公園") || res.retVal[i].sna.includes("綠空廊道(祥和路)") || res.retVal[i].sna.includes("豐栗安和路106巷口")) {
 
-                        if(res.retVal[i].sbi>=10){
-                            $("#Ubike-tbody").append(`<tr><td class="bg-success">${res.retVal[i].sna.split("_")[1]}</td><td>${res.retVal[i].bemp}</td><td>${res.retVal[i].sbi_detail.yb2}</td><td>${res.retVal[i].sbi_detail.eyb}</td><td class="bg-success">${res.retVal[i].sbi}</td></tr>`)
-                        }else if(res.retVal[i].sbi>0 && res.retVal[i].sbi<10){
-                            $("#Ubike-tbody").append(`<tr><td class="bg-warning">${res.retVal[i].sna.split("_")[1]}</td><td>${res.retVal[i].bemp}</td><td>${res.retVal[i].sbi_detail.yb2}</td><td>${res.retVal[i].sbi_detail.eyb}</td><td class="bg-warning">${res.retVal[i].sbi}</td></tr>`)
+                                if (res.retVal[i].sbi >= 10) {
+                                    $("#Ubike-tbody").append(`<tr><td class="bg-success">${res.retVal[i].sna.split("_")[1]}</td><td>${res.retVal[i].bemp}</td><td>${res.retVal[i].sbi_detail.yb2}</td><td>${res.retVal[i].sbi_detail.eyb}</td><td class="bg-success">${res.retVal[i].sbi}</td></tr>`)
+                                } else if (res.retVal[i].sbi > 0 && res.retVal[i].sbi < 10) {
+                                    $("#Ubike-tbody").append(`<tr><td class="bg-warning">${res.retVal[i].sna.split("_")[1]}</td><td>${res.retVal[i].bemp}</td><td>${res.retVal[i].sbi_detail.yb2}</td><td>${res.retVal[i].sbi_detail.eyb}</td><td class="bg-warning">${res.retVal[i].sbi}</td></tr>`)
 
-                        }else if(res.retVal[i].sbi == 0){
-                            $("#Ubike-tbody").append(`<tr><td class="bg-danger">${res.retVal[i].sna.split("_")[1]}</td><td>${res.retVal[i].bemp}</td><td>${res.retVal[i].sbi_detail.yb2}</td><td>${res.retVal[i].sbi_detail.eyb}</td><td class="bg-danger">${res.retVal[i].sbi}</td></tr>`)
+                                } else if (res.retVal[i].sbi == 0) {
+                                    $("#Ubike-tbody").append(`<tr><td class="bg-danger">${res.retVal[i].sna.split("_")[1]}</td><td>${res.retVal[i].bemp}</td><td>${res.retVal[i].sbi_detail.yb2}</td><td>${res.retVal[i].sbi_detail.eyb}</td><td class="bg-danger">${res.retVal[i].sbi}</td></tr>`)
 
-                        }
-                                
+                                }
+
 
                             }
 
