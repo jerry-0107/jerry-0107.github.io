@@ -48,6 +48,11 @@
                     <option value="寶熊漁樂碼頭">寶熊漁樂碼頭</option>
                     <option value="潭子車站">潭子車站</option>
                     <option value="豐原車站">豐原車站</option>
+                    <option value="台中車站(轉運中心A月台)">台中車站(A月台)</option>
+                    <option value="台中車站(轉運中心B月台)">台中車站(B月台)</option>
+                    <option value="台中車站(轉運中心C月台)">台中車站(C月台)</option>
+                    <option value="台中車站(轉運中心D月台)">台中車站(D月台)</option>
+                    
                 </select>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="show" id="show_all_bus" checked
@@ -255,10 +260,11 @@
             refreshAllApi()
             async function AsyncFunction() {
                 while (true) {
+                    $("#clock").text(`${getTime("time").split(" ")[0]}${getTime("time").split(" ")[1]}${getTime("time").split(" ")[2]}${getTime("time").split(" ")[3]}${getTime("time").split(" ")[4]}`)
+
                     if (auto_refresh) {
                         if (refresh_sec > 0) {
                             refresh_sec = refresh_sec - 1
-                            $("#clock").text(`${getTime("time").split(" ")[0]}${getTime("time").split(" ")[1]}${getTime("time").split(" ")[2]}${getTime("time").split(" ")[3]}${getTime("time").split(" ")[4]}`)
                             $("#refresh_prog").css("width", (refresh_sec * 3.3) + "%").text(refresh_sec).removeClass("bg-secondary")
                             await delay(1)
 
@@ -270,6 +276,7 @@
                     else {
                         break;
                     }
+
                 }
             }
 
@@ -330,8 +337,8 @@
             async function refreshAllApi() {
 
 
-                var Bus_stops = ["文化新村", "弘文中學", "中山祥和路口", "寶熊漁樂碼頭", "栗林車站", "潭子車站", "豐原車站"]
-                var stops_code = [[1237, 1238], [1254, 1255], [4199, 4200], [1306, 1307], [1258, 1259], [1300, 1301], [2845, 2846]]
+                var Bus_stops = ["文化新村", "弘文中學", "中山祥和路口", "寶熊漁樂碼頭", "栗林車站", "潭子車站", "豐原車站","台中車站(轉運中心A月台)","台中車站(轉運中心B月台)",,"台中車站(轉運中心C月台)","台中車站(轉運中心D月台)"]
+                var stops_code = [[1237, 1238], [1254, 1255], [4199, 4200], [1306, 1307], [1258, 1259], [1300, 1301], [2845, 2846],[4980],[4981],[4983],[4989]]
 
                 $("#BUS-tbody-0").html(`<tr class="bus-loading"><td colspan="2"><div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 資料讀取中...</td></tr>`)
                 $("#BUS-tbody-1").html(`<tr class="bus-loading"><td colspan="2"><div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 資料讀取中...</td></tr>`)
@@ -339,28 +346,20 @@
                 let accesstoken = JSON.parse($("#req_header").text());
 
                 $(".BUS-station").text($("#BUS-select").val())
-                $.ajax({
-                    url: `https://tdx.transportdata.tw/api/advanced/v2/Bus/EstimatedTimeOfArrival/City/Taichung/PassThrough/Station/${stops_code[Bus_stops.indexOf($("#BUS-select").val())][0]}?%24format=JSON`,
-                    method: "GET",
-                    dataType: "json",
-                    headers: {
-                        "authorization": "Bearer " + accesstoken.access_token,
-                    },
-                    success: function (res) {
-                        readBusData(res)
-                    }
-                })
-                $.ajax({
-                    url: `https://tdx.transportdata.tw/api/advanced/v2/Bus/EstimatedTimeOfArrival/City/Taichung/PassThrough/Station/${stops_code[Bus_stops.indexOf($("#BUS-select").val())][1]}?%24format=JSON`,
-                    method: "GET",
-                    dataType: "json",
-                    headers: {
-                        "authorization": "Bearer " + accesstoken.access_token,
-                    },
-                    success: function (res) {
-                        readBusData(res)
-                    }
-                })
+                for (i = 0; i < stops_code[Bus_stops.indexOf($("#BUS-select").val())].length; i++) {
+                    $.ajax({
+                        url: `https://tdx.transportdata.tw/api/advanced/v2/Bus/EstimatedTimeOfArrival/City/Taichung/PassThrough/Station/${stops_code[Bus_stops.indexOf($("#BUS-select").val())][i]}?%24format=JSON`,
+                        method: "GET",
+                        dataType: "json",
+                        headers: {
+                            "authorization": "Bearer " + accesstoken.access_token,
+                        },
+                        success: function (res) {
+                            readBusData(res)
+                        }
+                    })
+                }
+
                 $.ajax({
                     url: "https://datacenter.taichung.gov.tw/swagger/OpenData/9af00e84-473a-4f3d-99be-b875d8e86256",
                     method: "GET",
