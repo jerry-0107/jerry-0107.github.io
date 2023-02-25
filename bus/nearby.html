@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css" integrity="sha512-6+fQwheLeCW6sKV5liSHZ0rxcrN4TRBwWOhsof+3Iahu9J+WRyF4eBLjL5QshWxja6WiKE1WAtrH0hsRJ3nA8A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+
     <style>
         #map {
             height: 500px
@@ -23,12 +24,19 @@
     </style>
 </head>
 
-<body>
+<body class="m-3">
 
-    <div id="map"></div>
-
-    <div>
-
+    <div id="map">
+        <div style="display: flex;align-items: center;justify-content: center;text-align: center;height: 100%;">
+            <div id="OSM-loading" style="text-align: center;"><h4>OpenStreetMap</h4>正在取得你的位置資訊...</div>
+        </div>
+    </div>
+<p></p>
+    <div class="d-flex">
+        <input type="text" name="" id="lng" class="form-control me-1" style="width:fit-content" placeholder="經度">
+   
+        <input type="text" name="" id="lat" class="form-control me-1" style="width:fit-content" placeholder="緯度">
+        
     </div>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
         integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
@@ -39,40 +47,33 @@
 
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js" integrity="sha512-mq6Ep7oDFiumX+lUJle/srDcLqY512R6Yney/E3u3sZZO7T+UgoizxPmAauxoc5qERfMVMcHVITQYf6eKmtjtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
     <script>
         // 跟使用者要位置 
-
-
+    
+            
         function successGPS(position) {
+            $("#OSM-loading").html("<h4>OpenStreetMap</h4>地圖載入中...")
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             center = [lat, lng];
-
+            $("#lat").val(lat);$("#lng").val(lng)
             let zoom = 17; // 0 - 18
             var map = L.map('map').setView(center, zoom);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap', // 商用時必須要有版權出處
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap', 
                 zoomControl: true, // 是否秀出 - + 按鈕
             }).addTo(map);
-            L.control.locate({
-                position: 'topleft',
-                locateOptions: {
-                    enableHighAccuracy: true
-                },
-                strings: {
-                    title: '定位我的位置',
-                    metersUnit: '公尺',
-                    feetUnit: '英尺',
-                    popup: '距離誤差：{distance}{unit}以內'
-                },
-                clickBehavior: {
-                    inView: 'stop',
-                    outOfView: 'setView',
-                    inViewNotFollowing: 'inView'
-                }
+            const customIcon = L.icon({
+                // iconUrl: 'D:/html/Bus/geo-alt-fill.svg',
+                iconSize: [42, 42],
+            });
+            const marker = L.marker(center, {
+                //       icon: customIcon,
+                opacity: 1.0
             }).addTo(map);
-
+            marker.bindPopup("<b>你的目前位置</b><br>定位可能有誤差").openPopup();
 
             map.zoomIn(18);
             const popup = L.popup();
@@ -80,27 +81,26 @@
                 console.log(e)
                 let lat = e.latlng.lat; // 緯度
                 let lng = e.latlng.lng; // 經度
-                popup
-                    .setLatLng(e.latlng)
-                    .setContent(`緯度：${lat}<br/>經度：${lng}`)
-                    .openOn(map);
+                popup.setLatLng(e.latlng).setContent(`緯度：${lat}<br/>經度：${lng}`).openOn(map);
+                $("#lat").val(lat);$("#lng").val(lng)
             }
             map.on('click', onMapClick);
 
         };
         function errorGPS() {
-            window.alert('無法判斷您的所在位置，無法使用此功能');
+  
             // 接著寫使用者「封鎖」位置資訊請求後要執行的事
+            $("#OSM-loading").html(`<h4>OpenStreetMap</h4>請允許使用位置資訊<p><buton class="btn btn-primary" onclick=" $('#OSM-loading').html('<h4>OpenStreetMap</h4>正在取得你的位置資訊...');navigator.geolocation.getCurrentPosition(successGPS, errorGPS);">重新定位</button></p>`)
+ 
         }
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(successGPS, errorGPS);
         } else {
-            window.alert('您的裝置不具備GPS，無法使用此功能');
+
+            $("#OSM-loading").html("<h4>OpenStreetMap</h4>你的裝置無法使用位置資訊")
             // 接著寫使用者裝置不支援位置資訊時要執行的事
         }
-
-
 
 
     </script>
