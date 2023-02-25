@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>附近大眾運輸</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css'
+        integrity='sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=='
+        crossorigin='anonymous' />
+    <link rel='stylesheet'
+        href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css'
+        integrity='sha512-YFENbnqHbCRmJt5d+9lHimyEMt8LKSNTMLSaHjvsclnZGICeY/0KYEeiHwD1Ux4Tcao0h60tdcMv+0GljvWyHg=='
+        crossorigin='anonymous' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css" integrity="sha512-6+fQwheLeCW6sKV5liSHZ0rxcrN4TRBwWOhsof+3Iahu9J+WRyF4eBLjL5QshWxja6WiKE1WAtrH0hsRJ3nA8A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        #map {
+            height: 500px
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <div>
+
+    </div>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
+        integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
+        crossorigin='anonymous'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.js'
+        integrity='sha512-L6XANV6sOsx9N9c787eDN1pjB2Pzautd3xDgn4cMKuoleHSuCJi5pCDGPCtwE3Bd4A1Olnr0k0aQXbczYzg+wg=='
+        crossorigin='anonymous'></script>
+
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js" integrity="sha512-mq6Ep7oDFiumX+lUJle/srDcLqY512R6Yney/E3u3sZZO7T+UgoizxPmAauxoc5qERfMVMcHVITQYf6eKmtjtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        // 跟使用者要位置 
+
+
+        function successGPS(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            center = [lat, lng];
+
+            let zoom = 17; // 0 - 18
+            var map = L.map('map').setView(center, zoom);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap', // 商用時必須要有版權出處
+                zoomControl: true, // 是否秀出 - + 按鈕
+            }).addTo(map);
+            L.control.locate({
+                position: 'topleft',
+                locateOptions: {
+                    enableHighAccuracy: true
+                },
+                strings: {
+                    title: '定位我的位置',
+                    metersUnit: '公尺',
+                    feetUnit: '英尺',
+                    popup: '距離誤差：{distance}{unit}以內'
+                },
+                clickBehavior: {
+                    inView: 'stop',
+                    outOfView: 'setView',
+                    inViewNotFollowing: 'inView'
+                }
+            }).addTo(map);
+
+
+            map.zoomIn(18);
+            const popup = L.popup();
+            function onMapClick(e) {
+                console.log(e)
+                let lat = e.latlng.lat; // 緯度
+                let lng = e.latlng.lng; // 經度
+                popup
+                    .setLatLng(e.latlng)
+                    .setContent(`緯度：${lat}<br/>經度：${lng}`)
+                    .openOn(map);
+            }
+            map.on('click', onMapClick);
+
+        };
+        function errorGPS() {
+            window.alert('無法判斷您的所在位置，無法使用此功能');
+            // 接著寫使用者「封鎖」位置資訊請求後要執行的事
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(successGPS, errorGPS);
+        } else {
+            window.alert('您的裝置不具備GPS，無法使用此功能');
+            // 接著寫使用者裝置不支援位置資訊時要執行的事
+        }
+
+
+
+
+    </script>
+
+</body>
+
+</html>
