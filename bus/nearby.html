@@ -14,7 +14,10 @@
         integrity='sha512-YFENbnqHbCRmJt5d+9lHimyEMt8LKSNTMLSaHjvsclnZGICeY/0KYEeiHwD1Ux4Tcao0h60tdcMv+0GljvWyHg=='
         crossorigin='anonymous' />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css" integrity="sha512-6+fQwheLeCW6sKV5liSHZ0rxcrN4TRBwWOhsof+3Iahu9J+WRyF4eBLjL5QshWxja6WiKE1WAtrH0hsRJ3nA8A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css"
+        integrity="sha512-6+fQwheLeCW6sKV5liSHZ0rxcrN4TRBwWOhsof+3Iahu9J+WRyF4eBLjL5QshWxja6WiKE1WAtrH0hsRJ3nA8A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 
     <style>
@@ -28,16 +31,45 @@
 
     <div id="map">
         <div style="display: flex;align-items: center;justify-content: center;text-align: center;height: 100%;">
-            <div id="OSM-loading" style="text-align: center;"><h4>OpenStreetMap</h4>正在取得你的位置資訊...</div>
+            <div id="OSM-loading" style="text-align: center;">
+                <h4>OpenStreetMap</h4>資料讀取中...
+            </div>
         </div>
     </div>
-<p></p>
+    <p></p>
     <div class="d-flex">
         <input type="text" name="" id="lng" class="form-control me-1" style="width:fit-content" placeholder="經度">
-   
+
         <input type="text" name="" id="lat" class="form-control me-1" style="width:fit-content" placeholder="緯度">
+
+        <input type="number" name="" id="r" value="500" max="1000" min="2" style="width:fit-content"
+            placeholder="半徑(公尺)" class="form-control me-1">
+        <button class="btn btn-primary" id="send-query">送出查詢</button>
         
     </div>
+<div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                <label class="form-check-label" for="inlineCheckbox1">YouBike 1.0</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                <label class="form-check-label" for="inlineCheckbox2">YouBike 2.0/2.0E</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option2">
+                <label class="form-check-label" for="inlineCheckbox3">T-Bike</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option2">
+                <label class="form-check-label" for="inlineCheckbox4">K-Bike</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox5" value="option2">
+                <label class="form-check-label" for="inlineCheckbox5">P-Bike</label>
+            </div>
+        </div>
+    <div id="req_header" hidden></div>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
         integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
         crossorigin='anonymous'></script>
@@ -46,63 +78,92 @@
         crossorigin='anonymous'></script>
 
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js" integrity="sha512-mq6Ep7oDFiumX+lUJle/srDcLqY512R6Yney/E3u3sZZO7T+UgoizxPmAauxoc5qERfMVMcHVITQYf6eKmtjtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js"
+        integrity="sha512-mq6Ep7oDFiumX+lUJle/srDcLqY512R6Yney/E3u3sZZO7T+UgoizxPmAauxoc5qERfMVMcHVITQYf6eKmtjtw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
-        // 跟使用者要位置 
-    
-            
-        function successGPS(position) {
-            $("#OSM-loading").html("<h4>OpenStreetMap</h4>地圖載入中...")
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            center = [lat, lng];
-            $("#lat").val(lat);$("#lng").val(lng)
-            let zoom = 17; // 0 - 18
-            var map = L.map('map').setView(center, zoom);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap', 
-                zoomControl: true, // 是否秀出 - + 按鈕
-            }).addTo(map);
-            const customIcon = L.icon({
-                // iconUrl: 'D:/html/Bus/geo-alt-fill.svg',
-                iconSize: [42, 42],
-            });
-            const marker = L.marker(center, {
-                //       icon: customIcon,
-                opacity: 1.0
-            }).addTo(map);
-            marker.bindPopup("<b>你的目前位置</b><br>定位可能有誤差").openPopup();
 
-            map.zoomIn(18);
-            const popup = L.popup();
-            function onMapClick(e) {
-                console.log(e)
-                let lat = e.latlng.lat; // 緯度
-                let lng = e.latlng.lng; // 經度
-                popup.setLatLng(e.latlng).setContent(`緯度：${lat}<br/>經度：${lng}`).openOn(map);
-                $("#lat").val(lat);$("#lng").val(lng)
-            }
-            map.on('click', onMapClick);
 
+        var tdxLogin = {
+            grant_type: "client_credentials",
+            client_id: "jerry20200815-905e4c2d-f4f9-42dd",
+            client_secret: "df5c085e-f262-4258-b1d6-518e40138f71"
         };
-        function errorGPS() {
-  
-            // 接著寫使用者「封鎖」位置資訊請求後要執行的事
-            $("#OSM-loading").html(`<h4>OpenStreetMap</h4>請允許使用位置資訊<p><buton class="btn btn-primary" onclick=" $('#OSM-loading').html('<h4>OpenStreetMap</h4>正在取得你的位置資訊...');navigator.geolocation.getCurrentPosition(successGPS, errorGPS);">重新定位</button></p>`)
- 
+
+        $.ajax({
+            type: "POST",
+            url: "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token",
+            crossDomain: true,
+            dataType: 'JSON',
+            data: tdxLogin,
+            async: false,
+            success: function (data) {
+                //   console.log(data);
+                $("#req_header").text(JSON.stringify(data))
+            },
+            error: function (xhr, textStatus, thrownError) {
+
+            }
+        });
+        let center = [24.22615573302304, 120.70408436926908];
+        var map = L.map('map').setView(center, 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            zoomControl: true, // 是否秀出 - + 按鈕
+        }).addTo(map);
+        L.control.locate({
+            position: 'topleft',
+            locateOptions: {
+                enableHighAccuracy: true
+            },
+            strings: {
+                title: '定位我的位置',
+                metersUnit: '公尺',
+                feetUnit: '英尺',
+                popup: '距離誤差：{distance}{unit}以內'
+            },
+            clickBehavior: {
+                inView: 'stop',
+                outOfView: 'setView',
+                inViewNotFollowing: 'inView'
+            }
+        }).addTo(map);
+
+
+
+        function readBikeData(res) {
+            console.log(res)
         }
+        let accesstoken = JSON.parse($("#req_header").text());
+        $("#send-query").on("click", (e) => {
+            let lat = $("#lat").val(), lng = $("#lng").val(), r = $("#r").val();
+            $.ajax({
+                url: `https://tdx.transportdata.tw/api/advanced/v2/Bike/Availability/NearBy?%24spatialFilter=nearby%28${lat}%2C%20${lng}%2C%20${r}%29&%24format=JSON`,
+                //     https://tdx.transportdata.tw/api/advanced/v2/Bike/Station/NearBy?%24spatialFilter=nearby%28${lat}%2C%20${lng}%2C%20${r}%29&%24format=JSON
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(successGPS, errorGPS);
-        } else {
+                method: "GET",
+                dataType: "json",
+                headers: {
+                    "authorization": "Bearer " + accesstoken.access_token,
+                },
+                success: function (res) {
+                    readBikeData(res)
+                }
+            })
 
-            $("#OSM-loading").html("<h4>OpenStreetMap</h4>你的裝置無法使用位置資訊")
-            // 接著寫使用者裝置不支援位置資訊時要執行的事
+        })
+        const popup = L.popup();
+        function onMapClick(e) {
+            console.log(e)
+            let lat = e.latlng.lat; // 緯度
+            let lng = e.latlng.lng; // 經度
+            popup.setLatLng(e.latlng).setContent(`<b>此地點</b><br>經度：${lng}<br/>緯度：${lat}`).openOn(map);
+            $("#lat").val(lat); $("#lng").val(lng)
         }
-
-
+        map.on('click', onMapClick);
     </script>
 
 </body>
