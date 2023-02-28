@@ -18,7 +18,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css"
         integrity="sha512-6+fQwheLeCW6sKV5liSHZ0rxcrN4TRBwWOhsof+3Iahu9J+WRyF4eBLjL5QshWxja6WiKE1WAtrH0hsRJ3nA8A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/2.4.0/Control.FullScreen.min.css" integrity="sha512-Gf0xgqc7R4+2ATKUYRXPpl2xXWAbHIgIIGlqy1ugbTcuSSSKG7Kw/IULAuQWIiRVwQAn0CcLVRtI79C6mGROQQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         #map {
@@ -44,12 +44,13 @@
     <div class="d-flex m-1">
         <input type="text" name="" id="lng" class="form-control me-1" style="max-width: 20vw;" placeholder="經度">
 
-        <input type="text" name="" id="lat" class="form-control me-1"  style="max-width: 20vw;" placeholder="緯度">
-            <input type="number" name="" id="r" value="500" max="1000" min="2" style="max-width: 16vw;"
+        <input type="text" name="" id="lat" class="form-control me-1" style="max-width: 20vw;" placeholder="緯度">
+        <input type="number" name="" id="r" value="500" max="1000" min="2" style="max-width: 16vw;"
             placeholder="查詢半徑(公尺)" class="form-control me-1">
 
-        <button class="btn btn-primary" id="send-query"><i class="bi bi-search"></i></button></div>
-    
+        <button class="btn btn-primary" id="send-query"><i class="bi bi-search"></i></button>
+    </div>
+
 
     <div>選擇資料類型:
         <div class="form-check form-check-inline">
@@ -86,6 +87,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js"
         integrity="sha512-mq6Ep7oDFiumX+lUJle/srDcLqY512R6Yney/E3u3sZZO7T+UgoizxPmAauxoc5qERfMVMcHVITQYf6eKmtjtw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/2.4.0/Control.FullScreen.js" integrity="sha512-soC5gg5CeLNdNfDfPXZtkyDOQE1izv2ermc/Ub4Yse0WVEUUadAe6hnduFqryCvA1gJi298YKEJVvnxs8STUlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
     <script>
 
@@ -129,7 +132,7 @@
                 title: '定位我的位置',
                 metersUnit: '公尺',
                 feetUnit: '英尺',
-                popup: '距離誤差：{distance}{unit}以內'
+                popup: '<b>你的定位點</b><br>距離誤差：{distance}{unit}以內'
             },
             clickBehavior: {
                 inView: 'stop',
@@ -139,7 +142,15 @@
         }).addTo(map);
 
 
-
+        L.control.fullscreen({
+            position: 'topleft',
+            title: '進入全螢幕',
+            titleCancel: '離開全螢幕',
+            content: '<img class="p-1" src="dist/size-fullscreen.svg">',
+            forceSeparateButton: true,
+            forcePseudoFullscreen: true,
+            fullscreenElement: false
+        }).addTo(map);
         function readBikeData(res) {
             console.log(res)
         }
@@ -164,7 +175,7 @@
             $("#query-body").html(`<div id="query-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>資料讀取中 (2/2)...</div>`)
             $.ajax({
                 url: `https://tdx.transportdata.tw/api/advanced/v2/Bike/Station/NearBy?%24spatialFilter=nearby%28${lat}%2C%20${lng}%2C%20${r}%29&%24format=JSON`,
-            
+
 
                 method: "GET",
                 dataType: "json",
