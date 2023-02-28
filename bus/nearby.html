@@ -158,12 +158,15 @@ var MyLoc = []
         function readBikeData(res,insertTo) {
             console.log(res)
             if(insertTo == 0){
-                BikeData = []
+              
                 BikeData[0] = res
             }else if(insertTo == 1){
                 BikeData[1] = res
+                for(i=0;i<BikeData[0].length;i++){
+
+                }
             }
-            console.log(BikeData)
+            
         }
         let accesstoken = JSON.parse($("#req_header").text());
         var BikeData = []
@@ -224,6 +227,11 @@ var MyLoc = []
             MyLoc[0] = e.latlng.lat
             MyLoc[1] = e.latlng.lng
         });
+
+
+
+
+        //https://ithelp.ithome.com.tw/articles/10206140#:~:text=%E4%BE%86%E6%BA%90%E6%98%AF%EF%BC%9A%E9%80%99%E9%82%8A-,%E7%A8%8B%E5%BC%8F%E7%A2%BC%E7%AF%84%E4%BE%8B%E5%A6%82%E4%B8%8B%EF%BC%9A,-var%20myPositionMarker%20%3D%20L
     </script>
 
 </body>
