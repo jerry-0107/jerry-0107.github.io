@@ -155,13 +155,13 @@ var MyLoc = []
             forcePseudoFullscreen: true,
             fullscreenElement: false
         }).addTo(map);
-        function readBikeData(res) {
+        function readBikeData(res,insertTo) {
             console.log(res)
-            if(!BikeData[0] || (BikeData[0] && BikeData[1])){
+            if(insertTo == 0){
+                BikeData = []
                 BikeData[0] = res
-            }else if(!BikeData[1]){
+            }else if(insertTo == 1){
                 BikeData[1] = res
-
             }
             console.log(BikeData)
         }
@@ -180,7 +180,7 @@ var MyLoc = []
                     "authorization": "Bearer " + accesstoken.access_token,
                 },
                 success: function (res) {
-                    readBikeData(res)
+                    readBikeData(res,0)
                 }
             })
             $("#query-body").html(`<div id="query-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>資料讀取中 (2/2)...</div>`)
@@ -194,7 +194,7 @@ var MyLoc = []
                     "authorization": "Bearer " + accesstoken.access_token,
                 },
                 success: function (res) {
-                    readBikeData(res)
+                    readBikeData(res,1)
                 }
             })
 
