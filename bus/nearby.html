@@ -38,7 +38,7 @@
     </div>
     <p></p>
     <div>
-        <button class="btn btn-outline-primary"><i class="bi bi-geo-alt-fill"></i></button>
+        <button class="btn btn-outline-primary" id="find-my-loc"><i class="bi bi-geo-alt-fill"></i></button>
     </div>
     <p></p>
     <div class="d-flex m-1">
@@ -92,6 +92,10 @@
 
     <script>
 
+////////////////////
+var MyLoc = []
+
+///////////////////
 
 
         var tdxLogin = {
@@ -146,7 +150,7 @@
             position: 'topleft',
             title: '進入全螢幕',
             titleCancel: '離開全螢幕',
-           
+            content: '<img class="p-1" src="/fullscreen.svg">',
             forceSeparateButton: true,
             forcePseudoFullscreen: true,
             fullscreenElement: false
@@ -195,7 +199,15 @@
             })
 
         })
-        const popup = L.popup();
+
+
+
+        $("#find-my-loc").on("click",e=>{
+            $("#lat").val(MyLoc[1])
+            $("#lng").val(MyLoc[0])
+        })
+
+        var popup = L.popup();
         function onMapClick(e) {
             console.log(e)
             let lat = e.latlng.lat; // 緯度
@@ -209,6 +221,8 @@
 
         map.on('locationfound', function (e) {
             console.log(e)
+            MyLoc[0] = e.latlng.lat
+            MyLoc[1] = e.latlng.lng
         });
     </script>
 
