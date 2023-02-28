@@ -42,10 +42,10 @@
     </div>
     <p></p>
     <div class="d-flex m-1">
-        <input type="text" name="" id="lng" class="form-control me-1" style="max-width: 13vw;" placeholder="經度">
+        <input type="text" name="" id="lng" class="form-control me-1" style="max-width: 17vw;" placeholder="經度">
 
-        <input type="text" name="" id="lat" class="form-control me-1"  style="max-width: 13vw;" placeholder="緯度">
-            <input type="number" name="" id="r" value="500" max="1000" min="2" style="max-width: 10vw;"
+        <input type="text" name="" id="lat" class="form-control me-1"  style="max-width: 17vw;" placeholder="緯度">
+            <input type="number" name="" id="r" value="500" max="1000" min="2" style="max-width: 13vw;"
             placeholder="查詢半徑(公尺)" class="form-control me-1">
 
         <button class="btn btn-primary" id="send-query">送出查詢</button></div>
@@ -71,44 +71,9 @@
         </div>
     </div>
 
-    <div class="accordion" id="accordionPanelsStayOpenExample">
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-              Accordion Item #1
-            </button>
-          </h2>
-          <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
-            <div class="accordion-body">
-              <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-              Accordion Item #2
-            </button>
-          </h2>
-          <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
-            <div class="accordion-body">
-              <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-              Accordion Item #3
-            </button>
-          </h2>
-          <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
-            <div class="accordion-body">
-              <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-            </div>
-          </div>
-        </div>
-      </div>
+    <div id="query-body">
+
+    </div>
     <div id="req_header" hidden></div>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
         integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
@@ -180,6 +145,7 @@
         let accesstoken = JSON.parse($("#req_header").text());
         $("#send-query").on("click", (e) => {
             let lat = $("#lat").val(), lng = $("#lng").val(), r = $("#r").val();
+            $("#query-body").html(`<div id="query-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>資料讀取中...</div>`)
             $.ajax({
                 url: `https://tdx.transportdata.tw/api/advanced/v2/Bike/Availability/NearBy?%24spatialFilter=nearby%28${lat}%2C%20${lng}%2C%20${r}%29&%24format=JSON`,
                 //     https://tdx.transportdata.tw/api/advanced/v2/Bike/Station/NearBy?%24spatialFilter=nearby%28${lat}%2C%20${lng}%2C%20${r}%29&%24format=JSON
