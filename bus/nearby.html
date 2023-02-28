@@ -42,10 +42,10 @@
     </div>
     <p></p>
     <div class="d-flex m-1">
-        <input type="text" name="" id="lng" class="form-control me-1" style="max-width: 17vw;" placeholder="經度">
+        <input type="text" name="" id="lng" class="form-control me-1" style="max-width: 20vw;" placeholder="經度">
 
-        <input type="text" name="" id="lat" class="form-control me-1"  style="max-width: 17vw;" placeholder="緯度">
-            <input type="number" name="" id="r" value="500" max="1000" min="2" style="max-width: 13vw;"
+        <input type="text" name="" id="lat" class="form-control me-1"  style="max-width: 20vw;" placeholder="緯度">
+            <input type="number" name="" id="r" value="500" max="1000" min="2" style="max-width: 16vw;"
             placeholder="查詢半徑(公尺)" class="form-control me-1">
 
         <button class="btn btn-primary" id="send-query">送出查詢</button></div>
@@ -53,7 +53,7 @@
 
     <div>選擇資料類型:
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" checked>
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
             <label class="form-check-label" for="inlineCheckbox1">YouBike 1.0</label>
         </div>
         <div class="form-check form-check-inline">
@@ -61,13 +61,13 @@
             <label class="form-check-label" for="inlineCheckbox2">YouBike 2.0/2.0E</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option2" checked>
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3" checked>
             <label class="form-check-label" for="inlineCheckbox3">公車</label>
         </div>
 
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option2">
-            <label class="form-check-label" for="inlineCheckbox3">其他</label>
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option4">
+            <label class="form-check-label" for="inlineCheckbox4">其他</label>
         </div>
     </div>
 
@@ -144,12 +144,27 @@
             console.log(res)
         }
         let accesstoken = JSON.parse($("#req_header").text());
+        var BikeData = []
         $("#send-query").on("click", (e) => {
             let lat = $("#lat").val(), lng = $("#lng").val(), r = $("#r").val();
-            $("#query-body").html(`<div id="query-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>資料讀取中...</div>`)
+            $("#query-body").html(`<div id="query-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>資料讀取中 (1/2)...</div>`)
             $.ajax({
                 url: `https://tdx.transportdata.tw/api/advanced/v2/Bike/Availability/NearBy?%24spatialFilter=nearby%28${lat}%2C%20${lng}%2C%20${r}%29&%24format=JSON`,
                 //     https://tdx.transportdata.tw/api/advanced/v2/Bike/Station/NearBy?%24spatialFilter=nearby%28${lat}%2C%20${lng}%2C%20${r}%29&%24format=JSON
+
+                method: "GET",
+                dataType: "json",
+                headers: {
+                    "authorization": "Bearer " + accesstoken.access_token,
+                },
+                success: function (res) {
+                    readBikeData(res)
+                }
+            })
+            $("#query-body").html(`<div id="query-loading"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>資料讀取中 (2/2)...</div>`)
+            $.ajax({
+                url: `https://tdx.transportdata.tw/api/advanced/v2/Bike/Station/NearBy?%24spatialFilter=nearby%28${lat}%2C%20${lng}%2C%20${r}%29&%24format=JSON`,
+            
 
                 method: "GET",
                 dataType: "json",
