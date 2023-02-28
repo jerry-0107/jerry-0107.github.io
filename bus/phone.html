@@ -285,7 +285,7 @@
             }
 
             function readBusData(res) {
-                
+
                 //console.log($(".bus-loding"))
                 if ($(".bus-loading").length > 0) {
                     $("#BUS-tbody-0").html(" ")
@@ -302,10 +302,10 @@
                             if (Math.floor(res[i].EstimateTime / 60) >= 30) {
                                 $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-primary text-white"><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].EstimateTime / 60)}</td><td>${res[i].PlateNumb}</td></tr>`)
 
-                            } else if (Math.floor(res[i].EstimateTime / 60) < 30 && Math.floor(res[i].EstimateTime / 60)>=10) {
+                            } else if (Math.floor(res[i].EstimateTime / 60) < 30 && Math.floor(res[i].EstimateTime / 60) >= 10) {
                                 $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-success text-white"><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].EstimateTime / 60)}</td><td>${res[i].PlateNumb}</td></tr>`)
                             }
-                            else if ( Math.floor(res[i].EstimateTime / 60) < 10 && Math.floor(res[i].EstimateTime / 60)>=5) {
+                            else if (Math.floor(res[i].EstimateTime / 60) < 10 && Math.floor(res[i].EstimateTime / 60) >= 5) {
                                 $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-warning "><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].EstimateTime / 60)}</td><td>${res[i].PlateNumb}</td></tr>`)
                             }
                             else if (Math.floor(res[i].EstimateTime / 60) < 5) {
@@ -317,7 +317,7 @@
                                 if (Math.floor(res[i].Estimates[r].EstimateTime / 60) >= 30) {
                                     $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-primary text-white"><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].Estimates[r].EstimateTime / 60)}</td><td>${res[i].Estimates[r].PlateNumb}</td></tr>`)
 
-                                } else if (Math.floor(res[i].Estimates[r].EstimateTime / 60) < 30 && Math.floor(res[i].Estimates[r].EstimateTime/60)>=10) {
+                                } else if (Math.floor(res[i].Estimates[r].EstimateTime / 60) < 30 && Math.floor(res[i].Estimates[r].EstimateTime / 60) >= 10) {
                                     $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-success text-white"><td>${res[i].RouteName.Zh_tw}</td><td>${Math.floor(res[i].Estimates[r].EstimateTime / 60)}</td><td>${res[i].Estimates[r].PlateNumb}</td></tr>`)
                                 }
                                 else if (Math.floor(res[i].Estimates[r].EstimateTime / 60) < 10 && Math.floor(res[i].Estimates[r].EstimateTime / 60) >= 5) {
@@ -343,12 +343,12 @@
                         }
                         if (res[i].StopStatus === 2) {
                             // console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
-            
+
                             $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-secondary text-white"><td>${res[i].RouteName.Zh_tw}</td><td>此站不停</td><td>無資料</td></tr>`)
                         }
                         if (res[i].StopStatus === 4) {
                             //console.log(res[i].Direction + " " + res[i].RouteName.Zh_tw + " " + res[i].PlateNumb + " " + res[i].StopStatus)
-                    
+
                             $("#BUS-tbody-" + res[i].Direction).append(`<tr class="bg-secondary text-white"><td>${res[i].RouteName.Zh_tw}</td><td>今日不開</td><td>無資料</td></tr>`)
                         }
                     }
@@ -363,8 +363,8 @@
             async function refreshAllApi() {
 
 
-                var Bus_stops = ["文化新村", "弘文中學", "中山祥和路口", "寶熊漁樂碼頭", "栗林車站", "潭子車站", "豐原車站", "台中車站(轉運中心A月台)", "台中車站(轉運中心B月台)", "台中車站(轉運中心C月台)", "台中車站(轉運中心D月台)","捷運松竹站（北屯路）"]
-                var stops_code = [[1237, 1238], [1254, 1255], [4199, 4200], [1306, 1307], [1258, 1259], [1300, 1301], [2845, 2846], [4980], [4981], [4983], [4989],[332,333]]
+                var Bus_stops = ["文化新村", "弘文中學", "中山祥和路口", "寶熊漁樂碼頭", "栗林車站", "潭子車站", "豐原車站", "台中車站(轉運中心A月台)", "台中車站(轉運中心B月台)", "台中車站(轉運中心C月台)", "台中車站(轉運中心D月台)", "捷運松竹站(北屯路)"]
+                var stops_code = [[1237, 1238], [1254, 1255], [4199, 4200], [1306, 1307], [1258, 1259], [1300, 1301], [2845, 2846], [4980], [4981], [4983], [4989], [332, 333]]
 
                 $("#BUS-tbody-0").html(`<tr class="bus-loading"><td colspan="3"><div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 資料讀取中...</td></tr>`)
                 $("#BUS-tbody-1").html(`<tr class="bus-loading"><td colspan="3"><div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 資料讀取中...</td></tr>`)
