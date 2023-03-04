@@ -10,6 +10,33 @@
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.css"
+        integrity="sha512-6+fQwheLeCW6sKV5liSHZ0rxcrN4TRBwWOhsof+3Iahu9J+WRyF4eBLjL5QshWxja6WiKE1WAtrH0hsRJ3nA8A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/2.4.0/Control.FullScreen.min.css"
+        integrity="sha512-Gf0xgqc7R4+2ATKUYRXPpl2xXWAbHIgIIGlqy1ugbTcuSSSKG7Kw/IULAuQWIiRVwQAn0CcLVRtI79C6mGROQQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <style>
+            #Time {
+                border-radius: 5px;
+  position: fixed;
+  z-index: 9999;
+  background-color: #f1f1f1;
+  text-align: center;
+  border: 1px solid #d3d3d3;
+}
+
+#Timeheader {
+    border-radius: 5px;
+  padding: 10px;
+  cursor: move;
+}
+        </style>
 </head>
 
 <body>
@@ -18,7 +45,7 @@
 
         <nav class="navbar navbar-dark bg-dark sticky-top p-2">
             <div style="width: 100%;text-align: center;" class="p-2">
-                <a class="navbar-brand" style="flex:1 0 auto;" id="header">Loading</a>
+                <a class="navbar-brand" style="flex:1 0 auto;" id="header">大眾運輸查詢系統</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasDarkNavbar" style="  
                     position:absolute;
@@ -27,7 +54,7 @@
                     padding:5px;" aria-controls="offcanvasDarkNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
+          
             </div>
         </nav>
         <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
@@ -44,20 +71,32 @@
                     <ul class="list-group mb-1" id="toolbar-1" style="cursor: pointer;">
                         <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas"
                             onclick="App('TRAsearch')">台鐵</li>
-                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas">高鐵</li>
-                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas">捷運</li>
+                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas"
+                            onclick="App('HSRsearch')">高鐵</li>
+                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas"
+                            onclick="App('MRTsearch')">捷運</li>
 
                         <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas">公路客運</li>
                         <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas">市區客運</li>
-                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas">共享單車</li>
+                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas" onclick="App('BIKEsearch')">共享單車</li>
                     </ul>
                     <ul class="list-group mb-1" id="toolbar-2" style="cursor: pointer;">
-                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas">已加星號</li>
-                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas">歷史紀錄</li>
+                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas" onclick="App('marked')">書籤</li>
+                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas" onclick="App('history')">歷史紀錄</li>
+                    </ul>
+                    <ul class="list-group mb-1" id="toolbar-2" style="cursor: pointer;">
+                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas" onclick="App('setting')">設定</li>
+
+                        <li class="list-group-item list-group-item-dark" data-bs-dismiss="offcanvas"
+                            onclick="App('about')">關於</li>
                     </ul>
                 </ul>
             </div>
         </div>
+        <div id="Time" >
+            <div id="Timeheader" class="bg-gradient bg-primary text-white">時間顯示</div>
+            <h3>15:30</h3>
+          </div>
         <div class="alert alert-info" id="loading-info">資料讀取中...</div>
         <div id="main-content" class="p-3">
             資料讀取中...
@@ -70,6 +109,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
     <!--Jquery-->
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js"
+        integrity="sha512-mq6Ep7oDFiumX+lUJle/srDcLqY512R6Yney/E3u3sZZO7T+UgoizxPmAauxoc5qERfMVMcHVITQYf6eKmtjtw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/2.4.0/Control.FullScreen.js"
+        integrity="sha512-soC5gg5CeLNdNfDfPXZtkyDOQE1izv2ermc/Ub4Yse0WVEUUadAe6hnduFqryCvA1gJi298YKEJVvnxs8STUlQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
     <!--Main script-->
     <script>
@@ -131,10 +178,10 @@
         })(jQuery);
 
 
-        var TrainStationData;
+        var TrainStationData = "";
         function TrainStationDataOpt(type, par1) {
             if (type === "get") {
-                if ($("#req_header").text() !== "") {
+                if ($("#req_header").text() !== "" && TrainStationData === "") {
                     let accesstoken = JSON.parse($("#req_header").text());
                     $.ajax({
                         url: `https://tdx.transportdata.tw/api/basic/v3/Rail/TRA/Station?%24format=JSON`,
@@ -149,20 +196,21 @@
                             App("loadingDismiss");
                         },
                         error: function (xhr, textStatus, thrownError) {
-                            App("loadingFailed", "讀取台鐵車站資料");
+                            if (TrainStationData === "") { App("loadingFailed", "讀取台鐵車站資料"); }
                         }
                     })
                 } else {
-                    App("loadingFailed", "讀取台鐵車站資料");
+                    if (TrainStationData === "") { App("loadingFailed", "讀取台鐵車站資料"); }
+
                 }
             } else if (type === "search") {
 
                 $("#search-result").html("")
                 for (i = 0; i < TrainStationData.Stations.length; i++) {
 
-                    if (TrainStationData.Stations[i].StationName.Zh_tw.includes(par1) && par1 !== "") {
+                    if ((TrainStationData.Stations[i].StationName.Zh_tw.includes(par1) || TrainStationData.Stations[i].StationName.Zh_tw.replace("臺", "台").includes(par1)) && par1 !== "") {
                         console.log(TrainStationData.Stations[i])
-                        $("#search-result").append(`<a onclick="App('station','${TrainStationData.Stations[i].StationName.Zh_tw}','${TrainStationData.Stations[i].StationID}',${i})" href="#" class="list-group-item list-group-item-action">${TrainStationData.Stations[i].StationName.Zh_tw}(${TrainStationData.Stations[i].StationID})</a>`)
+                        $("#search-result").append(`<a onclick="App('TRAstation','${TrainStationData.Stations[i].StationName.Zh_tw}','${TrainStationData.Stations[i].StationID}',${i})" href="#" class="list-group-item list-group-item-action">${TrainStationData.Stations[i].StationName.Zh_tw}(${TrainStationData.Stations[i].StationID})</a>`)
                     }
                 }
                 if ($("#search-result").html() == "") {
@@ -173,12 +221,12 @@
 
         }
 
-        var 
-        MRTStationData,
-        MRTStationIndex;
+        var
+            MRTStationData = "",
+            MRTStationIndex;
         function MRTStationDataOpt(type, par1) {
             if (type === "get") {
-                if ($("#req_header").text() !== "") {
+                if ($("#req_header").text() !== "" && MRTStationData === "") {
                     let accesstoken = JSON.parse($("#req_header").text());
                     $.ajax({
                         url: `https://tdx.transportdata.tw/api/basic/v3/Rail/TRA/Station?%24format=JSON`,
@@ -193,16 +241,59 @@
                             App("loadingDismiss");
                         },
                         error: function (xhr, textStatus, thrownError) {
-                            App("loadingFailed", "讀取捷運車站資料");
+                            if (MRTStationData === "") { App("loadingFailed", "讀取捷運車站資料"); }
                         }
                     })
                 } else {
-                    App("loadingFailed", "讀取捷運車站資料");
+                    if (MRTStationData === "") { App("loadingFailed", "讀取捷運車站資料"); }
+
                 }
             } else if (type === "search") {
 
             }
         }
+        var HSRStationData = ""
+        function HSRStationDataOpt(type, par1) {
+            if (type === "get") {
+                if ($("#req_header").text() !== "" && HSRStationData === "") {
+                    let accesstoken = JSON.parse($("#req_header").text());
+                    $.ajax({
+                        url: `https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/Station?%24format=JSON`,
+                        method: "GET",
+                        dataType: "json",
+                        headers: {
+                            "authorization": "Bearer " + accesstoken.access_token,
+                        },
+                        success: function (res) {
+                            HSRStationData = res;
+                            console.log(res);
+                            App("loadingDismiss");
+                        },
+                        error: function (xhr, textStatus, thrownError) {
+                            if (HSRStationData === "") { App("loadingFailed", "讀取高鐵車站資料") }
+                        }
+                    })
+                } else {
+                    if (HSRStationData === "") { App("loadingFailed", "讀取高鐵車站資料") }
+                }
+            } else if (type === "search") {
+                $("#search-result").html("")
+                for (i = 0; i < HSRStationData.length; i++) {
+
+                    if ((HSRStationData[i].StationName.Zh_tw.includes(par1) || HSRStationData[i].StationName.Zh_tw.replace("台", "臺").includes(par1)) && par1 !== "") {
+                        console.log(HSRStationData[i])
+                        $("#search-result").append(`
+                        <a onclick="App('HSRstation','${HSRStationData[i].StationName.Zh_tw}','${HSRStationData[i].StationID}',${i})" href="#" class="list-group-item list-group-item-action">${HSRStationData[i].StationName.Zh_tw}(${HSRStationData[i].StationID})</a>`)
+                    }
+                }
+                if ($("#search-result").html() == "") {
+                    $("#search-result").append(`<a href="#" class="list-group-item list-group-item-action">無資料</a>`)
+
+                }
+            }
+        }
+
+        var NowPage = ""
         function App(page, par1, par2, par3) {
             if (page === "loading" || page === "loadingFailed" || page === "loadingDismiss") {
                 if (page === "loading") {
@@ -219,12 +310,18 @@
                     $("#main-content").html(`<div class="d-flex"><input type="text" class="form-control me-1" oninput="TrainStationDataOpt('search',$('#trainStationNameInput').val())" id="trainStationNameInput" placeholder="輸入台鐵車站名稱..."><button class="btn btn-primary bi bi-search" onclick="TrainStationDataOpt('search',$('#trainStationNameInput').val()) "></button></div><div class="list-group mt-2" id="search-result"></div>`)
                     TrainStationDataOpt("get")
                 }
+                else if (page === "HSRsearch") {
+                    $("#header").text("高鐵車站 - 搜尋")
+                    $("#main-content").html(`<div class="d-flex"><input type="text" class="form-control me-1" oninput="HSRStationDataOpt('search',$('#trainStationNameInput').val())" id="trainStationNameInput" placeholder="輸入高鐵車站名稱..."><button class="btn btn-primary bi bi-search" onclick="HSRStationDataOpt('search',$('#trainStationNameInput').val()) "></button></div><div class="list-group mt-2" id="search-result"></div>`)
+                    HSRStationDataOpt("get")
+                    
+                }
                 else if (page === "MRTsearch") {
                     $("#header").text("捷運車站 - 搜尋")
                     $("#main-content").html(`<div class="d-flex"><input type="text" class="form-control me-1" oninput="TrainStationDataOpt('search',$('#trainStationNameInput').val())" id="trainStationNameInput" placeholder="輸入捷運站名..."><button class="btn btn-primary bi bi-search" onclick="TrainStationDataOpt('search',$('#trainStationNameInput').val()) "></button></div><div class="list-group mt-2" id="search-result"></div>`)
                     TrainStationDataOpt("get")
                 }
-                else if (page === "station") {
+                else if (page === "TRAstation") {
                     let stationLvL;
                     $("#header").text("台鐵 - " + par1 + "車站")
                     //['0: 特等', '1: 一等', '2: 二等', '3: 三等', '4: 簡易', '5: 招呼', '6: 號誌', 'A: 貨運', 'B: 基地', 'X: 非車']
@@ -256,18 +353,90 @@
                         stationLvL = "非車站"
                     }
                     $("#main-content").html(`
-                <div class="card"><div class="card-body"><h5 class="card-title">車站資料</h5><h6 class="card-subtitle mb-2 text-muted">${stationLvL}</h6><p class="card-text">地址 : ${TrainStationData.Stations[par3].StationAddress}<br>電話 : ${TrainStationData.Stations[par3].StationPhone}</p><a href="${TrainStationData.Stations[par3].StationURL}" target="_blank" class="card-link bi bi-box-arrow-up-right">詳細資料</a></div></div>
+                <div class="card mb-1"><div class="card-body"><h5 class="card-title">${par1}車站</h5><h6 class="card-subtitle mb-2 text-muted">${stationLvL}</h6><p class="card-text">地址 : ${TrainStationData.Stations[par3].StationAddress}<br>電話 : ${TrainStationData.Stations[par3].StationPhone}</p><a href="${TrainStationData.Stations[par3].StationURL}" target="_blank" class="card-link bi bi-box-arrow-up-right">詳細資料</a></div></div>
+                <div class="card mb-1"><div class="card-body"><h5 class="card-title">即時到離站看板</h5><h6 class="card-subtitle mb-2 text-muted">每2分鐘更新</h6><p class="card-text">地址 : ${TrainStationData.Stations[par3].StationAddress}<br>電話 : ${TrainStationData.Stations[par3].StationPhone}</p><a href="${TrainStationData.Stations[par3].StationURL}" target="_blank" class="card-link bi bi-box-arrow-up-right">詳細資料</a></div></div>
+                `)
+                }
+                else if (page === "HSRstation") {
+                    $("#main-content").html(`${HSRStationData[par3].StationAddress}`)
+                }
+                else if (page === "BIKEsearch") {
+                    $("#header").text("公共自行車 - 搜尋")
+                    $("#main-content").html(`    
+                    <div id="map" style="height:50vh"><div style="display: flex;align-items: center;justify-content: center;text-align: center;height: 100%;"><div id="OSM-loading" style="text-align: center;"><h4>OpenStreetMap</h4>資料讀取中...</div></div></div>
+                    選擇資料提供方式:
+                    <div class="form-check"><input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked><label class="form-check-label" for="flexRadioDefault1">使用我的位置資訊(需開啟定位)</label></div>
+                    <div class="form-check"><input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"><label class="form-check-label" for="flexRadioDefault2">使用地圖上的標記</label></div>`)
+                    var center = [23.75518176611264, 120.9406086935125], MyLoc = []
+
+                    var map = L.map('map').setView(center, 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap',
+                        zoomControl: true,
+                    }).addTo(map);
+                    L.control.locate({
+                        icon: 'bi bi-geo-alt-fill fs-5',
+                        position: 'topleft',
+                        locateOptions: {
+                            enableHighAccuracy: true
+                        },
+                        flyTo: true,
+                        strings: {
+                            title: '定位我的位置',
+                            metersUnit: '公尺',
+                            feetUnit: '英尺',
+                            popup: '<b>你的定位點</b><br>距離誤差：{distance}{unit}以內'
+                        },
+                        clickBehavior: {
+                            inView: 'stop',
+                            outOfView: 'setView',
+                            inViewNotFollowing: 'inView'
+                        }
+                    }).addTo(map);
+
+                    L.control.fullscreen({
+                        position: 'topleft',
+                        title: '進入全螢幕',
+                        titleCancel: '離開全螢幕',
+                        content: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16"><path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/></svg>',
+                        forceSeparateButton: true,
+                        forcePseudoFullscreen: true,
+                        fullscreenElement: false
+                    }).addTo(map);
+                    var popup = L.popup();
+                    function onMapClick(e) {
+                        console.log(e)
+                        let lat = e.latlng.lat; // 緯度
+                        let lng = e.latlng.lng; // 經度
+                        popup.setLatLng(e.latlng).setContent(`<b>此地點</b><br>經度：${lng}<br/>緯度：${lat}`).openOn(map);
+                        $("#lat").val(lat); $("#lng").val(lng)
+                    }
+                    map.on('click', onMapClick);
+                    map.on('locationfound', function (e) {
+                        console.log(e)
+                        MyLoc[0] = e.latlng.lat
+                        MyLoc[1] = e.latlng.lng
+                    });
+
+                }
+                else if (page === "about") {
+                    $("#header").text("關於")
+                    $("#main-content").html(`
+                <h4>關於 大眾運輸查詢系統</h4>
+                <p><i>"整合交通資料，達到最佳效能"</i></p>
+                <p>資料來源:<a href="https://tdx.transportdata.tw/" target="_blank"><img alt="" height="30" src="https://tdx.transportdata.tw/images/tdxlogo.png" /></a></p>
+ 
                 `)
                 }
                 else if (page === "home") {
                     $("#header").text("大眾運輸查詢 - 首頁")
                     $("#main-content").html(`
                 <div class="card m-1"><div class="card-body"><h5 class="card-title">台鐵</h5><h6 class="card-subtitle mb-2 text-muted">指定站點的台鐵列車資料</h6><p class="card-text"></p><button class="btn btn-primary"  onclick="App('TRAsearch')">開始查詢</button></div></div>
-                <div class="card m-1"><div class="card-body"><h5 class="card-title">高鐵</h5><h6 class="card-subtitle mb-2 text-muted">指定站點的高鐵列車資料</h6><p class="card-text"></p><button class="btn btn-primary"  onclick="App('HSRsearch')">開始查詢</button></div></div>
+                <div class="card m-1"><div class="card-body"><h5 class="card-title">高鐵</h5><h6 class="card-subtitle mb-2 text-muted">指定站點的高鐵時刻表</h6><p class="card-text"></p><button class="btn btn-primary"  onclick="App('HSRsearch')">開始查詢</button></div></div>
                 <div class="card m-1"><div class="card-body"><h5 class="card-title">捷運</h5><h6 class="card-subtitle mb-2 text-muted">指定站點的捷運列車動態</h6><p class="card-text text-danger">目前台中捷運不提供動態資料</p><button class="btn btn-primary"  onclick="App('MRTsearch')">開始查詢</button></div></div>
                 <div class="card m-1"><div class="card-body"><h5 class="card-title">公路客運</h5><h6 class="card-subtitle mb-2 text-muted">公路客運即時動態</h6><p class="card-text"></p><button class="btn btn-primary"  onclick="App('InterBUSsearch')">開始查詢</button></div></div>
                 <div class="card m-1"><div class="card-body"><h5 class="card-title">市區客運</h5><h6 class="card-subtitle mb-2 text-muted">市區客運即時動態</h6><p class="card-text"></p><button class="btn btn-primary"  onclick="App('CityBUSsearch')">開始查詢</button></div></div>
-                <div class="card m-1"><div class="card-body"><h5 class="card-title">共享單車</h5><h6 class="card-subtitle mb-2 text-muted">共享單車即時剩餘位置資料</h6><p class="card-text"></p><button class="btn btn-primary"  onclick="App('BIKEsearch')">開始查詢</button></div></div>
+                <div class="card m-1"><div class="card-body"><h5 class="card-title">公共自行車</h5><h6 class="card-subtitle mb-2 text-muted">公共自行車即時剩餘位置資料</h6><p class="card-text"></p><button class="btn btn-primary"  onclick="App('BIKEsearch')">開始查詢</button></div></div>
                 `)
                 }
                 else {
@@ -278,6 +447,8 @@
                 請<a href="#" onclick="App('home')">回到首頁</a>
                 `)
                 }
+                NowPage = page
+                history.pushState({ "page": page,"par1":par1,"par2":par2,"par3":par3 }, null,"#");
             }
         }
 
@@ -314,9 +485,59 @@
         }
 
 
+        window.addEventListener("popstate", function (e) {
+            if (e.state && NowPage !== e.state.page) {
+                console.log(e.state.page)
+                App(e.state.page,e.state.par1,e.state.par2,e.state.par3)
+            }            
+        });
 
-        
 
+
+
+
+        dragElement(document.getElementById("Time"));
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    /* if present, the header is where you move the DIV from:*/
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    /* otherwise, move the DIV from anywhere inside the DIV:*/
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    /* stop moving when mouse button is released:*/
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
     </script>
 </body>
 
