@@ -40,6 +40,8 @@
         </div>
 
         <button class="btn btn-primary me-1" onclick="getnum()">建議新數字+新增現有數字</button>
+        <button class="btn btn-primary me-1" onclick="addnum()">送出</button>
+        <button class="btn btn-primary me-1" onclick="var n = Math.abs(getRandomInt(0, 9999) + getRandomInt(-10, 10) - getRandomInt(-20, 220));$('#input').val(n);checknum()">建議新數字</button>
     </div>
     <p><span id="search">輸入數字以搜尋...</span></p>
     

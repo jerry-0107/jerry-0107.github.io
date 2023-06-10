@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css'
+    integrity='sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=='
+    crossorigin='anonymous' />
+<link rel='stylesheet'
+    href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css'
+    integrity='sha512-YFENbnqHbCRmJt5d+9lHimyEMt8LKSNTMLSaHjvsclnZGICeY/0KYEeiHwD1Ux4Tcao0h60tdcMv+0GljvWyHg=='
+    crossorigin='anonymous' />
+</head>
+
+<body class="m-3">
+    <h2>分析(非即時)</h2>
+    <p>共猜了<span id="total" class="badge text-bg-primary">N/A</span>個數字 猜中了<span id="success-total"
+            class="badge text-bg-success">N/A</span>個數字
+
+    </p>
+
+    <p>
+        理論平均值: 每<span id="total" class="badge text-bg-primary">222.20</span>個數字/1個成功數字
+        <br>當前平均值: 每<span id="nowavg" class="badge text-bg-primary">N/A</span>個數字/1個成功數字
+    </p>
+    <div class="progress" style="height: 16px;">
+        <div class="progress-bar" role="progressbar" id="prog1" style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
+            aria-valuemax="100">
+            <span id="percent">N/A</span>
+        </div>
+    </div>
+
+
+
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js'
+    integrity='sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=='
+    crossorigin='anonymous'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js'
+    integrity='sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g=='
+    crossorigin='anonymous'></script>
+    <script>
+        var number_data, success_data, current_success;
+        if (localStorage.getItem("rnum")) {
+            number_data = JSON.parse(localStorage.getItem("rnum")).number
+            success_data = JSON.parse(localStorage.getItem("rnum")).success
+            /*for (let i = 0; i < number_data.length; i++) {
+                if (success_data.includes(number_data[i])) {
+                    $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${number_data[i]}</li>`)
+                } else {
+                 //   $("#output").append(`<li class="list-group-item bg-secondary" data-type="failed">${number_data[i]}</li>`)
+                }
+            }**/
+
+            // for(i=0;i<success_data.length;i++){
+            //   if(success_data[i] !== null){
+            //  $("#output").append(`<li class="list-group-item text-bg-success" data-type="success">${success_data[i]}</li>`)
+
+            //     }
+
+            // }
+            current_success = success_data.length
+            // $("#output").append(`<li class="list-group-item text-bg-dark" data-type="divider">---上次結尾 共${number_data.length}個數字 ${current_success}個成功數字---</li>`)
+            $("#total").text(number_data.length)
+            let per = (number_data.length / 10000) * 100
+            $("#percent").text(per.toFixed(2) + "%")
+            $("#prog1").css("width", Number(per.toFixed(2)) + "%").attr("aria-valuenow", (number_data.length / 10000) * 100)
+
+
+            $("#success-total").text(current_success)
+
+            if (Number((number_data.length / current_success).toFixed(2)) <= 222.20) {
+                $("#nowavg").text(`${(number_data.length / current_success).toFixed(2)}`).attr("class", "badge text-bg-success")
+            } else if (Number((number_data.length / current_success).toFixed(2)) > 222.20) {
+                $("#nowavg").text(`${(number_data.length / current_success).toFixed(2)}`).attr("class", "badge text-bg-secondary")
+            }
+
+        } else {
+            localStorage.setItem("rnum", JSON.stringify({ number: [], success: [] }))
+        }
+    </script>
+</body>
+
+</html>
