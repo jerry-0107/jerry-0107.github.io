@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Videos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <style>
+        iframe {
+
+
+            width: 100%;
+            height: 100%;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+
+<body class="p-1">
+    <div class="flex pb-1">
+        <input class="form-control pr-1" placeholder="輸入YT 影片連結" id="ytlink" />
+        <div class="p-1"></div>
+        <button class="btn btn-outline-dark" id="submit">GO</button>
+    </div>
+    <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 100%;">
+
+    </div>
+
+
+    <script>
+
+        function UrlParam(url, name) {
+            var url = new URL(url),
+                result = url.searchParams.get(name);
+            return result
+        }
+
+        function getVideoOrPlaylistId(inputData) {
+            if (!inputData.includes("youtube.com/post")) {
+                if (inputData.includes("youtube.com")) {
+
+                    var output = inputData
+                    if (inputData.includes("playlist")) {
+                        return [UrlParam(inputData, "list"), "playlist"]
+                    }
+                    output = inputData.replace("www.", "")
+                    output = output.replace("https://", "")
+                    output = output.replace("youtube.com/watch?v=", "")
+                    var nextSearchCharAt = output.indexOf("&")
+                    if (nextSearchCharAt === -1) return [output, "video"]
+                    return [output.slice(0, nextSearchCharAt), "video"]
+
+                } else if (inputData.includes("youtu.be")) {
+
+                    var output = inputData
+                    if (inputData.includes("playlist")) {
+                        return [UrlParam(inputData, "list"), "playlist"]
+                    }
+                    output = inputData.replace("www.", "")
+                    output = output.replace("https://", "")
+                    output = output.replace("youtu.be/", "")
+                    var nextSearchCharAt = output.indexOf("?")
+                    if (nextSearchCharAt === -1) return [output, "video"]
+                    return [output.slice(0, nextSearchCharAt), "video"]
+                }
+            } else {
+                console.log("invaild link")
+                return null
+            }
+
+        }
+
+        function handleClick(e) {
+            var inputData = document.getElementById("ytlink").value
+            console.log(getVideoOrPlaylistId(inputData))
+            try {
+                theid = getVideoOrPlaylistId(inputData)[0]
+                thekind = getVideoOrPlaylistId(inputData)[1]
+                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}?rel=0`)
+                document.getElementById("video").innerHTML = `<iframe id="player" src="https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0"></iframe>`
+                document.getElementById("ytlink").value = ""
+            } catch {
+                alert("請檢查影片連結是否錯誤!!")
+            }
+
+
+        }
+
+        function handleKeyboard(e) {
+            if (e.keyCode === 13) { handleClick() }
+        }
+
+
+        document.getElementById("submit").onclick = handleClick
+        document.onkeydown = handleKeyboard
+    </script>
+
+
+    <!-- 
+     播放相關按鈕
+    <div class="row align-items-center pt-4">
+        <div class="col text-center">
+            <div class="btn-group">
+                <button class="btn btn-outline-dark" id="play" type="button">播放</button>
+                <button class="btn btn-outline-dark" id="pause" type="button">暫停</button>
+                <button class="btn btn-outline-dark" id="stop" type="button">停止</button>
+                <button class="btn btn-outline-dark" id="back" type="button">後退10秒</button>
+                <button class="btn btn-outline-dark" id="forward" type="button">前進10秒</button>
+            </div>
+        </div>
+
+        <!-- 速度相關
+        <div class="col text-center">
+            <div class="form-group row align-items-center mb-0">
+                <div class="col-2 text-right">
+                    <label class="mb-0" for="volume">速度</label>
+                </div>
+                <div class="col-10">
+                    <input class="form-control-range" id="rate" type="range" min="0.25" max="2" step="0.25" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 聲音相關按鈕
+    <div class="row pt-4">
+        <div class="col-10">
+            <div class="form-group row align-items-center mb-0">
+                <div class="col-2 text-right">
+                    <label class="mb-0" for="volume">音量</label>
+                </div>
+                <div class="col-10">
+                    <input class="form-control-range" id="volume" type="range" min="0" max="100" step="1" />
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="custom-control custom-switch">
+                <input class="custom-control-input" id="toggleMute" type="checkbox" checked="checked" />
+                <label class="custom-control-label" for="toggleMute">靜音</label>
+            </div>
+        </div>
+    </div> -->
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(e) {
+            const play = document.getElementById('play');
+            const pause = document.getElementById('pause');
+            const stop = document.getElementById('stop');
+
+            const back = document.getElementById('back');
+            const forward = document.getElementById('forward');
+
+            const rate = document.getElementById('rate');
+
+            const volume = document.getElementById('volume');
+            const mute = document.getElementById('toggleMute');
+
+            //- 播放、暫停、停止
+            play.addEventListener('click', () => {
+                mute.checked = true;
+                e.target.mute().playVideo();
+            });
+            pause.addEventListener('click', () => e.target.pauseVideo());
+            stop.addEventListener('click', () => e.target.stopVideo());
+
+            // 後退、前進10秒
+            back.addEventListener('click', () => {
+                // 先抓到目前秒數
+                let current = e.target.getCurrentTime();
+                // 後退10秒：目前秒數 - 10
+                e.target.seekTo(current - 10);
+            });
+            forward.addEventListener('click', () => {
+                // 先抓到目前秒數
+                let current = e.target.getCurrentTime();
+                // 前進10秒：目前秒數 + 10
+                e.target.seekTo(current + 10);
+            });
+
+            //- 速度
+            rate.value = e.target.getPlaybackRate(); // 先抓目前的速度
+            rate.addEventListener('input', () => e.target.setPlaybackRate(Number(rate.value)))
+
+            //- 音量
+            volume.value = e.target.getVolume(); // 先抓目前的音量
+            volume.addEventListener('input', () => e.target.setVolume(volume.value))
+
+            //- 靜音
+            //- 有聲的情況下無法自動播放，因此不執行 playVideo
+            mute.addEventListener('change', () => mute.checked ? e.target.mute().playVideo() : e.target.unMute());
+
+        }
+    </script>
+</body>
+
+</html>
