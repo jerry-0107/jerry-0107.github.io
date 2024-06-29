@@ -57,14 +57,16 @@
         </div>
         <div id="fullscToolBar" class="p-1" style="width: 100%;">
             <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()"
-                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .55rem;margin-left: 1.5rem;"><i
-                    class="bi bi-fullscreen-exit"></i></button>
+                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
+                    class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
             <div style="float: right;color: #fff;padding-right: 1.5rem;" id="batteryBar">電力等級
             </div>
         </div>
     </div>
 
     <script>
+
+        var nowplays = [0, 0]
 
 
         function UrlParam(url, name) {
@@ -75,20 +77,16 @@
 
         function getVideoOrPlaylistId(inputData) {
             if (!inputData.includes("youtube.com/post")) {
-                if (inputData.includes("youtube.com")) {
+                if (inputData.includes("youtube.com") && inputData.includes("/watch")) {
 
                     var output = inputData
                     if (inputData.includes("playlist")) {
                         return [UrlParam(inputData, "list"), "playlist"]
                     }
-                    output = inputData.replace("www.", "")
-                    output = output.replace("https://", "")
-                    output = output.replace("youtube.com/watch?v=", "")
-                    var nextSearchCharAt = output.indexOf("&")
-                    if (nextSearchCharAt === -1) return [output, "video"]
-                    return [output.slice(0, nextSearchCharAt), "video"]
+                    return [UrlParam(inputData, "v"), "video"]
 
-                } else if (inputData.includes("youtu.be")) {
+                }
+                else if (inputData.includes("youtu.be") || (inputData.includes("youtube.com") && inputData.includes("/live"))) {
 
                     var output = inputData
                     if (inputData.includes("playlist")) {
@@ -97,6 +95,12 @@
                     output = inputData.replace("www.", "")
                     output = output.replace("https://", "")
                     output = output.replace("youtu.be/", "")
+                    output = output.replace("youtube.com/", "")
+                    output = output.replace("live", "")
+                    output = output.replace("/", "")
+                    output = output.replace("m.", "")//for m.youtube.com
+
+                    console.log(output)
                     var nextSearchCharAt = output.indexOf("?")
                     if (nextSearchCharAt === -1) return [output, "video"]
                     return [output.slice(0, nextSearchCharAt), "video"]
@@ -118,8 +122,8 @@
             return false
         }
 
-        function updateHistoryList() {
-
+        function updateHistoryList(nowplays) {
+            console.log(nowplays)
             var data = JSON.parse(localStorage.getItem("YTplayerHistory")),
                 htmlTxt = "";
 
@@ -130,7 +134,7 @@
             console.log(data)
             data = data.reverse()
             for (let i = 0; i < data.length; i++) {
-                htmlTxt = htmlTxt + `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? " (" + data[i].playlistVideoCounts + "部影片)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}</a>`
+                htmlTxt = htmlTxt + `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action ${data[i].id === nowplays[1] ? "active" : ""}"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? " (" + data[i].playlistVideoCounts + "部影片)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}<br/>${data[i].id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a>`
             }
             document.getElementById("historyList").innerHTML = htmlTxt
         }
@@ -149,7 +153,7 @@
                     lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount })
                     localStorage.setItem("YTplayerHistory", JSON.stringify(lastData))
                 }
-                updateHistoryList()
+                updateHistoryList(nowplays)
             }
         }
 
@@ -159,7 +163,7 @@
                 var theid = _id,
                     thekind = _type;
                 console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}?rel=0`)
-                document.getElementById("video").innerHTML = `<iframe id="player" src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&fs=0"></iframe>`
+                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0"></iframe>`
 
                 document.getElementById("ytlink").value = ""
 
@@ -171,11 +175,15 @@
                         .then(r => dumpLocalData(_id, _type, r))
                         .catch(e => console.warn(e))
                 }
+
             }
 
             if (type && id) {
                 try {
+                    nowplays = [type, id]
                     renderSc(type, id)
+                    updateHistoryList(nowplays)
+
                 } catch {
                     const myModal = new bootstrap.Modal('#invailddata-modal', {})
                     myModal.show()
@@ -186,6 +194,8 @@
                 try {
                     var theid = getVideoOrPlaylistId(inputData)[0],
                         thekind = getVideoOrPlaylistId(inputData)[1];
+                    nowplays = [thekind, theid]
+                    updateHistoryList(nowplays)
                     renderSc(thekind, theid)
 
                 } catch {
@@ -294,7 +304,7 @@
         window.onload = function () {
             $("#video").css("height", "100%")
             $("#fullscToolBar").hide()
-            updateHistoryList()
+            updateHistoryList(nowplays)
             if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
                 updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"))
