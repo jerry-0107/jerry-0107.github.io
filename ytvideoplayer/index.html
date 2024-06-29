@@ -46,6 +46,8 @@
         <div class="p-1"></div>
         <button class="btn btn-primary" id="submit"><i class="bi bi-search"></i></button>
         <div class="p-1"></div>
+        <button class="btn btn-outline-danger" id="clear"><i class="bi bi-trash"></i></button>
+        <div class="p-1"></div>
         <button class="btn btn-outline-dark" id="fullsc"><i class="bi bi-fullscreen"></i></button>
     </div>
     <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 100%;">
@@ -113,7 +115,7 @@
                 htmlTxt = "";
 
             for (let i = 0; i < data.length; i++) {
-                htmlTxt = htmlTxt + `<a href="${location.origin}/?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? "(播放清單)" : ""}<br/><i class="bi bi-person"></i>&nbsp;${data[i].channel}</a>`
+                htmlTxt = htmlTxt + `<a href="${location.origin}/?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? "(播放清單)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}</a>`
             }
             document.getElementById("historyList").innerHTML = htmlTxt
         }
@@ -125,11 +127,11 @@
             } else {
                 if (!localStorage.getItem("YTplayerHistory")) {
                     localStorage.setItem("YTplayerHistory", JSON.stringify(
-                        [{ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.default.url }]
+                        [{ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url }]
                     ))
                 } else {
                     var lastData = JSON.parse(localStorage.getItem("YTplayerHistory"))
-                    lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.default.url })
+                    lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url })
                     localStorage.setItem("YTplayerHistory", JSON.stringify(lastData))
                 }
                 updateHistoryList()
@@ -181,9 +183,13 @@
         function handleClick(e) {
             updateVideoFrame()
         }
+        function clearInput() {
+            if (confirm("確定要清除輸入嗎?")) document.getElementById("ytlink").value = ""
+        }
 
         function handleKeyboard(e) {
             if (e.keyCode === 13) { handleClick() }
+            else if (e.keyCode === 70) { openFullscreen() } //F
         }
         function openFullscreen() {
             var elem = document.getElementById("video");
@@ -196,6 +202,7 @@
             }
         }
 
+        document.getElementById("clear").onclick = clearInput
         document.getElementById("submit").onclick = handleClick
         document.onkeydown = handleKeyboard
         document.getElementById("fullsc").onclick = openFullscreen
@@ -207,116 +214,6 @@
             }
         }
     </script>
-
-
-    <!-- 
-     播放相關按鈕
-    <div class="row align-items-center pt-4">
-        <div class="col text-center">
-            <div class="btn-group">
-                <button class="btn btn-outline-dark" id="play" type="button">播放</button>
-                <button class="btn btn-outline-dark" id="pause" type="button">暫停</button>
-                <button class="btn btn-outline-dark" id="stop" type="button">停止</button>
-                <button class="btn btn-outline-dark" id="back" type="button">後退10秒</button>
-                <button class="btn btn-outline-dark" id="forward" type="button">前進10秒</button>
-            </div>
-        </div>
-
-        <!-- 速度相關
-        <div class="col text-center">
-            <div class="form-group row align-items-center mb-0">
-                <div class="col-2 text-right">
-                    <label class="mb-0" for="volume">速度</label>
-                </div>
-                <div class="col-10">
-                    <input class="form-control-range" id="rate" type="range" min="0.25" max="2" step="0.25" />
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 聲音相關按鈕
-    <div class="row pt-4">
-        <div class="col-10">
-            <div class="form-group row align-items-center mb-0">
-                <div class="col-2 text-right">
-                    <label class="mb-0" for="volume">音量</label>
-                </div>
-                <div class="col-10">
-                    <input class="form-control-range" id="volume" type="range" min="0" max="100" step="1" />
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="custom-control custom-switch">
-                <input class="custom-control-input" id="toggleMute" type="checkbox" checked="checked" />
-                <label class="custom-control-label" for="toggleMute">靜音</label>
-            </div>
-        </div>
-    <!-- </div> -->
-
-    <!-- <script src="https://www.youtube.com/iframe_api"></script>
-
-    <script>
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                events: {
-                    'onReady': onPlayerReady
-                }
-            });
-        }
-
-        function onPlayerReady(e) {
-            const play = document.getElementById('play');
-            const pause = document.getElementById('pause');
-            const stop = document.getElementById('stop');
-
-            const back = document.getElementById('back');
-            const forward = document.getElementById('forward');
-
-            const rate = document.getElementById('rate');
-
-            const volume = document.getElementById('volume');
-            const mute = document.getElementById('toggleMute');
-
-            //- 播放、暫停、停止
-            play.addEventListener('click', () => {
-                mute.checked = true;
-                e.target.mute().playVideo();
-            });
-            pause.addEventListener('click', () => e.target.pauseVideo());
-            stop.addEventListener('click', () => e.target.stopVideo());
-
-            // 後退、前進10秒
-            back.addEventListener('click', () => {
-                // 先抓到目前秒數
-                let current = e.target.getCurrentTime();
-                // 後退10秒：目前秒數 - 10
-                e.target.seekTo(current - 10);
-            });
-            forward.addEventListener('click', () => {
-                // 先抓到目前秒數
-                let current = e.target.getCurrentTime();
-                // 前進10秒：目前秒數 + 10
-                e.target.seekTo(current + 10);
-            });
-
-            //- 速度
-            rate.value = e.target.getPlaybackRate(); // 先抓目前的速度
-            rate.addEventListener('input', () => e.target.setPlaybackRate(Number(rate.value)))
-
-            //- 音量
-            volume.value = e.target.getVolume(); // 先抓目前的音量
-            volume.addEventListener('input', () => e.target.setVolume(volume.value))
-
-            //- 靜音
-            //- 有聲的情況下無法自動播放，因此不執行 playVideo
-            mute.addEventListener('change', () => mute.checked ? e.target.mute().playVideo() : e.target.unMute());
-
-        }
-    </script> -->
-
 
 
 
@@ -337,17 +234,18 @@
         </div>
     </div>
 
-
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasExampleLabel">觀看紀錄</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
+            <button class="btn btn-outline-danger"
+                onclick="if(confirm('確定要清除嗎?\n這項操作無法恢復!!')){localStorage.setItem('YTplayerHistory','[]');updateHistoryList()}"><i
+                    class="bi bi-trash"></i> 清除觀看紀錄</button>
+            <p></p>
             <div class="list-group" id="historyList">
                 <a href="#" class="list-group-item list-group-item-action">無資料</a>
-
-
             </div>
         </div>
     </div>
