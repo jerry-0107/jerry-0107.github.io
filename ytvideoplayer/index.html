@@ -10,11 +10,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         iframe {
-
-
             width: 100%;
             height: 100%;
         }
@@ -38,6 +39,9 @@
 
 <body class="p-1">
     <div class="flex pb-1">
+        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+            aria-controls="offcanvasExample"><i class="bi bi-clock-history"></i></button>
+        <div class="p-1"></div>
         <input class="form-control pr-1" placeholder="輸入YT 影片連結" id="ytlink" />
         <div class="p-1"></div>
         <button class="btn btn-primary" id="submit"><i class="bi bi-search"></i></button>
@@ -90,26 +94,92 @@
                 console.log("invaild link")
                 return null
             }
+        }
 
+        function isIdinHistorylist(id) {
+            if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].id === id) return true
+                }
+                return false
+            }
+            return false
+        }
+
+
+        function updateHistoryList() {
+            var data = JSON.parse(localStorage.getItem("YTplayerHistory")).reverse(),
+                htmlTxt = "";
+
+            for (let i = 0; i < data.length; i++) {
+                htmlTxt = htmlTxt + `<a href="${location.origin}/?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? "(播放清單)" : ""}<br/><i class="bi bi-person"></i>&nbsp;${data[i].channel}</a>`
+            }
+            document.getElementById("historyList").innerHTML = htmlTxt
+        }
+
+        function dumpLocalData(id, type, data) {
+            console.log(id, type, data)
+            if (data.items.length < 1) {
+                return
+            } else {
+                if (!localStorage.getItem("YTplayerHistory")) {
+                    localStorage.setItem("YTplayerHistory", JSON.stringify(
+                        [{ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.default.url }]
+                    ))
+                } else {
+                    var lastData = JSON.parse(localStorage.getItem("YTplayerHistory"))
+                    lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.default.url })
+                    localStorage.setItem("YTplayerHistory", JSON.stringify(lastData))
+                }
+                updateHistoryList()
+            }
+        }
+
+        function updateVideoFrame(type, id) {
+
+            function renderSc(_type, _id) {
+                var theid = _id,
+                    thekind = _type;
+                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}?rel=0`)
+                document.getElementById("video").innerHTML = `<iframe id="player" src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&fs=0"></iframe>`
+
+                document.getElementById("ytlink").value = ""
+
+                if (!isIdinHistorylist(_id)) {
+                    var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+                    fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
+                        method: "GET"
+                    }).then(r => r.json())
+                        .then(r => dumpLocalData(_id, _type, r))
+                        .catch(e => console.warn(e))
+                }
+            }
+
+            if (type && id) {
+                try {
+                    renderSc(type, id)
+                } catch {
+                    const myModal = new bootstrap.Modal('#invailddata-modal', {})
+                    myModal.show()
+                }
+            } else {
+                var inputData = document.getElementById("ytlink").value
+                console.log(getVideoOrPlaylistId(inputData))
+                try {
+                    var theid = getVideoOrPlaylistId(inputData)[0],
+                        thekind = getVideoOrPlaylistId(inputData)[1];
+                    renderSc(thekind, theid)
+
+                } catch {
+                    const myModal = new bootstrap.Modal('#invailddata-modal', {})
+                    myModal.show()
+                }
+            }
         }
 
         function handleClick(e) {
-            var inputData = document.getElementById("ytlink").value
-            console.log(getVideoOrPlaylistId(inputData))
-            try {
-                theid = getVideoOrPlaylistId(inputData)[0]
-                thekind = getVideoOrPlaylistId(inputData)[1]
-                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}?rel=0`)
-                document.getElementById("video").innerHTML = `<iframe id="player" src="https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0"></iframe>`
-
-                document.getElementById("ytlink").value = ""
-            } catch {
-                const myModal = new bootstrap.Modal('#invailddata-modal', {
-
-                })
-
-                myModal.show()
-            }
+            updateVideoFrame()
         }
 
         function handleKeyboard(e) {
@@ -128,12 +198,13 @@
 
         document.getElementById("submit").onclick = handleClick
         document.onkeydown = handleKeyboard
-
-
         document.getElementById("fullsc").onclick = openFullscreen
-
         window.onload = function () {
-
+            updateHistoryList()
+            if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
+                document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
+                updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"))
+            }
         }
     </script>
 
@@ -182,9 +253,9 @@
                 <label class="custom-control-label" for="toggleMute">靜音</label>
             </div>
         </div>
-    </div> -->
+    <!-- </div> -->
 
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
         var player;
@@ -244,7 +315,7 @@
             mute.addEventListener('change', () => mute.checked ? e.target.mute().playVideo() : e.target.unMute());
 
         }
-    </script>
+    </script> -->
 
 
 
@@ -265,6 +336,22 @@
             </div>
         </div>
     </div>
+
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">觀看紀錄</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="list-group" id="historyList">
+                <a href="#" class="list-group-item list-group-item-action">無資料</a>
+
+
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
