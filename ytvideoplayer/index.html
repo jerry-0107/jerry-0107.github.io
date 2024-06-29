@@ -50,13 +50,21 @@
         <div class="p-1"></div>
         <button class="btn btn-outline-dark" id="fullsc"><i class="bi bi-fullscreen"></i></button>
     </div>
-    <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 100%;">
-        <h1>影片會顯示在這裡</h1>
-        <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
+    <div class="flex" id="fullscreenContainer" style="height: 100%;width: 100%;flex-direction: column;">
+        <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 98%;">
+            <h1>影片會顯示在這裡</h1>
+            <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
+        </div>
+        <div id="fullscToolBar" class="p-1" style="width: 100%;">
+            <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()"
+                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .55rem;"><i
+                    class="bi bi-fullscreen-exit"></i></button>
+            <div style="float: right;color: #fff;" id="batteryBar">電力等級</div>
+        </div>
     </div>
 
-
     <script>
+
 
         function UrlParam(url, name) {
             var url = new URL(url),
@@ -108,7 +116,6 @@
             }
             return false
         }
-
 
         function updateHistoryList() {
 
@@ -191,15 +198,18 @@
             updateVideoFrame()
         }
         function clearInput() {
-            if (confirm("確定要清除輸入嗎?")) document.getElementById("ytlink").value = ""
+            if (document.getElementById("ytlink").value !== "") {
+                if (confirm("確定要清除輸入嗎?")) document.getElementById("ytlink").value = ""
+            }
         }
 
         function handleKeyboard(e) {
             if (e.keyCode === 13) { handleClick() }
             else if (e.keyCode === 70) { openFullscreen() } //F
+            else if (e.keyCode === 27) { e.preventDefault(); WexitFullscreen() } //esc
         }
         function openFullscreen() {
-            var elem = document.getElementById("video");
+            var elem = document.getElementById("fullscreenContainer");
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
             } else if (elem.webkitRequestFullscreen) { /* Safari */
@@ -207,13 +217,82 @@
             } else if (elem.msRequestFullscreen) { /* IE11 */
                 elem.msRequestFullscreen();
             }
+
+            $("#video").css("height", "98%")
+            $("#fullscToolBar").show()
+
         }
+        function WexitFullscreen() {
+            document.exitFullscreen()
+            $("#video").css("height", "100%")
+            $("#fullscToolBar").hide()
+
+        }
+
+        navigator.getBattery().then((battery) => {
+
+            function renderBatteryBar(level, charging) {
+                var htmlStr = ""
+                var colorClass = "";
+                var batteryClass = ""
+                if (level > 0.8) {
+                    colorClass = "text-success"
+                    batteryClass = "bi-battery-full"
+                }
+                else if (0.4 < level && level < 0.7) {
+                    colorClass = "text-warning"
+                    batteryClass = "bi-battery-half"
+                    console.log(level)
+
+                }
+                else {
+                    colorClass = "text-danger"
+                    batteryClass = "bi-battery"
+                    console.log(level)
+
+                }
+
+                if (charging) {
+                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: text-top;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
+                } else {
+                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: text-top;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
+                }
+                $("#batteryBar").html(htmlStr)
+            }
+
+
+            function updateAllBatteryInfo() {
+                updateChargeInfo();
+                updateLevelInfo();
+            }
+            updateAllBatteryInfo();
+
+            battery.addEventListener("chargingchange", () => {
+                updateChargeInfo();
+            });
+            function updateChargeInfo() {
+                console.log(`Battery charging? ${battery.charging ? "Yes" : "No"}`);
+                renderBatteryBar(battery.level, battery.charging)
+            }
+
+            battery.addEventListener("levelchange", () => {
+                updateLevelInfo();
+            });
+            function updateLevelInfo() {
+                console.log(`Battery level: ${battery.level * 100}%`);
+                renderBatteryBar(battery.level, battery.charging)
+            }
+        });
+
+
 
         document.getElementById("clear").onclick = clearInput
         document.getElementById("submit").onclick = handleClick
         document.onkeydown = handleKeyboard
         document.getElementById("fullsc").onclick = openFullscreen
         window.onload = function () {
+            $("#video").css("height", "100%")
+            $("#fullscToolBar").hide()
             updateHistoryList()
             if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
