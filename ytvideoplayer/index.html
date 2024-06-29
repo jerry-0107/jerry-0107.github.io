@@ -111,11 +111,18 @@
 
 
         function updateHistoryList() {
-            var data = JSON.parse(localStorage.getItem("YTplayerHistory")).reverse(),
+
+            var data = JSON.parse(localStorage.getItem("YTplayerHistory")),
                 htmlTxt = "";
 
+            if (!data || data.length < 1) {
+                document.getElementById("historyList").innerHTML = `<a href="#" class="list-group-item list-group-item-action">無資料</a>`
+                return
+            }
+            console.log(data)
+            data = data.reverse()
             for (let i = 0; i < data.length; i++) {
-                htmlTxt = htmlTxt + `<a href="${location.origin}/?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? "(播放清單)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}</a>`
+                htmlTxt = htmlTxt + `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? " (" + data[i].playlistVideoCounts + "部影片)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}</a>`
             }
             document.getElementById("historyList").innerHTML = htmlTxt
         }
@@ -127,11 +134,11 @@
             } else {
                 if (!localStorage.getItem("YTplayerHistory")) {
                     localStorage.setItem("YTplayerHistory", JSON.stringify(
-                        [{ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url }]
+                        [{ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount }]
                     ))
                 } else {
                     var lastData = JSON.parse(localStorage.getItem("YTplayerHistory"))
-                    lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url })
+                    lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount })
                     localStorage.setItem("YTplayerHistory", JSON.stringify(lastData))
                 }
                 updateHistoryList()
