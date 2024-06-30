@@ -248,7 +248,7 @@
                 var htmlStr = ""
                 var colorClass = "";
                 var batteryClass = ""
-                if (level > 0.7) {
+                if (level >= 0.7) {
                     colorClass = "text-success"
                     batteryClass = "bi-battery-full"
                 }
@@ -266,9 +266,9 @@
                 }
 
                 if (charging) {
-                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: text-top;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
+                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
                 } else {
-                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: text-top;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
+                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
                 }
                 $("#batteryBar").html(htmlStr)
             }
