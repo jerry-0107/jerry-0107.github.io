@@ -59,7 +59,9 @@
             <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()"
                 style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
                     class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
-            <div style="float: right;color: #fff;padding-right: 1.5rem;" id="batteryBar">電力等級
+            <div style="float: right;color: #fff;padding-right: 1.5rem;">
+                <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
+                <div id="batteryBar" style="display: inline-block;"></div>
             </div>
         </div>
     </div>
@@ -295,6 +297,14 @@
             }
         });
 
+        function updateTime() {
+            var dat = new Date(),
+                h = dat.getHours() > 9 ? dat.getHours() : "0" + dat.getHours(),
+                m = dat.getMinutes() > 9 ? dat.getMinutes() : "0" + dat.getMinutes()
+            $("#timeBar").html(`<span style="font-size: .75rem;">${h}:${m}</span>`)
+            setTimeout("updateTime()", 10000)
+        }
+
 
 
         document.getElementById("clear").onclick = clearInput
@@ -309,6 +319,7 @@
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
                 updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"))
             }
+            updateTime()
         }
     </script>
 
