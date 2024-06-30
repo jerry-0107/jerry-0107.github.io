@@ -73,7 +73,7 @@
     <script>
 
         var nowplays = [0, 0]
-        var batteryData = []
+        // var batteryData = []
 
         function UrlParam(url, name) {
             var url = new URL(url),
@@ -248,18 +248,18 @@
 
         navigator.getBattery().then((battery) => {
 
-            function countBatteryRemainTime() {
-                if (batteryData.length < 1) return "-1"
-                if (batteryData[-1].charging) return "-2"
-                var flag1, flag2 = batteryData.length - 1;
-                for (let i = 0; i < batteryData.length; i++) {
-                    if (batteryData[i].charging) {
-                        flag1 = i + 1
-                    }
-                }
-                if (flag1 >= flag2) return "-3"
-                return (batteryData[flag2].level - batteryData[flag1].level) / ((batteryData[flag2].time - batteryData[flag1].time) / 1000)
-            }
+            // function countBatteryRemainTime() {
+            //     if (batteryData.length < 1) return "-1"
+            //     if (batteryData[-1].charging) return "-2"
+            //     var flag1, flag2 = batteryData.length - 1;
+            //     for (let i = 0; i < batteryData.length; i++) {
+            //         if (batteryData[i].charging) {
+            //             flag1 = i + 1
+            //         }
+            //     }
+            //     if (flag1 >= flag2) return "-3"
+            //     return (batteryData[flag2].level - batteryData[flag1].level) / ((batteryData[flag2].time - batteryData[flag1].time) / 1000)
+            // }
 
             function renderBatteryBar(level, charging) {
                 var htmlStr = ""
@@ -279,15 +279,15 @@
                 }
 
                 if (charging) {
-                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
+                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}% </span>`
                 } else {
-                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle  !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
+                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle  !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}% ${(battery.level <= 0.2 && !charging ? "請充電" : "")} ${(battery.level >= 0.95 && charging ? "充電完成" : "")}</span>`
                 }
-                htmlStr = htmlStr + countBatteryRemainTime()
+                //htmlStr = htmlStr +  //+ countBatteryRemainTime()
                 $("#batteryBar").html(htmlStr)
 
-                batteryData.push({ level, charging, time: new Date() })
-                console.log(countBatteryRemainTime())
+                //   batteryData.push({ level, charging, time: new Date() })
+                // console.log(countBatteryRemainTime())
             }
 
 
