@@ -34,6 +34,10 @@
             height: 100vh;
             width: 100vw;
         }
+
+        .text-success-c {
+            color: #3eff10 !important;
+        }
     </style>
 </head>
 
@@ -55,7 +59,7 @@
             <h1>影片會顯示在這裡</h1>
             <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
         </div>
-        <div id="fullscToolBar" class="p-1" style="width: 100%;">
+        <div id="fullscToolBar" class="p-1" style="width: 100%;user-select: none;">
             <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()"
                 style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
                     class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
@@ -69,7 +73,7 @@
     <script>
 
         var nowplays = [0, 0]
-
+        var batteryData = []
 
         function UrlParam(url, name) {
             var url = new URL(url),
@@ -79,7 +83,7 @@
 
         function getVideoOrPlaylistId(inputData) {
             if (!inputData.includes("youtube.com/post")) {
-                if (inputData.includes("youtube.com") && inputData.includes("/watch")) {
+                if (inputData.includes("youtube.com") && (inputData.includes("/watch") || inputData.includes("/playlist"))) {
 
                     var output = inputData
                     if (inputData.includes("playlist")) {
@@ -244,33 +248,46 @@
 
         navigator.getBattery().then((battery) => {
 
+            function countBatteryRemainTime() {
+                if (batteryData.length < 1) return "-1"
+                if (batteryData[-1].charging) return "-2"
+                var flag1, flag2 = batteryData.length - 1;
+                for (let i = 0; i < batteryData.length; i++) {
+                    if (batteryData[i].charging) {
+                        flag1 = i + 1
+                    }
+                }
+                if (flag1 >= flag2) return "-3"
+                return (batteryData[flag2].level - batteryData[flag1].level) / ((batteryData[flag2].time - batteryData[flag1].time) / 1000)
+            }
+
             function renderBatteryBar(level, charging) {
                 var htmlStr = ""
                 var colorClass = "";
                 var batteryClass = ""
                 if (level >= 0.7) {
-                    colorClass = "text-success"
+                    colorClass = "text-success-c"
                     batteryClass = "bi-battery-full"
                 }
                 else if (0.4 < level && level < 0.7) {
                     colorClass = "text-warning"
                     batteryClass = "bi-battery-half"
-                    console.log(level)
-
                 }
                 else {
                     colorClass = "text-danger"
                     batteryClass = "bi-battery"
-                    console.log(level)
-
                 }
 
                 if (charging) {
-                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
+                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
                 } else {
-                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
+                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle  !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%</span>`
                 }
+                htmlStr = htmlStr + countBatteryRemainTime()
                 $("#batteryBar").html(htmlStr)
+
+                batteryData.push({ level, charging, time: new Date() })
+                console.log(countBatteryRemainTime())
             }
 
 
