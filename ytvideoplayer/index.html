@@ -72,6 +72,10 @@
 
     <script>
 
+        const whitelist = ["study with me", "study", "數學", "謝博凱", "國文", "複習講義", "物理", "線上教學"]
+        const blacklist = ["猫", "貓"]
+
+
         var nowplays = [0, 0]
         // var batteryData = []
 
@@ -80,6 +84,37 @@
                 result = url.searchParams.get(name);
             return result
         }
+
+
+        function isVideoinWhiteList(o) {
+            console.log("isVideoinWhiteList", o)
+            var title = o.name
+            var channel = o.channel
+            for (let i = 0; i < blacklist.length; i++) {
+                if (title.includes(blacklist[i]) || channel.includes(blacklist[i])) {
+                    console.log("alert!!!!!")
+                    $("#data-warning-modal-title").text(`你無法觀看來自 ${channel} 的影片`)
+                    $("#data-warning-modal-body").html(`以下影片<b>包含黑名單中的字詞:"${blacklist[i]}"</b>: <br/>${title}  <br/><img src='${o.thumbnails}'/><br/>`)
+                    $("#data-warning-modal-gobtn").hide()
+                    const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                    myModal2.show()
+
+                    return false
+                }
+            }
+            for (let i = 0; i < whitelist.length; i++) {
+                if (title.includes(whitelist[i]) || channel.includes(whitelist[i])) {
+                    return true
+                }
+            }
+            console.log("alert!!!!!")
+            $("#data-warning-modal-title").text(`要繼續觀看來自 ${channel} 的影片嗎?`)
+            $("#data-warning-modal-body").html(`以下影片<b>未經驗證</b>: <br/>${title}  <br/><img src='${o.thumbnails}'/><br/>繼續觀看可能存在風險。`)
+
+            const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+            myModal2.show()
+        }
+
 
         function getVideoOrPlaylistId(inputData) {
             if (!inputData.includes("youtube.com/post")) {
@@ -128,6 +163,17 @@
             return false
         }
 
+        function getItemFromHistoryList(id) {
+            if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].id === id) return data[i]
+                }
+                return false
+            }
+            return false
+        }
+
         function updateHistoryList(nowplays) {
             console.log(nowplays)
             var data = JSON.parse(localStorage.getItem("YTplayerHistory")),
@@ -168,19 +214,26 @@
             function renderSc(_type, _id) {
                 var theid = _id,
                     thekind = _type;
-                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}?rel=0`)
-                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0"></iframe>`
-
-                document.getElementById("ytlink").value = ""
 
                 if (!isIdinHistorylist(_id)) {
                     var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
                     fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
                         method: "GET"
                     }).then(r => r.json())
-                        .then(r => dumpLocalData(_id, _type, r))
+                        .then(r => {
+                            dumpLocalData(_id, _type, r);
+                            isVideoinWhiteList(getItemFromHistoryList(theid))
+                        })
                         .catch(e => console.warn(e))
+                } else {
+                    isVideoinWhiteList(getItemFromHistoryList(theid))
                 }
+
+
+                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}?rel=0`)
+                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0"></iframe>`
+
+                document.getElementById("ytlink").value = ""
 
             }
 
@@ -354,6 +407,26 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="data-warning-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="data-warning-modal-title">敗</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="data-warning-modal-body"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        onclick="window.location.href = '/'">關閉</button>
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
+                        id="data-warning-modal-gobtn">繼續</button>
                 </div>
             </div>
         </div>
