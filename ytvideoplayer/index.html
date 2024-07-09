@@ -90,11 +90,14 @@
             console.log("isVideoinWhiteList", o)
             var title = o.name.toLowerCase()
             var channel = o.channel.toLowerCase()
+
+            var _title = o.name
+            var _channel = o.channel
             for (let i = 0; i < blacklist.length; i++) {
                 if (title.includes(blacklist[i]) || channel.includes(blacklist[i])) {
                     console.log("alert!!!!!")
-                    $("#data-warning-modal-title").text(`你無法觀看來自 ${channel} 的影片`)
-                    $("#data-warning-modal-body").html(`以下影片<b>包含黑名單中的字詞:"${blacklist[i]}"</b>: <br/>${title}  <br/><img src='${o.thumbnails}'/><br/>`)
+                    $("#data-warning-modal-title").text(`你無法觀看來自 ${_channel} 的影片`)
+                    $("#data-warning-modal-body").html(`以下影片<b>包含黑名單中的字詞:"${blacklist[i]}"</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>`)
                     $("#data-warning-modal-gobtn").hide()
                     const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
                     myModal2.show()
@@ -108,11 +111,12 @@
                 }
             }
             console.log("alert!!!!!")
-            $("#data-warning-modal-title").text(`要繼續觀看來自 ${channel} 的影片嗎?`)
-            $("#data-warning-modal-body").html(`以下影片<b>未經驗證</b>: <br/>${title}  <br/><img src='${o.thumbnails}'/><br/>繼續觀看可能存在風險。`)
+            $("#data-warning-modal-title").text(`要繼續觀看來自 ${_channel} 的影片嗎?`)
+            $("#data-warning-modal-body").html(`以下影片<b>未經驗證</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>繼續觀看可能存在風險，我們建議您不要觀看。`)
 
             const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
             myModal2.show()
+            return true
         }
 
 
