@@ -98,7 +98,7 @@
                     $("#data-warning-modal-gobtn").hide()
                     const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
                     myModal2.show()
-
+                    document.getElementById("video").innerHTML = "<h3>影片已遭到封鎖</h3>"
                     return false
                 }
             }
@@ -231,11 +231,11 @@
                     }).then(r => r.json())
                         .then(r => {
                             dumpLocalData(_id, _type, r);
-                            isVideoinWhiteList(getItemFromHistoryList(theid))
+                            if (!isVideoinWhiteList(getItemFromHistoryList(theid))) return
                         })
                         .catch(e => console.warn(e))
                 } else {
-                    isVideoinWhiteList(getItemFromHistoryList(theid))
+                    if (!isVideoinWhiteList(getItemFromHistoryList(theid))) return
                 }
 
 
@@ -422,7 +422,7 @@
     </div>
 
     <div class="modal fade " tabindex="-1" id="data-warning-modal" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="data-warning-modal-title"></h5>
