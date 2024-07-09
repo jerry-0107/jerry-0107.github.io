@@ -88,8 +88,8 @@
 
         function isVideoinWhiteList(o) {
             console.log("isVideoinWhiteList", o)
-            var title = o.name
-            var channel = o.channel
+            var title = o.name.toLowerCase()
+            var channel = o.channel.toLowerCase()
             for (let i = 0; i < blacklist.length; i++) {
                 if (title.includes(blacklist[i]) || channel.includes(blacklist[i])) {
                     console.log("alert!!!!!")
@@ -117,6 +117,15 @@
 
 
         function getVideoOrPlaylistId(inputData) {
+            if (inputData.includes("/short")) {
+                console.log("alert!!!!!")
+                $("#data-warning-modal-title").text(`無法解析YouTube Shorts`)
+                $("#data-warning-modal-body").html(`出於安全考慮，系統已經停止解析YouTube Shorts`)
+                $("#data-warning-modal-gobtn").hide()
+                const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                myModal2.show()
+                return null
+            }
             if (!inputData.includes("youtube.com/post")) {
                 if (inputData.includes("youtube.com") && (inputData.includes("/watch") || inputData.includes("/playlist"))) {
 
@@ -412,19 +421,19 @@
         </div>
     </div>
 
-    <div class="modal fade" tabindex="-1" id="data-warning-modal">
+    <div class="modal fade " tabindex="-1" id="data-warning-modal" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="data-warning-modal-title">敗</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="data-warning-modal-title"></h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
                 <div class="modal-body">
                     <p id="data-warning-modal-body"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-                        onclick="window.location.href = '/'">關閉</button>
+                        onclick="window.location.search = '';window.location.reload()">關閉</button>
                     <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
                         id="data-warning-modal-gobtn">繼續</button>
                 </div>
