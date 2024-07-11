@@ -45,6 +45,8 @@
             display: inline-block;
             margin-left: .5rem;
             padding: .5rem;
+            width: 2.5rem;
+            text-align: center;
         }
     </style>
 </head>
@@ -286,7 +288,40 @@
         }
 
 
+        function getHIstoryListFromBackup() {
+
+
+            function diffHistory(r) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
+                for (let i = 0; i < r.length; i++) {
+                    if (!isIdinHistorylist(r.id)) {
+                        data.push(r[i])
+                    }
+                }
+                localStorage.setItem("YTplayerHistory", JSON.stringify(data))
+            }
+
+
+            fetch("https://data-saver-vz81.onrender.com/get", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ uid: document.getElementById("data-receive-input").value })
+            }).then(r => r.json())
+                .then(r => {
+                    diffHistory(r.obj)
+                })
+        }
+
+
         function uploadHistory() {
+            var code = "LOADING"
+            var htmlStr = ``
+            for (let i = 0; i < code.length; i++) {
+                htmlStr += `<div class="sharecode-container bg-dark text-white">${code[i]}</div>`
+            }
+            $("#sharecode").html(htmlStr)
             fetch("https://data-saver-vz81.onrender.com/put", {
                 method: "POST",
                 headers: {
@@ -491,16 +526,17 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="data-receive-modal-title"></h5>
+                    <h5 class="modal-title" id="data-receive-modal-title">接收其他裝置的紀錄</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="data-receive-modal-body"></p>
+                    <p id="data-receive-modal-body">請輸入分享代碼:</p>
+                    <input type="number" name="" id="data-receive-input" class="form-control">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
-                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
-                        id="data-receive-modal-gobtn">確定</button>
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" id="data-receive-modal-gobtn"
+                        onclick="">確定</button>
                 </div>
             </div>
         </div>
