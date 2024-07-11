@@ -293,6 +293,10 @@
 
             function diffHistory(r) {
                 var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []
+                if (r.length < 1) {
+                    $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (代碼可能無效或過期)</span>`)
+                    return
+                }
                 for (let i = 0; i < r.length; i++) {
                     if (!isIdinHistorylist(r.id)) {
                         data.push(r[i])
@@ -301,7 +305,7 @@
                 localStorage.setItem("YTplayerHistory", JSON.stringify(data))
             }
 
-
+            $("#data-receive-modal-text").html(`<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 正在讀取資料...`)
             fetch("https://data-saver-vz81.onrender.com/get", {
                 method: "POST",
                 headers: {
@@ -310,8 +314,18 @@
                 body: JSON.stringify({ uid: document.getElementById("data-receive-input").value })
             }).then(r => r.json())
                 .then(r => {
-                    console.log(JSON.parse(r.obj))
-                    diffHistory(JSON.parse(JSON.parse(r.obj)))
+                    console.log(r)
+                    if (!r.obj) {
+                        $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (代碼可能無效或過期)</span>`)
+                        //  console.log(JSON.parse(r.obj))
+                        return
+                    } else {
+                        $("#data-receive-modal-text").html(``)
+                        diffHistory(JSON.parse(JSON.parse(r.obj)))
+                    }
+                }).catch(e => {
+                    console.log(e)
+                    $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (連線問題，無法取得資料)</span>`)
                 })
         }
 
@@ -342,6 +356,9 @@
                     for (let i = 0; i < code.length; i++) {
                         htmlStr += `<div class="sharecode-container bg-dark text-white">${code[i]}</div>`
                     }
+                    // if (Number(code)) {
+                    //     htmlStr += `<button class="sharecode-container bg-dark text-white bi bi-clipboard"> </button>`
+                    // }
                     $("#sharecode").html(htmlStr)
                 })
                 .catch(err => {
@@ -422,9 +439,9 @@
                 }
 
                 if (charging) {
-                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}% </span>`
+                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%  ${(battery.level >= 0.95 && charging ? "充電完成" : "")}</span>`
                 } else {
-                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle  !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}% ${(battery.level <= 0.2 && !charging ? "請充電" : "")} ${(battery.level >= 0.95 && charging ? "充電完成" : "")}</span>`
+                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle  !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}% ${(battery.level <= 0.2 && !charging ? "請充電" : "")}</span>`
                 }
                 //htmlStr = htmlStr +  //+ countBatteryRemainTime()
                 $("#batteryBar").html(htmlStr)
@@ -533,11 +550,11 @@
                 <div class="modal-body">
                     <p id="data-receive-modal-body">請輸入分享代碼:</p>
                     <input type="number" name="" id="data-receive-input" class="form-control">
+                    <p id="data-receive-modal-text"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
-                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" id="data-receive-modal-gobtn"
-                        onclick="getHIstoryListFromBackup()">確定</button>
+                    <button type="button" class="btn btn-warning" onclick="getHIstoryListFromBackup()">確定</button>
                 </div>
             </div>
         </div>
