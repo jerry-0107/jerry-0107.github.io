@@ -291,18 +291,22 @@
         function getHIstoryListFromBackup() {
 
 
-            function diffHistory(r) {
+            function _diffHistory(r) {
                 var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []
                 if (r.length < 1) {
                     $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (代碼可能無效或過期)</span>`)
                     return
                 }
                 for (let i = 0; i < r.length; i++) {
-                    if (!isIdinHistorylist(r.id)) {
+                    console.log(r[i], r[i].id, isIdinHistorylist(r[i].id))
+                    if (!isIdinHistorylist(r[i].id)) {
                         data.push(r[i])
+                    } else {
+                        continue
                     }
                 }
                 localStorage.setItem("YTplayerHistory", JSON.stringify(data))
+                updateHistoryList(nowplays)
             }
 
             $("#data-receive-modal-text").html(`<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 正在讀取資料...`)
@@ -321,7 +325,7 @@
                         return
                     } else {
                         $("#data-receive-modal-text").html(``)
-                        diffHistory(JSON.parse(JSON.parse(r.obj)))
+                        _diffHistory(JSON.parse(JSON.parse(r.obj)))
                     }
                 }).catch(e => {
                     console.log(e)
@@ -482,7 +486,22 @@
             setTimeout("updateTime()", 10000)
         }
 
+        function diffHistory() {
+            var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []
+            if (data.length < 1) return
+            var idlist = []
 
+            for (let i = 0; i < data.length; i++) {
+                if (idlist.includes(data[i].id)) {
+                    delete data[i]
+                } else {
+                    idlist.push(data[i].id)
+                }
+            }
+            data = data.filter(item => item !== null)
+            console.log(data, JSON.stringify(data))
+            localStorage.setItem("YTplayerHistory", JSON.stringify(data))
+        }
 
         document.getElementById("clear").onclick = clearInput
         document.getElementById("submit").onclick = handleClick
@@ -491,12 +510,13 @@
         window.onload = function () {
             $("#video").css("height", "100%")
             $("#fullscToolBar").hide()
-            updateHistoryList(nowplays)
             if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
                 updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"))
             }
             updateTime()
+            diffHistory()
+            updateHistoryList(nowplays)
         }
     </script>
 
