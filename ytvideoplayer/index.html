@@ -199,7 +199,7 @@
 
         function updateHistoryList(nowplays) {
             console.log(nowplays)
-            var data = JSON.parse(localStorage.getItem("YTplayerHistory")),
+            var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : [],
                 htmlTxt = "";
 
             if (!data || data.length < 1) {
@@ -292,7 +292,7 @@
 
 
             function diffHistory(r) {
-                var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []
                 for (let i = 0; i < r.length; i++) {
                     if (!isIdinHistorylist(r.id)) {
                         data.push(r[i])
@@ -310,7 +310,8 @@
                 body: JSON.stringify({ uid: document.getElementById("data-receive-input").value })
             }).then(r => r.json())
                 .then(r => {
-                    diffHistory(r.obj)
+                    console.log(JSON.parse(r.obj))
+                    diffHistory(JSON.parse(JSON.parse(r.obj)))
                 })
         }
 
