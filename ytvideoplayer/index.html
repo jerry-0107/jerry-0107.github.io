@@ -307,6 +307,8 @@
                 }
                 localStorage.setItem("YTplayerHistory", JSON.stringify(data))
                 updateHistoryList(nowplays)
+                $("#data-receive-modal-text").html(`紀錄已經更新，你可以關閉此視窗`)
+
             }
 
             $("#data-receive-modal-text").html(`<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 正在讀取資料...`)
@@ -324,7 +326,7 @@
                         //  console.log(JSON.parse(r.obj))
                         return
                     } else {
-                        $("#data-receive-modal-text").html(``)
+                        $("#data-receive-modal-text").html(`正在處理來自代碼的資料...`)
                         _diffHistory(JSON.parse(JSON.parse(r.obj)))
                     }
                 }).catch(e => {
