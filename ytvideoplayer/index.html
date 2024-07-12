@@ -70,9 +70,11 @@
             <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
         </div>
         <div id="fullscToolBar" class="p-1" style="width: 100%;user-select: none;">
-            <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()"
-                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
-                    class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
+            <div id="fscToolbar-container-left" style="float: left;">
+                <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()" id="exitFullscreenBtn"
+                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
+                        class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
+            </div>
             <div style="float: right;color: #fff;padding-right: 1.5rem;">
                 <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
                 <div id="batteryBar" style="display: inline-block;"></div>
@@ -141,11 +143,17 @@
                 return null
             }
             if (!inputData.includes("youtube.com/post")) {
+                if (UrlParam(inputData, "v") && UrlParam(inputData, "list") && UrlParam(inputData, "index")) {
+                    console.log("/", [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")])
+                    return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
+                }
+
+
                 if (inputData.includes("youtube.com") && (inputData.includes("/watch") || inputData.includes("/playlist"))) {
 
                     var output = inputData
                     if (inputData.includes("playlist")) {
-                        return [UrlParam(inputData, "list"), "playlist"]
+                        return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
                     }
                     return [UrlParam(inputData, "v"), "video"]
 
@@ -154,7 +162,7 @@
 
                     var output = inputData
                     if (inputData.includes("playlist")) {
-                        return [UrlParam(inputData, "list"), "playlist"]
+                        return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
                     }
                     output = inputData.replace("www.", "")
                     output = output.replace("https://", "")
@@ -232,12 +240,13 @@
             }
         }
 
-        function updateVideoFrame(type, id) {
+        function updateVideoFrame(type, id, index) {
 
-            function renderSc(_type, _id) {
+            function renderSc(_type, _id, _index) {
                 var theid = _id,
-                    thekind = _type;
-
+                    thekind = _type,
+                    theindex = _index
+                console.log("///", theid, thekind, theindex)
                 if (!isIdinHistorylist(_id)) {
                     var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
                     fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
@@ -253,17 +262,23 @@
                 }
 
 
-                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}?rel=0`)
-                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0"></iframe>`
+                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}?rel=0${Number(_index) ? "&index=" + _index : ""}`)
+                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}"></iframe>`
 
                 document.getElementById("ytlink").value = ""
+
+                if (getItemFromHistoryList(theid).name.toLowerCase().includes("study")) {
+                    $("#exitFullscreenBtn").remove()
+                    new bootstrap.Modal('#study-modal', {}).show()
+                    $("#fscToolbar-container-left").html(`<span class="badge bg-success " style="margin-left: 1.5rem;">Study With Me 進行中!</span>`)
+                }
 
             }
 
             if (type && id) {
                 try {
                     nowplays = [type, id]
-                    renderSc(type, id)
+                    renderSc(type, id, index)
                     updateHistoryList(nowplays)
 
                 } catch {
@@ -275,10 +290,12 @@
                 console.log(getVideoOrPlaylistId(inputData))
                 try {
                     var theid = getVideoOrPlaylistId(inputData)[0],
-                        thekind = getVideoOrPlaylistId(inputData)[1];
+                        thekind = getVideoOrPlaylistId(inputData)[1],
+                        theindex = getVideoOrPlaylistId(inputData)[2]
+
                     nowplays = [thekind, theid]
                     updateHistoryList(nowplays)
-                    renderSc(thekind, theid)
+                    renderSc(thekind, theid, theindex)
 
                 } catch {
                     const myModal = new bootstrap.Modal('#invailddata-modal', {})
@@ -289,8 +306,6 @@
 
 
         function getHIstoryListFromBackup() {
-
-
             function _diffHistory(r) {
                 var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []
                 if (r.length < 1) {
@@ -308,7 +323,6 @@
                 localStorage.setItem("YTplayerHistory", JSON.stringify(data))
                 updateHistoryList(nowplays)
                 $("#data-receive-modal-text").html(`紀錄已經更新，你可以關閉此視窗`)
-
             }
 
             $("#data-receive-modal-text").html(`<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 正在讀取資料...`)
@@ -514,7 +528,7 @@
             $("#fullscToolBar").hide()
             if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
-                updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"))
+                updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"), UrlParam(location.href, "index"))
             }
             updateTime()
             diffHistory()
@@ -577,6 +591,27 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
                     <button type="button" class="btn btn-warning" onclick="getHIstoryListFromBackup()">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade " tabindex="-1" id="study-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="study-modal-title">檢測到Study With Me 影片</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="study-modal-body">檢測到Study With Me 影片，請<a href="#"
+                            onclick="openFullscreen()">進入全螢幕</a>來保證更好的體驗.</p>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-success" onclick="openFullscreen()">確定</button>
                 </div>
             </div>
         </div>
