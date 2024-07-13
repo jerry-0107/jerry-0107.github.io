@@ -261,13 +261,14 @@
                     if (!isVideoinWhiteList(getItemFromHistoryList(theid))) return
                 }
 
+                var isStudyVideo = getItemFromHistoryList(theid).name.toLowerCase().includes("study")
 
                 console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}?rel=0${Number(_index) ? "&index=" + _index : ""}`)
-                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}"></iframe>`
+                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}"></iframe>`
 
                 document.getElementById("ytlink").value = ""
 
-                if (getItemFromHistoryList(theid).name.toLowerCase().includes("study")) {
+                if (isStudyVideo) {
                     $("#exitFullscreenBtn").remove()
                     new bootstrap.Modal('#study-modal', {}).show()
                     $("#fscToolbar-container-left").html(`<span class="badge bg-success " style="margin-left: 1.5rem;">Study With Me 進行中!</span>`)
@@ -556,7 +557,7 @@
     </div>
 
     <div class="modal fade " tabindex="-1" id="data-warning-modal" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-fullscreen">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="data-warning-modal-title"></h5>
@@ -607,7 +608,7 @@
                 </div>
                 <div class="modal-body">
                     <p id="study-modal-body">檢測到Study With Me 影片，請<a href="#"
-                            onclick="openFullscreen()">進入全螢幕</a>來保證更好的體驗.</p>
+                            onclick="openFullscreen()">進入全螢幕</a>來保證更好的體驗.<br>(順帶一提，Study With Me 影片無法調整快慢.)</p>
                 </div>
                 <div class="modal-footer">
 
