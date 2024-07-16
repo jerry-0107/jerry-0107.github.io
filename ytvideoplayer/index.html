@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-avatar@latest/dist/avatar.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         iframe {
@@ -74,21 +75,50 @@
                 <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()" id="exitFullscreenBtn"
                     style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
                         class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
+
+
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#comment-modal"
+                    onclick="getComments(null,true)">留言</button>
             </div>
             <div style="float: right;color: #fff;padding-right: 1.5rem;">
                 <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
                 <div id="batteryBar" style="display: inline-block;"></div>
             </div>
         </div>
+
+
+
+
+        <div class="modal fade " tabindex="-1" id="comment-modal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="comment-modal-title">留言</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="comment-modal-p"></p>
+                        <div id="comments-container">請按下按鈕，開始讀取留言</div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success"
+                            onclick="getComments(nextCommentToken)">讀取留言</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
 
-        const whitelist = ["study with me", "study", "數學", "化學", "地球科學", "謝博凱", "國文", "廖士翔", "複習講義", "物理", "線上教學", "線上學習"]
+        const whitelist = ["study with me", "study", "數學", "化學", "生物", "地球科學", "謝博凱", "蔡任圃", "國文", "廖士翔", "複習講義", "物理", "線上教學", "線上學習"]
         const blacklist = ["猫", "貓"]
 
 
         var nowplays = [0, 0]
+        var nextCommentToken = null
         // var batteryData = []
 
         function UrlParam(url, name) {
@@ -518,6 +548,82 @@
             data = data.filter(item => item !== null)
             console.log(data, JSON.stringify(data))
             localStorage.setItem("YTplayerHistory", JSON.stringify(data))
+        }
+
+        function getComments(next, frombtn) {
+            function processComments(comments) {
+                if (comments.length < 1) {
+                    document.getElementById("comments-container").innerText = "沒有任何留言"
+                }
+                comments.forEach(comment => {
+                    const commentsContainer = document.getElementById("comments-container")
+                    const commentText = comment.snippet.topLevelComment.snippet.textDisplay;
+                    const commentAuthor = comment.snippet.topLevelComment.snippet.authorDisplayName;
+                    const commentAuthorPhoto = comment.snippet.topLevelComment.snippet.authorProfileImageUrl
+                    const commentElement = document.createElement('div');
+                    commentElement.innerHTML = `<img src="${commentAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${commentAuthor}:</strong> ${commentText}`;
+                    commentsContainer.appendChild(commentElement);
+                    console.log(comment.snippet.topLevelComment.snippet)
+                    // Display replies if any
+                    if (comment.replies) {
+                        const repliesContainer = document.createElement('div');
+                        repliesContainer.style.marginLeft = '20px';
+                        comment.replies.comments.forEach(reply => {
+                            const replyText = reply.snippet.textDisplay;
+                            const replyAuthor = reply.snippet.authorDisplayName;
+                            const replyElement = document.createElement('p');
+                            replyElement.innerHTML = `<img src="${commentAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${commentAuthor}:</strong> ${commentText}`;
+                            repliesContainer.appendChild(replyElement);
+                        });
+                        commentsContainer.appendChild(repliesContainer);
+                    }
+                });
+            }
+            if (frombtn && $("#comments-container")) {
+                $(".modal-backdrop").appendTo("#fullscreenContainer")
+                return
+            }
+            if (!next) {
+                $(".modal-backdrop").appendTo("#fullscreenContainer")
+                $("#comments-container").html("")
+                if (nowplays[0] === "video") {
+                    var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+
+                    var url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${nowplays[1]}&key=${apiKey}`
+
+                    if (nextCommentToken) {
+                        url += `&pageToken=${nextCommentToken}`;
+                    } else {
+                        //    $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效")
+                    }
+
+                    fetch(url, {
+                        method: "GET"
+                    }).then(r => r.json())
+                        .then(r => {
+                            processComments(r.items);
+                            nextCommentToken = r.nextPageToken
+                        })
+                }
+            }
+            else {
+                var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+
+                var url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${nowplays[1]}&key=${apiKey}`
+
+                if (nextCommentToken) {
+                    url += `&pageToken=${nextCommentToken}`;
+                } else {
+                    $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效")
+                    return
+                }
+
+                fetch(url, {
+                    method: "GET"
+                }).then(r => r.json())
+
+                    .then(r => { processComments(r.items); nextCommentToken = r.nextPageToken })
+            }
         }
 
         document.getElementById("clear").onclick = clearInput
