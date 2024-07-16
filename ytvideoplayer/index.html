@@ -572,7 +572,8 @@
                             const replyText = reply.snippet.textDisplay;
                             const replyAuthor = reply.snippet.authorDisplayName;
                             const replyElement = document.createElement('p');
-                            replyElement.innerHTML = `<img src="${commentAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${commentAuthor}:</strong> ${commentText}`;
+                            const replyAuthorPhoto = reply.snippet.authorProfileImageUrl
+                            replyElement.innerHTML = `<img src="${replyAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${replyAuthor}:</strong> ${replyText}`;
                             repliesContainer.appendChild(replyElement);
                         });
                         commentsContainer.appendChild(repliesContainer);
