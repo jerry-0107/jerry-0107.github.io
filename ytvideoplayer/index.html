@@ -81,6 +81,12 @@
                     onclick="getComments(null,true)">留言</button>
             </div>
             <div style="float: right;color: #fff;padding-right: 1.5rem;">
+                <div id="stateBar" style="display: inline-block;" class="pe-1">
+                    <div class="spinner-border spinner-border-sm" role="status"
+                        style="vertical-align: middle  !important;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
                 <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
                 <div id="batteryBar" style="display: inline-block;"></div>
             </div>
@@ -111,6 +117,7 @@
         </div>
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
 
         const whitelist = ["study with me", "study", "數學", "化學", "生物", "地球科學", "謝博凱", "蔡任圃", "國文", "廖士翔", "複習講義", "物理", "線上教學", "線上學習"]
@@ -126,6 +133,29 @@
                 result = url.searchParams.get(name);
             return result
         }
+        var player;
+
+
+
+        function onPlayerReady(e) {
+            // 為確保瀏覽器上可以自動播放，要把影片調成靜音
+            //  e.target.mute().playVideo();
+            console.log("init")
+            $("#stateBar").html(``)
+        }
+        function onPlayerStateChange(e) {
+            console.log(e.target.getCurrentTime())
+            $("#stateBar").html(`${e.data === 2 ? `<i class="bi bi-pause-circle-fill" style="vertical-align: middle  !important;"></i>` : ``} ${e.data === 3 ? `<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>` : ``}`)
+
+            if (e.data === 2) {
+                localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
+            } else {
+                //   
+
+            }
+        }
+
+
 
 
         function isVideoinWhiteList(o) {
@@ -177,8 +207,6 @@
                     console.log("/", [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")])
                     return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
                 }
-
-
                 if (inputData.includes("youtube.com") && (inputData.includes("/watch") || inputData.includes("/playlist"))) {
 
                     var output = inputData
@@ -272,14 +300,14 @@
 
         function updateVideoFrame(type, id, index) {
 
-            function renderSc(_type, _id, _index) {
+            async function renderSc(_type, _id, _index) {
                 var theid = _id,
                     thekind = _type,
                     theindex = _index
-                console.log("///", theid, thekind, theindex)
+                console.log(theid, thekind, theindex)
                 if (!isIdinHistorylist(_id)) {
                     var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
-                    fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
+                    await fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
                         method: "GET"
                     }).then(r => r.json())
                         .then(r => {
@@ -294,15 +322,48 @@
                 var isStudyVideo = getItemFromHistoryList(theid).name.toLowerCase().includes("study")
 
                 console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}?rel=0${Number(_index) ? "&index=" + _index : ""}`)
-                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}"></iframe>`
+
+
+
+
+                if (localStorage.getItem("YTplayerPausedVideo")) {
+
+                    var YTplayerPausedVideo = JSON.parse(localStorage.getItem("YTplayerPausedVideo"))
+                    if (YTplayerPausedVideo.id === theid) {
+
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo.pausedAt)}"></iframe>`
+
+                    } else {
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
+
+                    }
+                } else {
+                    document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
+
+                }
+
+
+
+                console.log(document.getElementById("player"))
+                player = new YT.Player('player', {
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    },
+                    playerVars: {
+                        controls: '0'
+                    },
+                });
 
                 document.getElementById("ytlink").value = ""
+                console.log("init: ", theid, player)
 
                 if (isStudyVideo) {
                     $("#exitFullscreenBtn").remove()
                     new bootstrap.Modal('#study-modal', {}).show()
                     $("#fscToolbar-container-left").html(`<span class="badge bg-success " style="margin-left: 1.5rem;">Study With Me 進行中!</span>`)
                 }
+
 
             }
 
@@ -312,7 +373,8 @@
                     renderSc(type, id, index)
                     updateHistoryList(nowplays)
 
-                } catch {
+                } catch (e) {
+                    console.error(e)
                     const myModal = new bootstrap.Modal('#invailddata-modal', {})
                     myModal.show()
                 }
@@ -328,7 +390,8 @@
                     updateHistoryList(nowplays)
                     renderSc(thekind, theid, theindex)
 
-                } catch {
+                } catch (e) {
+                    console.error(e)
                     const myModal = new bootstrap.Modal('#invailddata-modal', {})
                     myModal.show()
                 }
@@ -379,8 +442,6 @@
                     $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (連線問題，無法取得資料)</span>`)
                 })
         }
-
-
         function uploadHistory() {
             var code = "LOADING"
             var htmlStr = ``
@@ -546,7 +607,7 @@
                 }
             }
             data = data.filter(item => item !== null)
-            console.log(data, JSON.stringify(data))
+            //console.log(data, JSON.stringify(data))
             localStorage.setItem("YTplayerHistory", JSON.stringify(data))
         }
 
