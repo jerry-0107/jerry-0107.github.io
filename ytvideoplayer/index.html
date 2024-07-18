@@ -129,9 +129,14 @@
         // var batteryData = []
 
         function UrlParam(url, name) {
-            var url = new URL(url),
-                result = url.searchParams.get(name);
-            return result
+            try {
+                var url = new URL(url),
+                    result = url.searchParams.get(name);
+                return result
+            } catch (e) {
+                console.warn(e)
+                return null
+            }
         }
         var player;
 
@@ -140,7 +145,7 @@
         function onPlayerReady(e) {
             // 為確保瀏覽器上可以自動播放，要把影片調成靜音
             //  e.target.mute().playVideo();
-            console.log("init")
+            console.log("YT Video init Success!", e)
             $("#stateBar").html(``)
         }
         function onPlayerStateChange(e) {
@@ -486,9 +491,9 @@
         function handleClick(e) {
             updateVideoFrame()
         }
-        function clearInput() {
+        function clearInput(k) {
             if (document.getElementById("ytlink").value !== "") {
-                if (confirm("確定要清除輸入嗎?")) document.getElementById("ytlink").value = ""
+                if (confirm("確定要清除輸入嗎?") || k) document.getElementById("ytlink").value = ""
             }
         }
 
@@ -689,6 +694,10 @@
         }
 
         document.getElementById("clear").onclick = clearInput
+        document.getElementById("clear").ondblclick = function () {
+            clearInput(true)
+        }
+
         document.getElementById("submit").onclick = handleClick
         document.onkeydown = handleKeyboard
         document.getElementById("fullsc").onclick = openFullscreen
