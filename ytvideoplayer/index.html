@@ -163,8 +163,8 @@
 
 
 
-        function isVideoinWhiteList(o) {
-            console.log("isVideoinWhiteList", o)
+        function isVideoinWhiteList(o, hideAlert) {
+            console.log("isVideoinWhiteList", o, hideAlert)
             var title = o.name.toLowerCase()
             var channel = o.channel.toLowerCase()
 
@@ -173,12 +173,14 @@
             for (let i = 0; i < blacklist.length; i++) {
                 if (title.includes(blacklist[i]) || channel.includes(blacklist[i])) {
                     console.log("alert!!!!!")
-                    $("#data-warning-modal-title").text(`你無法觀看來自 ${_channel} 的影片`)
-                    $("#data-warning-modal-body").html(`以下影片<b>包含黑名單中的字詞:"${blacklist[i]}"</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>`)
-                    $("#data-warning-modal-gobtn").hide()
-                    const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
-                    myModal2.show()
-                    document.getElementById("video").innerHTML = `<h3>來自 ${_channel} 的影片已經遭到封鎖</h3>`
+                    if (!hideAlert) {
+                        $("#data-warning-modal-title").text(`你無法觀看來自 ${_channel} 的影片`)
+                        $("#data-warning-modal-body").html(`以下影片<b>包含黑名單中的字詞:"${blacklist[i]}"</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>`)
+                        $("#data-warning-modal-gobtn").hide()
+                        const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                        myModal2.show()
+                        document.getElementById("video").innerHTML = `<h3>來自 ${_channel} 的影片已經遭到封鎖</h3>`
+                    }
                     return false
                 }
             }
@@ -188,12 +190,15 @@
                 }
             }
             console.log("alert!!!!!")
-            $("#data-warning-modal-title").text(`要繼續觀看來自 ${_channel} 的影片嗎?`)
-            $("#data-warning-modal-body").html(`以下影片<b>未經驗證</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>繼續觀看可能存在風險，我們建議您不要觀看。`)
+            if (!hideAlert) {
 
-            const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
-            myModal2.show()
-            return true
+                $("#data-warning-modal-title").text(`要繼續觀看來自 ${_channel} 的影片嗎?`)
+                $("#data-warning-modal-body").html(`以下影片<b>未經驗證</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>繼續觀看可能存在風險，我們建議您不要觀看。`)
+
+                const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                myModal2.show()
+            }
+            return [true, false]
         }
 
 
@@ -317,11 +322,11 @@
                     }).then(r => r.json())
                         .then(r => {
                             dumpLocalData(_id, _type, r);
-                            if (!isVideoinWhiteList(getItemFromHistoryList(theid))) return
+                            if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
                         })
                         .catch(e => console.warn(e))
                 } else {
-                    if (!isVideoinWhiteList(getItemFromHistoryList(theid))) return
+                    if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
                 }
 
                 var isStudyVideo = getItemFromHistoryList(theid).name.toLowerCase().includes("study")
@@ -621,76 +626,79 @@
                 if (comments.length < 1) {
                     document.getElementById("comments-container").innerText = "沒有任何留言"
                 }
-                comments.forEach(comment => {
-                    const commentsContainer = document.getElementById("comments-container")
-                    const commentText = comment.snippet.topLevelComment.snippet.textDisplay;
-                    const commentAuthor = comment.snippet.topLevelComment.snippet.authorDisplayName;
-                    const commentAuthorPhoto = comment.snippet.topLevelComment.snippet.authorProfileImageUrl
-                    const commentElement = document.createElement('div');
-                    commentElement.innerHTML = `<img src="${commentAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${commentAuthor}:</strong> ${commentText}`;
-                    commentsContainer.appendChild(commentElement);
-                    console.log(comment.snippet.topLevelComment.snippet)
-                    // Display replies if any
-                    if (comment.replies) {
-                        const repliesContainer = document.createElement('div');
-                        repliesContainer.style.marginLeft = '20px';
-                        comment.replies.comments.forEach(reply => {
-                            const replyText = reply.snippet.textDisplay;
-                            const replyAuthor = reply.snippet.authorDisplayName;
-                            const replyElement = document.createElement('p');
-                            const replyAuthorPhoto = reply.snippet.authorProfileImageUrl
-                            replyElement.innerHTML = `<img src="${replyAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${replyAuthor}:</strong> ${replyText}`;
-                            repliesContainer.appendChild(replyElement);
-                        });
-                        commentsContainer.appendChild(repliesContainer);
-                    }
-                });
+                try {
+                    comments.forEach(comment => {
+                        const commentsContainer = document.getElementById("comments-container")
+                        const commentText = comment.snippet.topLevelComment.snippet.textDisplay;
+                        const commentAuthor = comment.snippet.topLevelComment.snippet.authorDisplayName;
+                        const commentAuthorPhoto = comment.snippet.topLevelComment.snippet.authorProfileImageUrl
+                        const commentElement = document.createElement('div');
+                        commentElement.innerHTML = `<img src="${commentAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${commentAuthor}:</strong> ${commentText}`;
+                        commentsContainer.appendChild(commentElement);
+                        console.log(comment.snippet.topLevelComment.snippet)
+                        // Display replies if any
+                        if (comment.replies) {
+                            const repliesContainer = document.createElement('div');
+                            repliesContainer.style.marginLeft = '20px';
+                            comment.replies.comments.forEach(reply => {
+                                const replyText = reply.snippet.textDisplay;
+                                const replyAuthor = reply.snippet.authorDisplayName;
+                                const replyElement = document.createElement('p');
+                                const replyAuthorPhoto = reply.snippet.authorProfileImageUrl
+                                replyElement.innerHTML = `<img src="${replyAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${replyAuthor}:</strong> ${replyText}`;
+                                repliesContainer.appendChild(replyElement);
+                            });
+                            commentsContainer.appendChild(repliesContainer);
+                        }
+                    });
+                } catch (e) {
+                    console.warn(e)
+                    $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效")
+
+                }
             }
+
+            console.log(player)
             if (frombtn && $("#comments-container")) {
                 $(".modal-backdrop").appendTo("#fullscreenContainer")
                 return
             }
-            if (!next) {
+            try {
                 $(".modal-backdrop").appendTo("#fullscreenContainer")
-                $("#comments-container").html("")
-                if (nowplays[0] === "video") {
-                    var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+                if (!next) $("#comments-container").html("")
+                $("#comment-modal-p").html(`${player.videoTitle} 的留言`)
 
-                    var url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${nowplays[1]}&key=${apiKey}`
-
-                    if (nextCommentToken) {
-                        url += `&pageToken=${nextCommentToken}`;
-                    } else {
-                        //    $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效")
-                    }
-
-                    fetch(url, {
-                        method: "GET"
-                    }).then(r => r.json())
-                        .then(r => {
-                            processComments(r.items);
-                            nextCommentToken = r.nextPageToken
-                        })
-                }
-            }
-            else {
                 var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
 
-                var url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${nowplays[1]}&key=${apiKey}`
+                var url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${player.playerInfo.videoData.video_id}&key=${apiKey}`
 
                 if (nextCommentToken) {
                     url += `&pageToken=${nextCommentToken}`;
-                } else {
-                    $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效")
-                    return
                 }
 
                 fetch(url, {
                     method: "GET"
                 }).then(r => r.json())
-
-                    .then(r => { processComments(r.items); nextCommentToken = r.nextPageToken })
+                    .then(r => {
+                        processComments(r.items);
+                        nextCommentToken = r.nextPageToken
+                    })
+                    .catch(e => {
+                        $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效")
+                    })
             }
+            catch (error) {
+                $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效")
+
+            }
+
+        }
+
+
+        function renderSuggestVideo(id) {
+            var data = getItemFromHistoryList(id)
+
+            $("#video").html(`<h3>上次暫停的影片</h3><div class="list-group"><a href = "${location.origin + location.pathname}?id=${data.id}&type=${data.type}" class= "list-group-item list-group-item-action" ><img src="${data.thumbnails}"/><br/>${data.name}${data.type === "playlist" ? " (" + data.playlistVideoCounts + "部影片)" : ""} <br /> <i class="bi bi-person-circle"></i> &nbsp;${data.channel} <br />${data.id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a></div>`)
         }
 
         document.getElementById("clear").onclick = clearInput
@@ -707,6 +715,13 @@
             if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
                 updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"), UrlParam(location.href, "index"))
+            } else if (localStorage.getItem("YTplayerPausedVideo")) {
+                var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo")).id
+                var theVid = getItemFromHistoryList(videoId)
+                console.log(videoId)
+                if (isVideoinWhiteList(theVid, true) === true) {
+                    renderSuggestVideo(videoId)
+                }
             }
             updateTime()
             diffHistory()
