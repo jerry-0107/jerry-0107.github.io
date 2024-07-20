@@ -557,7 +557,7 @@
 
         function toggleMute() {
             try {
-                if (player.isMuted) {
+                if (player.isMuted()) {
                     player.unMute()
                 } else {
                     player.mute()
