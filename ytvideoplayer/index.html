@@ -168,12 +168,14 @@
             //  e.target.mute().playVideo();
             console.log("YT Video init Success!", e)
             $("#stateBar").html(``)
+            saveVideoProgress()
         }
         function onPlayerStateChange(e) {
             console.log(e.target.getCurrentTime())
             // $("#stateBar").html(`${e.data === 2 ? `<i class="bi" style="vertical-align: middle  !important;"></i>` : ``} ${e.data === 3 ? `<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>` : ``}`)
 
             if (e.data === 2) {
+                console.log("[user paused] saving watching progress:", player.getCurrentTime())
                 localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
                 updateStateBar("bi-pause-circle-fill")
             } else if (e.data === 3) {
@@ -183,6 +185,12 @@
             }
         }
 
+
+        function saveVideoProgress() {
+            console.log("[cron process] saving watching progress:", player.getCurrentTime())
+            localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
+            setTimeout(saveVideoProgress, 30000)
+        }
 
 
 
@@ -525,7 +533,7 @@
             }
         }
 
-        async function player_back(secs) {
+        async function player_backward(secs) {
             try {
                 player.seekTo(player.getCurrentTime() - secs)
                 await updateStateBar("bi-caret-left-square-fill", 1)
@@ -571,7 +579,7 @@
             if (e.keyCode === 13) { handleClick() }
             else if (e.keyCode === 70) { openFullscreen() } //F
             else if (e.keyCode === 27) { e.preventDefault(); WexitFullscreen() } //esc
-            else if (e.keyCode === 37) { await player_back(10) } // <-
+            else if (e.keyCode === 37) { await player_backward(10) } // <-
             else if (e.keyCode === 39) { await player_forward(10) } // ->
             else if (e.keyCode === 32) { toggleVideoPlay() } //space
             else if (e.keyCode === 77) { toggleMute() } //M
