@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Videos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-avatar@latest/dist/avatar.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .text-success-c {
+            color: #3eff10 !important;
+        }
+
+        .sharecode-container {
+            font-size: 1.2rem;
+            border-radius: 5px;
+            display: inline-block;
+            margin-left: .5rem;
+            padding: .5rem;
+            width: 2.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="p-1">
+    <div class="flex pb-1">
+        <input class="form-control pr-1" placeholder="輸入YT 頻道連結" id="ytlink" />
+        <div class="p-1"></div>
+        <button class="btn btn-primary" id="submit"><i class="bi bi-search"></i></button>
+        <div class="p-1"></div>
+        <button class="btn btn-outline-danger" id="clear"><i class="bi bi-trash"></i></button>
+    </div>
+
+
+
+    <p></p>
+    <div id="ChannelHandle"></div>
+    <p></p>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+                影片</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+                播放清單</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+            tabindex="0">
+            <ul class="list-group w-90" id="ChannelVIdeoList"></ul>
+
+        </div>
+        <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <ul class="list-group w-90" id="ChannelPlayList"></ul>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        const whitelist = ["study with me", "study", "數學", "化學", "生物", "地球科學", "謝博凱", "蔡任圃", "國文", "廖士翔", "複習講義", "物理", "線上教學", "線上學習"]
+        const blacklist = ["猫", "貓"]
+        const apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+
+
+        var nowplays = [0, 0]
+        var nextCommentToken = null
+        // var batteryData = []
+
+        function UrlParam(url, name) {
+            try {
+                var url = new URL(url),
+                    result = url.searchParams.get(name);
+                return result
+            } catch (e) {
+                console.warn(e)
+                return null
+            }
+        }
+
+
+
+        async function getChannelVideos(CHANNEL_ID) {
+            let nextPageToken = '';
+            let videos = [];
+            var internalId;
+            if (CHANNEL_ID.includes("@")) {
+                internalId = await getInternalChannelId(CHANNEL_ID)
+
+            } else {
+                internalId = CHANNEL_ID
+            }
+
+            do {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${internalId}&part=snippet,id&order=date&maxResults=50&pageToken=${nextPageToken}&type=video,channel,playlist`);
+                const data = await response.json();
+                videos.push(...data.items);
+                nextPageToken = data.nextPageToken;
+            } while (nextPageToken);
+
+            nextPageToken = ""
+            do {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${internalId}&maxResults=25&key=${apiKey}`);
+                const data = await response.json();
+                videos.push(...data.items);
+                nextPageToken = data.nextPageToken;
+            } while (nextPageToken);
+
+            videos = videos.reverse()
+
+            return videos;
+        }
+
+        async function getInternalChannelId(customChannelId) {
+            const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?key=${apiKey}&forHandle=${customChannelId}&part=id`);
+            const data = await response.json();
+            if (data.items.length > 0) {
+                return data.items[0].id;
+            } else {
+                throw new Error('Channel not found');
+            }
+        }
+
+
+        function getUser(text) {
+            var rtext = text.replace("https://", "").replace("www.", "").replace("youtube.com/", "").replace("/", "?")
+            console.log(rtext)
+
+            var nextSearchCharAt = rtext.indexOf("?")
+            var nextSlashCharAt = rtext.indexOf("/")
+
+            if (nextSearchCharAt === -1 && nextSearchCharAt) return rtext
+            rtext = rtext.slice(0, nextSlashCharAt)
+
+            console.log(rtext, nextSearchCharAt, nextSlashCharAt)
+
+            rtext = rtext.split("?")[0]
+            return rtext
+
+
+        }
+
+        function renderChannelPage(data) {
+            var playlistids = []
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id.kind === "youtube#video") {
+                    var htmlstr = `<a href="${location.origin + location.pathname}?id=${data[i].id.videoId}&type=video" class="list-group-item w-90">${data[i].snippet.title}<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                    $("#ChannelVIdeoList").append(htmlstr)
+                }
+                else if (data[i].id.kind === "youtube#playlist") {
+                    if (!playlistids.includes(data[i].id.playlistId)) {
+                        var htmlstr = `<a href="${location.origin + location.pathname}?id=${data[i].id.playlistId}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                        $("#ChannelPlayList").append(htmlstr)
+                        playlistids.push(data[i].id.playlistId)
+                    }
+
+                }
+                else if (data[i].id.kind === "youtube#channel") {
+                    var htmlstr = `<img class="avatar avatar-32 bg-light rounded-circle text-white" src="${data[i].snippet.thumbnails.default.url}"> <h3 style="display:inline">${data[i].snippet.title}</h3>`
+                    $("#ChannelHandle").append(htmlstr)
+                }
+                else if (data[i].kind === "youtube#playlist") {
+                    if (!playlistids.includes(data[i].id)) {
+                        var htmlstr = `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                        $("#ChannelPlayList").append(htmlstr)
+                        playlistids.push(data[i].id)
+                    }
+                }
+            }
+        }
+        function clearInput(k) {
+            if (document.getElementById("ytlink").value !== "") {
+                if (confirm("確定要清除輸入嗎?") || k) document.getElementById("ytlink").value = ""
+            }
+        }
+
+        function handleClick() {
+            var user = getUser(document.getElementById("ytlink").value)
+            getChannelVideos(user).then(videos => { console.log(videos); renderChannelPage(videos) }
+            );
+        }
+
+        document.getElementById("clear").onclick = clearInput
+        document.getElementById("clear").ondblclick = function () {
+            clearInput(true)
+        }
+        async function handleKeyboard(e) {
+            if (e.keyCode === 13) { handleClick() }
+        }
+        document.getElementById("submit").onclick = handleClick
+    </script>
+</body>
+
+</html>
