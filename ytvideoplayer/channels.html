@@ -152,7 +152,7 @@
 
 
         function getUser(text) {
-            var rtext = text.replace("https://", "").replace("www.", "").replace("youtube.com/", "").replace("/", "?")
+            var rtext = text.replace("https://", "").replace("www.", "").replace("youtube.com/", "").replace("/", "?").replace("channel?", "")
             console.log(rtext)
 
             var nextSearchCharAt = rtext.indexOf("?")
@@ -173,12 +173,12 @@
             var playlistids = []
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id.kind === "youtube#video") {
-                    var htmlstr = `<a href="${location.origin + location.pathname}?id=${data[i].id.videoId}&type=video" class="list-group-item w-90">${data[i].snippet.title}<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                    var htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id.videoId}&type=video" class="list-group-item w-90">${data[i].snippet.title}<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
                     $("#ChannelVIdeoList").append(htmlstr)
                 }
                 else if (data[i].id.kind === "youtube#playlist") {
                     if (!playlistids.includes(data[i].id.playlistId)) {
-                        var htmlstr = `<a href="${location.origin + location.pathname}?id=${data[i].id.playlistId}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                        var htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id.playlistId}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
                         $("#ChannelPlayList").append(htmlstr)
                         playlistids.push(data[i].id.playlistId)
                     }
@@ -190,7 +190,7 @@
                 }
                 else if (data[i].kind === "youtube#playlist") {
                     if (!playlistids.includes(data[i].id)) {
-                        var htmlstr = `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                        var htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
                         $("#ChannelPlayList").append(htmlstr)
                         playlistids.push(data[i].id)
                     }
