@@ -96,10 +96,18 @@
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
-                <div id="saving-stateBar" style="display: inline-block;" class="pe-1"><span
+                <!-- <div id="saving-stateBar" style="display: inline-block;" class="pe-1"><span
                         class="text-danger">尚未儲存進度</span></div>
+               -->
                 <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
-                <div id="batteryBar" style="display: inline-block;"></div>
+                <div id="batteryBar" style="display: inline-block;" class="pe-1"></div>
+                <div id="videoSettingBar" style="display: inline-block;" class="pe-1">
+                    <div style="display: flex;">
+                        <div id="setbge-icon" class="pe-1"></div>
+                        <div id="setbge-1" class="pe-1"></div>
+                        <div id="setbge-2"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -174,6 +182,32 @@
             return true
         }
 
+        function onPlaybackQualityChange(e) {
+            var quality = "", icon = ''
+            if (e.data === "tiny") { quality = "144p" }
+
+            else if (e.data === "medium") { quality = "360p" }
+            else if (e.data === "hd720") { quality = ``; icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i>` }
+            else if (e.data === "hd1080") { quality = ``; icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i> ` }
+
+            else if (e.data === "highres") { quality = ``; icon = `<i class="bi bi-badge-4k-fill" style="vertical-align: middle !important;"></i>` }
+
+            if (quality) $("#setbge-1").html(`<span class="badge bg-primary" style="font-size: .65rem;">${quality}</span>`)
+            if (icon) $("#setbge-icon").html(icon)
+
+        }
+
+        function onPlaybackRateChange(e) {
+            console.log(e)
+            if (e.data !== 1) {
+                $("#setbge-2").html(`<span class="badge bg-secondary" style="font-size: .65rem;">${e.data}X</span>`)
+            } else {
+                $("#setbge-2").html(``)
+
+            }
+
+        }
+
         async function onPlayerReady(e) {
             // 為確保瀏覽器上可以自動播放，要把影片調成靜音
             //  e.target.mute().playVideo();
@@ -201,8 +235,8 @@
         async function saveVideoProgress() {
             console.log("[cron process] saving watching progress:", player.getCurrentTime())
             localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
-            $("#saving-stateBar").html(`<span class="text-success-c animate__flash">進度儲存成功</span>`)
-            await delay(1)
+            // $("#saving-stateBar").html(`<span class="text-success-c animate__flash">進度儲存成功</span>`)
+            //await delay(1)
             $("#saving-stateBar").html(``)
 
             setTimeout(saveVideoProgress, 30000)
@@ -405,7 +439,9 @@
                 player = new YT.Player('player', {
                     events: {
                         'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange
+                        'onStateChange': onPlayerStateChange,
+                        'onPlaybackQualityChange': onPlaybackQualityChange,
+                        'onPlaybackRateChange': onPlaybackRateChange
                     },
                     playerVars: {
                         controls: '0'
@@ -912,7 +948,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <iframe src="https://jerry-0107.github.io/ytvideoplayer/channels"></iframe>
+            <iframe src="https://jerry-0107.github.io/ytvideoplayer/channels?framed=true"></iframe>
         </div>
     </div>
 

@@ -47,7 +47,7 @@
 
 <body class="p-1">
     <div class="flex pb-1">
-        <button class="btn btn-secondary bi bi-arrow-left-circle-fill" type="button"
+        <button id="back" class="btn btn-secondary bi bi-arrow-left-circle-fill" type="button"
             onclick="location.href = location.href.replace('/channels','').replace('.html','')"></button>
         <div class="p-1"></div>
         <div class="input-group">
@@ -57,8 +57,7 @@
         </div>
         <div class="p-1"></div>
         <button class="btn btn-primary" id="submit"><i class="bi bi-search"></i></button>
-        <div class="p-1"></div>
-        <button class="btn btn-outline-danger" id="clear"><i class="bi bi-trash"></i></button>
+
     </div>
 
 
@@ -224,6 +223,13 @@
             if (e.keyCode === 13) { handleClick() }
         }
         document.getElementById("submit").onclick = handleClick
+
+
+        window.onload = function () {
+            if (UrlParam("framed") == "true") {
+                $("#back").remove()
+            }
+        }
     </script>
 </body>
 
