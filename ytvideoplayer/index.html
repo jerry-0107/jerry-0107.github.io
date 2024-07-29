@@ -183,24 +183,21 @@
         }
 
         function onPlaybackQualityChange(e) {
-            var quality = "", icon = ''
-            if (e.data === "tiny") { quality = "144p" }
+            var icon = ''
 
-            else if (e.data === "medium") { quality = "360p" }
-            else if (e.data === "hd720") { quality = ``; icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i>` }
-            else if (e.data === "hd1080") { quality = ``; icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i> ` }
+            if (e.data === "hd720") { icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i>` }
+            else if (e.data === "hd1080") { icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i> ` }
 
-            else if (e.data === "highres") { quality = ``; icon = `<i class="bi bi-badge-4k-fill" style="vertical-align: middle !important;"></i>` }
+            else if (e.data === "highres") { icon = `<i class="bi bi-badge-4k-fill" style="vertical-align: middle !important;"></i>` }
 
-            if (quality) $("#setbge-1").html(`<span class="badge bg-primary" style="font-size: .65rem;">${quality}</span>`)
-            if (icon) $("#setbge-icon").html(icon)
-
+            //  if (quality) $("#setbge-1").html(`<span class="badge bg-primary" style="font-size: .65rem;">${quality}</span>`)
+            $("#setbge-icon").html(icon)
         }
 
         function onPlaybackRateChange(e) {
             console.log(e)
             if (e.data !== 1) {
-                $("#setbge-2").html(`<span class="badge bg-secondary" style="font-size: .65rem;">${e.data}X</span>`)
+                $("#setbge-2").html(`<span class="text-info" style="font-size: .75rem;">${e.data}X</span>`)
             } else {
                 $("#setbge-2").html(``)
 
@@ -213,6 +210,10 @@
             //  e.target.mute().playVideo();
             console.log("YT Video init Success!", e)
             $("#stateBar").html(``)
+            $("#setbge-2").html(``)
+            $("#setbge-1").html(``)
+            $("#setbge-icon").html(``)
+
             await saveVideoProgress()
         }
         function onPlayerStateChange(e) {

@@ -226,7 +226,7 @@
 
 
         window.onload = function () {
-            if (UrlParam("framed") == "true") {
+            if (UrlParam(location.href, "framed") == "true") {
                 $("#back").remove()
             }
         }
