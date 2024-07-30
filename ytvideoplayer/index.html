@@ -836,6 +836,29 @@
             clearInput(true)
         }
 
+        window.addEventListener(
+            "message",
+            (event) => {
+                if (event.origin !== location.origin) return;
+
+                //console.log(event)
+                try {
+                    var data = JSON.parse(event.data)
+                    if (Boolean(data)) {
+                        if (data.method === "updateVideoFrame") {
+                            var constructedUrl = location.origin + "?" + data.data
+                            updateVideoFrame(UrlParam(constructedUrl, "type"), UrlParam(constructedUrl, "id"), UrlParam(constructedUrl, "index"))
+                            $("#toggleCloseOC1").click()
+                        }
+                    }
+                } catch (e) {
+
+                }
+            },
+            false,
+        );
+
+
         document.getElementById("submit").onclick = handleClick
         document.onkeydown = handleKeyboard
         document.getElementById("fullsc").onclick = openFullscreen
@@ -856,6 +879,8 @@
             updateTime()
             diffHistory()
             updateHistoryList(nowplays)
+
+            $("#accountFrame").attr('src', location.origin + location.pathname + "/channels.html?framed=true")
         }
     </script>
 
@@ -946,10 +971,11 @@
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasExampleLabel">查詢頻道</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" id="toggleCloseOC1" class="btn-close" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <iframe src="https://jerry-0107.github.io/ytvideoplayer/channels?framed=true"></iframe>
+            <iframe id="accountFrame" src="https://jerry-0107.github.io/ytvideoplayer/channels?framed=true"></iframe>
         </div>
     </div>
 

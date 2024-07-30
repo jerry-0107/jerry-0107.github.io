@@ -90,7 +90,9 @@
         </div>
 
     </div>
-
+    <pre>
+    @ver 1.0
+</pre>
 
     <script>
         const whitelist = ["study with me", "study", "數學", "化學", "生物", "地球科學", "謝博凱", "蔡任圃", "國文", "廖士翔", "複習講義", "物理", "線上教學", "線上學習"]
@@ -126,24 +128,28 @@
                 internalId = CHANNEL_ID
             }
 
-            do {
-                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${internalId}&part=snippet,id&order=date&maxResults=50&pageToken=${nextPageToken}&type=video,channel,playlist`);
-                const data = await response.json();
-                videos.push(...data.items);
-                nextPageToken = data.nextPageToken;
-            } while (nextPageToken);
+            try {
+                do {
+                    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${internalId}&part=snippet,id&order=date&maxResults=50&pageToken=${nextPageToken}&type=video,channel,playlist`);
+                    const data = await response.json();
+                    videos.push(...data.items);
+                    nextPageToken = data.nextPageToken;
+                } while (nextPageToken);
 
-            nextPageToken = ""
-            do {
-                const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${internalId}&maxResults=25&key=${apiKey}`);
-                const data = await response.json();
-                videos.push(...data.items);
-                nextPageToken = data.nextPageToken;
-            } while (nextPageToken);
+                nextPageToken = ""
+                do {
+                    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${internalId}&maxResults=25&key=${apiKey}`);
+                    const data = await response.json();
+                    videos.push(...data.items);
+                    nextPageToken = data.nextPageToken;
+                } while (nextPageToken);
 
-            videos = videos.reverse()
+                videos = videos.reverse()
 
-            return videos;
+                return videos;
+            } catch (e) {
+                $("#ChannelHandle").html("無資料，請檢查輸入!!")
+            }
         }
 
         async function getInternalChannelId(customChannelId) {
@@ -179,26 +185,51 @@
             var playlistids = []
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id.kind === "youtube#video") {
-                    var htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id.videoId}&type=video" class="list-group-item w-90">${data[i].snippet.title}<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                    var htmlstr = ""
+                    if (Boolean(!UrlParam(location.href, "framed"))) {
+                        htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id.videoId}&type=video" class="list-group-item w-90">${data[i].snippet.title}<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                    } else {
+                        htmlstr = `<a href="#" onclick="postMsg('id=${data[i].id.videoId}&type=video')" class="list-group-item w-90">${data[i].snippet.title}<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                    }
                     $("#ChannelVIdeoList").append(htmlstr)
                 }
                 else if (data[i].id.kind === "youtube#playlist") {
-                    if (!playlistids.includes(data[i].id.playlistId)) {
-                        var htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id.playlistId}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
-                        $("#ChannelPlayList").append(htmlstr)
-                        playlistids.push(data[i].id.playlistId)
+
+
+                    if (Boolean(!UrlParam(location.href, "framed"))) {
+
+                        if (!playlistids.includes(data[i].id.playlistId)) {
+                            var htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id.playlistId}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                            $("#ChannelPlayList").append(htmlstr)
+                            playlistids.push(data[i].id.playlistId)
+                        }
+                    } else {
+                        if (!playlistids.includes(data[i].id.playlistId)) {
+                            var htmlstr = `<a href="#" onclick="postMsg('id=${data[i].id.playlistId}&type=playlist')" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                            $("#ChannelPlayList").append(htmlstr)
+                            playlistids.push(data[i].id.playlistId)
+                        }
                     }
 
                 }
                 else if (data[i].id.kind === "youtube#channel") {
                     var htmlstr = `<img class="avatar avatar-32 bg-light rounded-circle text-white" src="${data[i].snippet.thumbnails.default.url}"> <h3 style="display:inline">${data[i].snippet.title}</h3>`
-                    $("#ChannelHandle").append(htmlstr)
+                    $("#ChannelHandle").html(htmlstr)
                 }
                 else if (data[i].kind === "youtube#playlist") {
-                    if (!playlistids.includes(data[i].id)) {
-                        var htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
-                        $("#ChannelPlayList").append(htmlstr)
-                        playlistids.push(data[i].id)
+                    if (Boolean(!UrlParam(location.href, "framed"))) {
+
+                        if (!playlistids.includes(data[i].id)) {
+                            var htmlstr = `<a href="${location.origin + location.pathname.replace("channels", "")}?id=${data[i].id}&type=playlist" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                            $("#ChannelPlayList").append(htmlstr)
+                            playlistids.push(data[i].id)
+                        }
+                    } else {
+                        if (!playlistids.includes(data[i].id)) {
+                            var htmlstr = `<a href="#" onclick="postMsg('id=${data[i].id}&type=playlist')" class="list-group-item w-90">${data[i].snippet.title} (播放清單)<br/><img src="${data[i].snippet.thumbnails.medium.url}"></a>`
+                            $("#ChannelPlayList").append(htmlstr)
+                            playlistids.push(data[i].id)
+                        }
                     }
                 }
             }
@@ -210,9 +241,19 @@
         }
 
         function handleClick() {
+            $("#ChannelHandle").html(`
+            <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+            loading...`)
+
             var user = getUser(document.getElementById("ytlink").value)
             getChannelVideos(user).then(videos => { console.log(videos); renderChannelPage(videos) }
             );
+        }
+
+        function postMsg(str) {
+            console.log(str, 'post!')
+            postMessage(JSON.stringify({ 'method': "updateVideoFrame", 'data': str }), location.origin)
+            new bootstrap.Modal('#data-receive-modal', {}).show()
         }
 
         document.getElementById("clear").onclick = clearInput
@@ -231,6 +272,26 @@
             }
         }
     </script>
+
+
+    <div class="modal fade " tabindex="-1" id="data-receive-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="data-receive-modal-title">影片已經開啟</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="data-receive-modal-body">影片已經於主視窗中開啟，可以關閉本頁面.</p>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
