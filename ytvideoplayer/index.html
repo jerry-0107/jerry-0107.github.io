@@ -394,8 +394,8 @@
         }
 
         function updateChannelFrame(data) {
-            channelId = data
-            //  console.log(data)
+            channelId = data.items[0].snippet.channelId
+            console.log(channelId, "set!")
             const iframe = document.getElementById('accountFrame').contentWindow;
 
             var str = data.items[0].snippet.channelId
@@ -900,6 +900,7 @@
 
 
         function iframeonload() {
+            console.log("iframe loaded!")
             if (channelId) {
                 //  console.log(data)
                 const iframe = document.getElementById('accountFrame').contentWindow;

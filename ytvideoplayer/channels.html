@@ -127,10 +127,22 @@
                     }
                     return false
                 } catch {
+                    location.setItem("YTplayerChannels", "[]")
                     return false
                 }
             }
             return false
+        }
+
+        function dumpChannelData(data) {
+            if (JSON.parse(localStorage.getItem("YTplayerChannels"))) {
+                var d = JSON.parse(localStorage.getItem("YTplayerChannels"))
+                d.push(data)
+                localStorage.setItem("YTplayerChannels", JSON.stringify(d))
+            }
+            else {
+                localStorage.setItem("YTplayerChannels", JSON.stringify([data]))
+            }
         }
 
         function getChannelinHistorylist(id) {
@@ -316,6 +328,13 @@
             new bootstrap.Modal('#data-receive-modal', {}).show()
         }
 
+        function renderAvater(channelid) {
+            var theChannel = getChannelinHistorylist(channelid)
+            var htmlstr = `<img class="avatar avatar-32 bg-light rounded-circle text-white" src="${theChannel.thumbnail}"> <h3 style="display:inline">${theChannel.title}</h3><br/>按一下搜尋開始讀取頻道資料`
+            $("#ChannelHandle").html(htmlstr)
+
+        }
+
         document.getElementById("clear").onclick = clearInput
         document.getElementById("clear").ondblclick = function () {
             clearInput(true)
@@ -340,20 +359,32 @@
                     var data = JSON.parse(event.data)
                     if (Boolean(data)) {
                         if (data.method === "updateChannelFrame") {
+
                             var channelid = data.data
                             if (isChannelIdinHistorylist(channelid)) {
-                                var theChannel = getChannelinHistorylist(channelid)
-                                var htmlstr = `<img class="avatar avatar-32 bg-light rounded-circle text-white" src="${theChannel.url}"> <h3 style="display:inline">${theChannel.title}</h3>`
-                                $("#ChannelHandle").html(htmlstr)
+                                renderAvater(channelid)
+                                $("#ytlink").val(channelid)
+
                             }
-                        } else {
-                            const response = fetch(`https://www.googleapis.com/youtube/v3/channels?key=${apiKey}&id=${channelid}&part=id,snippet`);
-                            const _data = response.json();
-                            if (_data.items.length > 0) {
-                                console.log(_data.items, "000000")
-                                $("#ytlink").val(data)
-                            } else {
-                                throw new Error('Channel not found');
+                            else {
+                                fetch(`https://www.googleapis.com/youtube/v3/channels?key=${apiKey}&id=${channelid}&part=id,snippet`)
+                                    .then(r => r.json())
+                                    .then(_data => {
+                                        if (_data.items.length > 0) {
+                                            console.log(_data.items, "000000")
+                                            $("#ytlink").val(data.data)
+                                            var dumpdata = {
+                                                id: channelid,
+                                                title: _data.items[0].snippet.title,
+                                                thumbnail: _data.items[0].snippet.thumbnails.default.url
+                                            }
+                                            dumpChannelData(dumpdata)
+                                            renderAvater(channelid)
+                                        } else {
+                                            throw new Error('Channel not found');
+                                        }
+                                    })
+
                             }
                         }
                     }
