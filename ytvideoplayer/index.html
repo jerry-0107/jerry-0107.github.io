@@ -399,7 +399,7 @@
             const iframe = document.getElementById('accountFrame').contentWindow;
 
             var str = data.items[0].snippet.channelId
-            iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': str }), location.origin)
+            iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': str }), location.origin + "channals")
             console.log(str, 'post!')
 
         }
@@ -854,9 +854,11 @@
         window.addEventListener(
             "message",
             (event) => {
+                console.log(event)
+
                 if (event.origin !== location.origin) return;
 
-                //console.log(event)
+                console.log(event)
                 try {
                     var data = JSON.parse(event.data)
                     console.log("received! data:", data)
@@ -1003,7 +1005,7 @@
             <button type="button" id="toggleCloseOC1" class="btn-close" data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
+        <div class="offcanvas-body" style="overflow: hidden;">
             <iframe onload="iframeonload()" id="accountFrame"></iframe>
         </div>
     </div>

@@ -42,6 +42,17 @@
             width: 2.5rem;
             text-align: center;
         }
+
+        .sticky {
+            z-index: 999000;
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0;
+        }
+
+        img {
+            max-width: 300px;
+        }
     </style>
 </head>
 
@@ -64,21 +75,23 @@
 
     <p></p>
     <div id="loading"></div>
-    <div id="ChannelHandle"></div>
-    <p></p>
-    <ul class="nav nav-tabs" id="myTab" role="tablist" style="position: sticky;">
+    <div class="sticky bg-light p-1">
+        <div id="ChannelHandle"></div>
+        <p></p>
+        <ul class="nav nav-tabs" id="myTab" role="tablist" style="position: sticky;">
 
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
-                type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
-                影片</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
-                type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
-                播放清單</button>
-        </li>
-    </ul>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                    type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+                    影片</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                    type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+                    播放清單</button>
+            </li>
+        </ul>
+    </div>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
             tabindex="0">
@@ -105,6 +118,7 @@
         // var batteryData = []
 
         var user;
+        var isAutoCompletedInput = false
 
         function UrlParam(url, name) {
             try {
@@ -313,6 +327,8 @@
         }
 
         function handleClick() {
+            $("#alert01").remove()
+            isAutoCompletedInput = false
             $("#loading").html(`
             <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
             `)
@@ -324,13 +340,13 @@
 
         function postMsg(str) {
             console.log(str, 'post!')
-            postMessage(JSON.stringify({ 'method': "updateVideoFrame", 'data': str }), location.origin)
+            window.parent.postMessage(JSON.stringify({ 'method': "updateVideoFrame", 'data': str }), location.origin)
             new bootstrap.Modal('#data-receive-modal', {}).show()
         }
 
         function renderAvater(channelid) {
             var theChannel = getChannelinHistorylist(channelid)
-            var htmlstr = `<img class="avatar avatar-32 bg-light rounded-circle text-white" src="${theChannel.thumbnail}"> <h3 style="display:inline">${theChannel.title}</h3><br/>按一下搜尋開始讀取頻道資料`
+            var htmlstr = `<img class="avatar avatar-32 bg-light rounded-circle text-white" src="${theChannel.thumbnail}"> <h3 style="display:inline">${theChannel.title}</h3><br/><p id="alert01">按一下搜尋開始讀取頻道資料</p>`
             $("#ChannelHandle").html(htmlstr)
 
         }
@@ -344,13 +360,13 @@
         }
         document.getElementById("submit").onclick = handleClick
         document.getElementById("loadmoreBtn").onclick = function () {
-            getChannelVideos(user, true).then(videos => { console.log(videos); renderChannelPage(videos) })
+            if (isAutoCompletedInput) handleClick();
+            else getChannelVideos(user, true).then(videos => { console.log(videos); renderChannelPage(videos) })
         }
 
         window.addEventListener(
             "message",
             (event) => {
-
 
                 if (event.origin !== location.origin) return;
 
@@ -359,7 +375,7 @@
                     var data = JSON.parse(event.data)
                     if (Boolean(data)) {
                         if (data.method === "updateChannelFrame") {
-
+                            isAutoCompletedInput = true
                             var channelid = data.data
                             if (isChannelIdinHistorylist(channelid)) {
                                 renderAvater(channelid)
@@ -387,6 +403,7 @@
 
                             }
                         }
+                        return
                     }
                 } catch (e) {
                     console.warn(e)
