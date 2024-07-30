@@ -859,6 +859,7 @@
                 //console.log(event)
                 try {
                     var data = JSON.parse(event.data)
+                    console.log("received! data:", data)
                     if (Boolean(data)) {
                         if (data.method === "updateVideoFrame") {
                             var constructedUrl = location.origin + "?" + data.data
