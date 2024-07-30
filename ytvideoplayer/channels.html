@@ -63,9 +63,10 @@
 
 
     <p></p>
+    <div id="loading"></div>
     <div id="ChannelHandle"></div>
     <p></p>
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <ul class="nav nav-tabs" id="myTab" role="tablist" style="position: sticky;">
 
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
@@ -90,9 +91,8 @@
         </div>
 
     </div>
-    <pre>
-    @ver 1.0
-</pre>
+
+    <button class="btn btn-primary mt-1" id="loadmoreBtn">更多</button>
 
     <script>
         const whitelist = ["study with me", "study", "數學", "化學", "生物", "地球科學", "謝博凱", "蔡任圃", "國文", "廖士翔", "複習講義", "物理", "線上教學", "線上學習"]
@@ -103,6 +103,8 @@
         var nowplays = [0, 0]
         var nextCommentToken = null
         // var batteryData = []
+
+        var user;
 
         function UrlParam(url, name) {
             try {
@@ -116,9 +118,73 @@
         }
 
 
+        function isChannelIdinHistorylist(id) {
+            if (JSON.parse(localStorage.getItem("YTplayerChannels"))) {
+                try {
+                    var data = JSON.parse(localStorage.getItem("YTplayerChannels"))
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].id === id) return true
+                    }
+                    return false
+                } catch {
+                    return false
+                }
+            }
+            return false
+        }
 
-        async function getChannelVideos(CHANNEL_ID) {
-            let nextPageToken = '';
+        function getChannelinHistorylist(id) {
+            if (JSON.parse(localStorage.getItem("YTplayerChannels"))) {
+                try {
+                    var data = JSON.parse(localStorage.getItem("YTplayerChannels"))
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].id === id) return data[i]
+                    }
+                    return false
+                } catch {
+                    return false
+                }
+            }
+            return false
+        }
+
+
+
+        async function fetchYouTubeData(endpoint) {
+            const url = `https://www.googleapis.com/youtube/v3/${endpoint}&key=${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        }
+
+
+        var nextPageTokenVideos, nextPageTokenPlaylists, maxResults = 50
+        async function getVideos(channelId, loadMore = false) {
+            let endpoint = `search?channelId=${channelId}&part=snippet&type=video&maxResults=${maxResults}`;
+            if (nextPageTokenVideos && loadMore) {
+                endpoint += `&pageToken=${nextPageTokenVideos}`;
+            }
+            const data = await fetchYouTubeData(endpoint);
+            nextPageTokenVideos = data.nextPageToken || '';
+            // displayVideos(data.items, loadMore);
+            return data.items
+        }
+
+        async function getPlaylists(channelId, loadMore = false) {
+            let endpoint = `playlists?channelId=${channelId}&part=snippet&maxResults=${maxResults}`;
+            if (nextPageTokenPlaylists && loadMore) {
+                endpoint += `&pageToken=${nextPageTokenPlaylists}`;
+            }
+            const data = await fetchYouTubeData(endpoint);
+            nextPageTokenPlaylists = data.nextPageToken || '';
+            return data.items
+            // displayPlaylists(data.items, loadMore);
+        }
+
+
+
+        async function getChannelVideos(CHANNEL_ID, shouldloadmore) {
+
             let videos = [];
             var internalId;
             if (CHANNEL_ID.includes("@")) {
@@ -129,23 +195,11 @@
             }
 
             try {
-                do {
-                    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${internalId}&part=snippet,id&order=date&maxResults=50&pageToken=${nextPageToken}&type=video,channel,playlist`);
-                    const data = await response.json();
-                    videos.push(...data.items);
-                    nextPageToken = data.nextPageToken;
-                } while (nextPageToken);
-
-                nextPageToken = ""
-                do {
-                    const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${internalId}&maxResults=25&key=${apiKey}`);
-                    const data = await response.json();
-                    videos.push(...data.items);
-                    nextPageToken = data.nextPageToken;
-                } while (nextPageToken);
+                videos.push(...await getVideos(internalId, shouldloadmore))
+                videos.push(...await getPlaylists(internalId, shouldloadmore))
 
                 videos = videos.reverse()
-
+                console.log(videos)
                 return videos;
             } catch (e) {
                 $("#ChannelHandle").html("無資料，請檢查輸入!!")
@@ -182,7 +236,9 @@
         }
 
         function renderChannelPage(data) {
+            console.warn(data)
             var playlistids = []
+            $("#loading").html("")
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id.kind === "youtube#video") {
                     var htmlstr = ""
@@ -233,6 +289,10 @@
                     }
                 }
             }
+
+            if (!nextPageTokenVideos) { $("#ChannelVIdeoList").append("沒有更多資料了") }
+            if (!nextPageTokenPlaylists) { $("#ChannelPlayList").append("沒有更多資料了") }
+
         }
         function clearInput(k) {
             if (document.getElementById("ytlink").value !== "") {
@@ -241,11 +301,11 @@
         }
 
         function handleClick() {
-            $("#ChannelHandle").html(`
+            $("#loading").html(`
             <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
-            loading...`)
+            `)
 
-            var user = getUser(document.getElementById("ytlink").value)
+            user = getUser(document.getElementById("ytlink").value)
             getChannelVideos(user).then(videos => { console.log(videos); renderChannelPage(videos) }
             );
         }
@@ -264,6 +324,45 @@
             if (e.keyCode === 13) { handleClick() }
         }
         document.getElementById("submit").onclick = handleClick
+        document.getElementById("loadmoreBtn").onclick = function () {
+            getChannelVideos(user, true).then(videos => { console.log(videos); renderChannelPage(videos) })
+        }
+
+        window.addEventListener(
+            "message",
+            (event) => {
+
+
+                if (event.origin !== location.origin) return;
+
+                console.log(event)
+                try {
+                    var data = JSON.parse(event.data)
+                    if (Boolean(data)) {
+                        if (data.method === "updateChannelFrame") {
+                            var channelid = data.data
+                            if (isChannelIdinHistorylist(channelid)) {
+                                var theChannel = getChannelinHistorylist(channelid)
+                                var htmlstr = `<img class="avatar avatar-32 bg-light rounded-circle text-white" src="${theChannel.url}"> <h3 style="display:inline">${theChannel.title}</h3>`
+                                $("#ChannelHandle").html(htmlstr)
+                            }
+                        } else {
+                            const response = fetch(`https://www.googleapis.com/youtube/v3/channels?key=${apiKey}&id=${channelid}&part=id,snippet`);
+                            const _data = response.json();
+                            if (_data.items.length > 0) {
+                                console.log(_data.items, "000000")
+                                $("#ytlink").val(data)
+                            } else {
+                                throw new Error('Channel not found');
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn(e)
+                }
+            },
+            false,
+        );
 
 
         window.onload = function () {

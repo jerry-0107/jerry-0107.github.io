@@ -145,6 +145,7 @@
 
         var nowplays = [0, 0]
         var nextCommentToken = null
+        var channelId
         // var batteryData = []
 
         function UrlParam(url, name) {
@@ -333,6 +334,8 @@
             }
         }
 
+
+
         function isIdinHistorylist(id) {
             if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
                 var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
@@ -390,6 +393,17 @@
             }
         }
 
+        function updateChannelFrame(data) {
+            channelId = data
+            //  console.log(data)
+            const iframe = document.getElementById('accountFrame').contentWindow;
+
+            var str = data.items[0].snippet.channelId
+            iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': str }), location.origin)
+            console.log(str, 'post!')
+
+        }
+
         function updateVideoFrame(type, id, index) {
 
             async function renderSc(_type, _id, _index) {
@@ -397,19 +411,20 @@
                     thekind = _type,
                     theindex = _index
                 console.log(theid, thekind, theindex)
-                if (!isIdinHistorylist(_id)) {
-                    var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
-                    await fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
-                        method: "GET"
-                    }).then(r => r.json())
-                        .then(r => {
-                            dumpLocalData(_id, _type, r);
-                            if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
-                        })
-                        .catch(e => console.warn(e))
-                } else {
-                    if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
-                }
+                // if (!isIdinHistorylist(_id)) {
+                var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+                await fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
+                    method: "GET"
+                }).then(r => r.json())
+                    .then(r => {
+                        if (!isIdinHistorylist(_id)) dumpLocalData(_id, _type, r);
+                        if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
+                        updateChannelFrame(r)
+                    })
+                    .catch(e => console.warn(e))
+                // } else {
+                //   if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
+                // }
 
                 var isStudyVideo = getItemFromHistoryList(theid).name.toLowerCase().includes("study")
 
@@ -880,7 +895,19 @@
             diffHistory()
             updateHistoryList(nowplays)
 
-            $("#accountFrame").attr('src', location.origin + location.pathname + "/channels.html?framed=true")
+            $("#accountFrame").attr('src', location.origin + location.pathname + "channels.html?framed=true")
+        }
+
+
+        function iframeonload() {
+            if (channelId) {
+                //  console.log(data)
+                const iframe = document.getElementById('accountFrame').contentWindow;
+
+
+                iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': channelId }), location.origin)
+                console.log(channelId, 'post on load!')
+            }
         }
     </script>
 
@@ -975,7 +1002,7 @@
                 aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <iframe id="accountFrame" src="https://jerry-0107.github.io/ytvideoplayer/channels?framed=true"></iframe>
+            <iframe onload="iframeonload()" id="accountFrame"></iframe>
         </div>
     </div>
 
