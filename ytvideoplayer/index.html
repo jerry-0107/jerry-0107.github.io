@@ -184,12 +184,12 @@
         }
 
         function onPlaybackQualityChange(e) {
+
+            console.log(e.data)
             var icon = ''
 
-            if (e.data === "hd720") { icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i>` }
-            else if (e.data === "hd1080") { icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i> ` }
-
-            else if (e.data === "highres") { icon = `<i class="bi bi-badge-4k-fill" style="vertical-align: middle !important;"></i>` }
+            if (e.data === "hd2160") { icon = `<i class="bi bi-badge-4k-fill" style="vertical-align: middle !important;"></i>` }
+            else if (e.data.includes("hd")) { icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i>` }
 
             //  if (quality) $("#setbge-1").html(`<span class="badge bg-primary" style="font-size: .65rem;">${quality}</span>`)
             $("#setbge-icon").html(icon)
@@ -399,7 +399,7 @@
             const iframe = document.getElementById('accountFrame').contentWindow;
 
             var str = data.items[0].snippet.channelId
-            iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': str }), location.origin + "channals")
+            iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': str }), location.origin)
             console.log(str, 'post!')
 
         }
@@ -854,7 +854,7 @@
         window.addEventListener(
             "message",
             (event) => {
-                console.log(event)
+
 
                 if (event.origin !== location.origin) return;
 
@@ -907,8 +907,6 @@
             if (channelId) {
                 //  console.log(data)
                 const iframe = document.getElementById('accountFrame').contentWindow;
-
-
                 iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': channelId }), location.origin)
                 console.log(channelId, 'post on load!')
             }
