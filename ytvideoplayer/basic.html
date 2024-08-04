@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Videos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .text-success-c {
+            color: #3eff10 !important;
+        }
+    </style>
+</head>
+
+<body class="p-1">
+    <div class="flex pb-1">
+        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+            aria-controls="offcanvasExample"><i class="bi bi-clock-history"></i></button>
+        <div class="p-1"></div>
+        <input class="form-control pr-1" placeholder="basic// 輸入YT 影片連結" id="ytlink" />
+        <div class="p-1"></div>
+        <button class="btn btn-primary" id="submit"><i class="bi bi-search"></i></button>
+        <div class="p-1"></div>
+        <button class="btn btn-outline-danger" id="clear"><i class="bi bi-trash"></i></button>
+        <div class="p-1"></div>
+        <button class="btn btn-outline-dark" id="fullsc"><i class="bi bi-fullscreen"></i></button>
+    </div>
+    <div class="flex" id="fullscreenContainer" style="height: 100%;width: 100%;flex-direction: column;">
+        <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 98%;">
+            <h1>影片會顯示在這裡</h1>
+            <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
+        </div>
+        <div id="fullscToolBar" class="p-1" style="width: 100%;user-select: none;">
+            <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()"
+                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
+                    class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
+            <div style="float: right;color: #fff;padding-right: 1.5rem;">
+                <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
+                <div id="batteryBar" style="display: inline-block;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const whitelist = ["study with me", "study", "數學", "化學", "生物", "地球科學", "謝博凱", "蔡任圃", "國文", "廖士翔", "複習講義", "物理", "線上教學", "線上學習"]
+        const blacklist = ["猫", "貓"]
+
+
+        var nowplays = [0, 0]
+        // var batteryData = []
+
+        function UrlParam(url, name) {
+            var url = new URL(url),
+                result = url.searchParams.get(name);
+            return result
+        }
+
+
+        function isVideoinWhiteList(o) {
+            console.log("isVideoinWhiteList", o)
+            var title = o.name.toLowerCase()
+            var channel = o.channel.toLowerCase()
+
+            var _title = o.name
+            var _channel = o.channel
+            for (let i = 0; i < blacklist.length; i++) {
+                if (title.includes(blacklist[i]) || channel.includes(blacklist[i])) {
+                    console.log("alert!!!!!")
+                    $("#data-warning-modal-title").text(`你無法觀看來自 ${_channel} 的影片`)
+                    $("#data-warning-modal-body").html(`以下影片<b>包含黑名單中的字詞:"${blacklist[i]}"</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>`)
+                    $("#data-warning-modal-gobtn").hide()
+                    const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                    myModal2.show()
+                    document.getElementById("video").innerHTML = "<h3>影片已遭到封鎖</h3>"
+                    return false
+                }
+            }
+            for (let i = 0; i < whitelist.length; i++) {
+                if (title.includes(whitelist[i]) || channel.includes(whitelist[i])) {
+                    return true
+                }
+            }
+            console.log("alert!!!!!")
+            $("#data-warning-modal-title").text(`要繼續觀看來自 ${_channel} 的影片嗎?`)
+            $("#data-warning-modal-body").html(`以下影片<b>未經驗證</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>繼續觀看可能存在風險，我們建議您不要觀看。`)
+
+            const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+            myModal2.show()
+            return true
+        }
+
+
+        function getVideoOrPlaylistId(inputData) {
+            if (inputData.includes("/short")) {
+                console.log("alert!!!!!")
+                $("#data-warning-modal-title").text(`無法解析YouTube Shorts`)
+                $("#data-warning-modal-body").html(`出於安全考慮，系統已經停止解析YouTube Shorts`)
+                $("#data-warning-modal-gobtn").hide()
+                const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                myModal2.show()
+                return null
+            }
+            if (!inputData.includes("youtube.com/post")) {
+                if (inputData.includes("youtube.com") && (inputData.includes("/watch") || inputData.includes("/playlist"))) {
+
+                    var output = inputData
+                    if (inputData.includes("playlist")) {
+                        return [UrlParam(inputData, "list"), "playlist"]
+                    }
+                    return [UrlParam(inputData, "v"), "video"]
+
+                }
+                else if (inputData.includes("youtu.be") || (inputData.includes("youtube.com") && inputData.includes("/live"))) {
+
+                    var output = inputData
+                    if (inputData.includes("playlist")) {
+                        return [UrlParam(inputData, "list"), "playlist"]
+                    }
+                    output = inputData.replace("www.", "")
+                    output = output.replace("https://", "")
+                    output = output.replace("youtu.be/", "")
+                    output = output.replace("youtube.com/", "")
+                    output = output.replace("live", "")
+                    output = output.replace("/", "")
+                    output = output.replace("m.", "")//for m.youtube.com
+
+                    console.log(output)
+                    var nextSearchCharAt = output.indexOf("?")
+                    if (nextSearchCharAt === -1) return [output, "video"]
+                    return [output.slice(0, nextSearchCharAt), "video"]
+                }
+            } else {
+                console.log("invaild link")
+                return null
+            }
+        }
+
+        function isIdinHistorylist(id) {
+            if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].id === id) return true
+                }
+                return false
+            }
+            return false
+        }
+
+        function getItemFromHistoryList(id) {
+            if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].id === id) return data[i]
+                }
+                return false
+            }
+            return false
+        }
+
+        function updateHistoryList(nowplays) {
+            console.log(nowplays)
+            var data = JSON.parse(localStorage.getItem("YTplayerHistory")),
+                htmlTxt = "";
+
+            if (!data || data.length < 1) {
+                document.getElementById("historyList").innerHTML = `<a href="#" class="list-group-item list-group-item-action">無資料</a>`
+                return
+            }
+            console.log(data)
+            data = data.reverse()
+            for (let i = 0; i < data.length; i++) {
+                htmlTxt = htmlTxt + `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action ${data[i].id === nowplays[1] ? "active" : ""}"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? " (" + data[i].playlistVideoCounts + "部影片)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}<br/>${data[i].id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a>`
+            }
+            document.getElementById("historyList").innerHTML = htmlTxt
+        }
+
+        function dumpLocalData(id, type, data) {
+            console.log(id, type, data)
+            if (data.items.length < 1) {
+                return
+            } else {
+                if (!localStorage.getItem("YTplayerHistory")) {
+                    localStorage.setItem("YTplayerHistory", JSON.stringify(
+                        [{ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount }]
+                    ))
+                } else {
+                    var lastData = JSON.parse(localStorage.getItem("YTplayerHistory"))
+                    lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount })
+                    localStorage.setItem("YTplayerHistory", JSON.stringify(lastData))
+                }
+                updateHistoryList(nowplays)
+            }
+        }
+
+        function updateVideoFrame(type, id) {
+
+            function renderSc(_type, _id) {
+                var theid = _id,
+                    thekind = _type;
+
+                if (!isIdinHistorylist(_id)) {
+                    var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+                    fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
+                        method: "GET"
+                    }).then(r => r.json())
+                        .then(r => {
+                            dumpLocalData(_id, _type, r);
+                            if (!isVideoinWhiteList(getItemFromHistoryList(theid))) return
+                        })
+                        .catch(e => console.warn(e))
+                } else {
+                    if (!isVideoinWhiteList(getItemFromHistoryList(theid))) return
+                }
+
+
+                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}?rel=0`)
+                document.getElementById("video").innerHTML = `<iframe id="player" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "videoseries?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0"></iframe>`
+
+                document.getElementById("ytlink").value = ""
+
+            }
+
+            if (type && id) {
+                try {
+                    nowplays = [type, id]
+                    renderSc(type, id)
+                    updateHistoryList(nowplays)
+
+                } catch {
+                    const myModal = new bootstrap.Modal('#invailddata-modal', {})
+                    myModal.show()
+                }
+            } else {
+                var inputData = document.getElementById("ytlink").value
+                console.log(getVideoOrPlaylistId(inputData))
+                try {
+                    var theid = getVideoOrPlaylistId(inputData)[0],
+                        thekind = getVideoOrPlaylistId(inputData)[1];
+                    nowplays = [thekind, theid]
+                    updateHistoryList(nowplays)
+                    renderSc(thekind, theid)
+
+                } catch {
+                    const myModal = new bootstrap.Modal('#invailddata-modal', {})
+                    myModal.show()
+                }
+            }
+        }
+
+        function handleClick(e) {
+            updateVideoFrame()
+        }
+        function clearInput() {
+            if (document.getElementById("ytlink").value !== "") {
+                if (confirm("確定要清除輸入嗎?")) document.getElementById("ytlink").value = ""
+            }
+        }
+
+        function handleKeyboard(e) {
+            if (e.keyCode === 13) { handleClick() }
+            else if (e.keyCode === 70) { openFullscreen() } //F
+            else if (e.keyCode === 27) { e.preventDefault(); WexitFullscreen() } //esc
+        }
+        function openFullscreen() {
+            var elem = document.getElementById("fullscreenContainer");
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+
+            $("#video").css("height", "98%")
+            $("#fullscToolBar").show()
+
+        }
+        function WexitFullscreen() {
+            document.exitFullscreen()
+            $("#video").css("height", "100%")
+            $("#fullscToolBar").hide()
+
+        }
+
+        navigator.getBattery().then((battery) => {
+
+            // function countBatteryRemainTime() {
+            //     if (batteryData.length < 1) return "-1"
+            //     if (batteryData[-1].charging) return "-2"
+            //     var flag1, flag2 = batteryData.length - 1;
+            //     for (let i = 0; i < batteryData.length; i++) {
+            //         if (batteryData[i].charging) {
+            //             flag1 = i + 1
+            //         }
+            //     }
+            //     if (flag1 >= flag2) return "-3"
+            //     return (batteryData[flag2].level - batteryData[flag1].level) / ((batteryData[flag2].time - batteryData[flag1].time) / 1000)
+            // }
+
+            function renderBatteryBar(level, charging) {
+                var htmlStr = ""
+                var colorClass = "";
+                var batteryClass = ""
+                if (level >= 0.7) {
+                    colorClass = "text-success-c"
+                    batteryClass = "bi-battery-full"
+                }
+                else if (0.4 < level && level < 0.7) {
+                    colorClass = "text-warning"
+                    batteryClass = "bi-battery-half"
+                }
+                else {
+                    colorClass = "text-danger"
+                    batteryClass = "bi-battery"
+                }
+
+                if (charging) {
+                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}% </span>`
+                } else {
+                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle  !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}% ${(battery.level <= 0.2 && !charging ? "請充電" : "")} ${(battery.level >= 0.95 && charging ? "充電完成" : "")}</span>`
+                }
+                //htmlStr = htmlStr +  //+ countBatteryRemainTime()
+                $("#batteryBar").html(htmlStr)
+
+                //   batteryData.push({ level, charging, time: new Date() })
+                // console.log(countBatteryRemainTime())
+            }
+
+
+            function updateAllBatteryInfo() {
+                updateChargeInfo();
+                updateLevelInfo();
+            }
+            updateAllBatteryInfo();
+
+            battery.addEventListener("chargingchange", () => {
+                updateChargeInfo();
+            });
+            function updateChargeInfo() {
+                console.log(`Battery charging? ${battery.charging ? "Yes" : "No"}`);
+                renderBatteryBar(battery.level, battery.charging)
+            }
+
+            battery.addEventListener("levelchange", () => {
+                updateLevelInfo();
+            });
+            function updateLevelInfo() {
+                console.log(`Battery level: ${battery.level * 100}%`);
+                renderBatteryBar(battery.level, battery.charging)
+            }
+        });
+
+        function updateTime() {
+            var dat = new Date(),
+                h = dat.getHours() > 9 ? dat.getHours() : "0" + dat.getHours(),
+                m = dat.getMinutes() > 9 ? dat.getMinutes() : "0" + dat.getMinutes()
+            $("#timeBar").html(`<span style="font-size: .75rem;">${h}:${m}</span>`)
+            setTimeout("updateTime()", 10000)
+        }
+
+
+
+        document.getElementById("clear").onclick = clearInput
+        document.getElementById("submit").onclick = handleClick
+        document.onkeydown = handleKeyboard
+        document.getElementById("fullsc").onclick = openFullscreen
+        window.onload = function () {
+            $("#video").css("height", "100%")
+            $("#fullscToolBar").hide()
+            updateHistoryList(nowplays)
+            if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
+                document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
+                updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"))
+            }
+            updateTime()
+        }
+    </script>
+
+
+
+    <div class="modal fade" tabindex="-1" id="invailddata-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">資料讀取失敗</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>請檢查影片連結是否錯誤!!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " tabindex="-1" id="data-warning-modal" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="data-warning-modal-title"></h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body">
+                    <p id="data-warning-modal-body"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        onclick="window.location.search = '';">關閉</button>
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
+                        id="data-warning-modal-gobtn">繼續</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">觀看紀錄</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <button class="btn btn-outline-danger"
+                onclick="if(confirm('確定要清除嗎?\n這項操作無法恢復!!')){localStorage.setItem('YTplayerHistory','[]');updateHistoryList()}"><i
+                    class="bi bi-trash"></i> 清除觀看紀錄</button>
+            <p></p>
+            <div class="list-group" id="historyList">
+                <a href="#" class="list-group-item list-group-item-action">無資料</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
