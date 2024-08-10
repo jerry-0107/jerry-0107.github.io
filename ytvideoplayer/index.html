@@ -75,42 +75,46 @@
         <button class="btn btn-outline-dark" id="fullsc"><i class="bi bi-fullscreen"></i></button>
     </div>
     <div class="flex" id="fullscreenContainer" style="height: 100%;width: 100%;flex-direction: column;">
+        <div id="toolbar-u-container" onclick="switchtoolbar()"></div>
+
         <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 98%;">
             <h1>影片會顯示在這裡</h1>
             <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
         </div>
-        <div id="fullscToolBar" class="p-1" style="width: 100%;user-select: none;">
-            <div id="fscToolbar-container-left" style="float: left;">
-                <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()" id="exitFullscreenBtn"
-                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
-                        class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
+        <div id="toolbar-b-container" onclick="switchtoolbar()">
+            <div id="fullscToolBar" onclick="switchtoolbar()" data-dir="b" class="p-1"
+                style="width: 100%;user-select: none;">
+                <div id="fscToolbar-container-left" style="float: left;">
+                    <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()" id="exitFullscreenBtn"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
+                            class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
 
 
-                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#comment-modal"
-                    onclick="getComments(null,true)">留言</button>
-            </div>
-            <div style="float: right;color: #fff;padding-right: 1.5rem;">
-                <div id="stateBar" style="display: inline-block;" class="pe-1">
-                    <div class="spinner-border spinner-border-sm" role="status"
-                        style="vertical-align: middle  !important;">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#comment-modal"
+                        onclick="getComments(null,true)">留言</button>
                 </div>
-                <!-- <div id="saving-stateBar" style="display: inline-block;" class="pe-1"><span
+                <div style="float: right;color: #fff;padding-right: 1.5rem;" onclick="switchtoolbar()">
+                    <div id="stateBar" style="display: inline-block;" class="pe-1">
+                        <div class="spinner-border spinner-border-sm" role="status"
+                            style="vertical-align: middle  !important;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <!-- <div id="saving-stateBar" style="display: inline-block;" class="pe-1"><span
                         class="text-danger">尚未儲存進度</span></div>
                -->
-                <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
-                <div id="batteryBar" style="display: inline-block;" class="pe-1"></div>
-                <div id="videoSettingBar" style="display: inline-block;" class="pe-1">
-                    <div style="display: flex;">
-                        <div id="setbge-icon" class="pe-1"></div>
-                        <div id="setbge-1" class="pe-1"></div>
-                        <div id="setbge-2"></div>
+                    <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
+                    <div id="batteryBar" style="display: inline-block;" class="pe-1"></div>
+                    <div id="videoSettingBar" style="display: inline-block;" class="pe-1">
+                        <div style="display: flex;">
+                            <div id="setbge-icon" class="pe-1"></div>
+                            <div id="setbge-1" class="pe-1"></div>
+                            <div id="setbge-2"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
 
 
 
@@ -597,6 +601,18 @@
         function clearInput(k) {
             if (document.getElementById("ytlink").value !== "") {
                 if (confirm("確定要清除輸入嗎?") || k) document.getElementById("ytlink").value = ""
+            }
+        }
+
+        function switchtoolbar() {
+            if ($("#fullscToolBar").attr("data-dir") === "b") {
+                $("#fullscToolBar").appendTo($("#toolbar-u-container"))
+                $("#toolbar-b-container").html("")
+                $("#fullscToolBar").attr({ "data-dir": "u" })
+            } else {
+                $("#fullscToolBar").appendTo($("#toolbar-b-container"))
+                $("#toolbar-u-container").html("")
+                $("#fullscToolBar").attr({ "data-dir": "b" })
             }
         }
 
