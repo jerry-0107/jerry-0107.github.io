@@ -147,7 +147,7 @@
                     }
                     return false
                 } catch {
-                    location.setItem("YTplayerChannels", "[]")
+                    localStorage.setItem("YTplayerChannels", "[]")
                     return false
                 }
             }
@@ -186,7 +186,7 @@
             var data = getChannelinHistorylist("*")
             if (data) {
                 for (let i = 0; i < data.length; i++) {
-                    var htmlStr = `<a href="${location.origin + location.pathname}?qid=${data[i].id}&${UrlParam(location.href, "framed") == "true" ? "&framed=true" : ""}" class="list-group-item list-group-item-action"><img class="avatar avatar-32 bg-light rounded-circle text-white" src="${data[i].thumbnail}"/> ${data[i].title}</a>`
+                    var htmlStr = `<a href="#" onclick="processDataFromRequest('${data[i].id}')" class="list-group-item list-group-item-action"><img class="avatar avatar-32 bg-light rounded-circle text-white" src="${data[i].thumbnail}"/> ${data[i].title}</a>`
                     $("#ChannelList").append(htmlStr)
                 }
             } else {
