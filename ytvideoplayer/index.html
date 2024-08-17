@@ -883,6 +883,8 @@
                     txt = txt + `<span class="badge text-bg-primary me-1 select-none" onclick="searchHistory('${whitelist[i]}')">${whitelist[i]}</span>`
                 } catch { }
             }
+            txt = txt + `<span class="badge text-bg-warning me-1 select-none" onclick="searchHistory('')">全部</span>`
+
             $("#suggestedSearch").html(txt)
         }
 
@@ -1088,7 +1090,7 @@
             <h5 class="offcanvas-title" id="offcanvasExampleLabel">觀看紀錄</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
+        <div class="offcanvas-body" style="padding-top: 0;">
             <button class="btn btn-outline-danger"
                 onclick="if(confirm('確定要清除嗎?\n這項操作無法恢復!!')){localStorage.setItem('YTplayerHistory','[]');updateHistoryList()}"><i
                     class="bi bi-trash"></i> 清除</button>
@@ -1101,7 +1103,7 @@
             <p></p>
             <div id="sharecode"></div>
             <p></p>
-            <div>
+            <div style="position: sticky;top: 0;z-index: 9990;background: #fff;height: auto;padding: 5px;">
                 <input id="history-filter" class="form-control" type="text" placeholder="搜尋歷史紀錄..."
                     oninput="searchHistory($(this).val())">
                 <div id="suggestedSearch">
