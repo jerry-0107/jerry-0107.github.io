@@ -197,7 +197,7 @@
             var icon = ''
 
             if (e.data === "hd2160") { icon = `<i class="bi bi-badge-4k-fill" style="vertical-align: middle !important;"></i>` }
-            else if (e.data.includes("hd")) { icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i>` }
+            else if (e.data.includes("hd") && !e.data.includes("720")) { icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i>` }
 
             //  if (quality) $("#setbge-1").html(`<span class="badge bg-primary" style="font-size: .65rem;">${quality}</span>`)
             $("#setbge-icon").html(icon)
@@ -368,10 +368,11 @@
             return false
         }
 
-        function updateHistoryList(nowplays) {
+        function updateHistoryList(nowplays, dataset) {
             console.log(nowplays)
-            var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : [],
+            var data = dataset ? dataset : (JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []),
                 htmlTxt = "";
+            document.getElementById("datalen").innerText = "共" + data.length + "筆資料"
 
             if (!data || data.length < 1) {
                 document.getElementById("historyList").innerHTML = `<a href="#" class="list-group-item list-group-item-action">無資料</a>`
@@ -524,17 +525,19 @@
                     $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (代碼可能無效或過期)</span>`)
                     return
                 }
+                var mnum = 0
                 for (let i = 0; i < r.length; i++) {
                     console.log(r[i], r[i].id, isIdinHistorylist(r[i].id))
                     if (!isIdinHistorylist(r[i].id)) {
                         data.push(r[i])
+                        mnum++
                     } else {
                         continue
                     }
                 }
                 localStorage.setItem("YTplayerHistory", JSON.stringify(data))
                 updateHistoryList(nowplays)
-                $("#data-receive-modal-text").html(`紀錄已經更新，你可以關閉此視窗`)
+                $("#data-receive-modal-text").html(`紀錄已經更新，你可以關閉此視窗 (增加了 ${mnum} 筆資料)`)
             }
 
             $("#data-receive-modal-text").html(`<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 正在讀取資料...`)
@@ -552,7 +555,7 @@
                         //  console.log(JSON.parse(r.obj))
                         return
                     } else {
-                        $("#data-receive-modal-text").html(`正在處理來自代碼的資料...`)
+                        $("#data-receive-modal-text").html(`正在處理來自代碼的 ${JSON.parse(JSON.parse(r.obj)).length} 筆資料...`)
                         _diffHistory(JSON.parse(JSON.parse(r.obj)))
                     }
                 }).catch(e => {
@@ -898,19 +901,9 @@
                     newd.push(data[i])
                 }
             }
+            updateHistoryList(nowplays, newd)
 
-            var data = newd,
-                htmlTxt = "";
-            if (!data || data.length < 1) {
-                document.getElementById("historyList").innerHTML = `<a href="#" class="list-group-item list-group-item-action">無資料</a>`
-                return
-            }
-            console.log(data)
-            data = data.reverse()
-            for (let i = 0; i < data.length; i++) {
-                htmlTxt = htmlTxt + `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action ${data[i].id === nowplays[1] ? "active" : ""}"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? " (" + data[i].playlistVideoCounts + "部影片)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}<br/>${data[i].id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a>`
-            }
-            document.getElementById("historyList").innerHTML = htmlTxt
+
 
         }
 
@@ -1041,6 +1034,8 @@
                     <p id="data-receive-modal-body">請輸入分享代碼:</p>
                     <input type="number" name="" id="data-receive-input" class="form-control">
                     <p id="data-receive-modal-text"></p>
+                    <p id="data-receive-modal-text2"></p>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
@@ -1095,6 +1090,7 @@
                 onclick="if(confirm('確定要清除嗎?\n這項操作無法恢復!!')){localStorage.setItem('YTplayerHistory','[]');updateHistoryList()}"><i
                     class="bi bi-trash"></i> 清除</button>
 
+
             <button class="btn btn-primary bi bi-share" onclick="uploadHistory()"> 分享</button>
             <button class="btn btn-primary bi bi-cloud-arrow-down" data-bs-dismiss="offcanvas"
                 data-bs-target="#data-receive-modal" data-bs-toggle="modal">
@@ -1106,9 +1102,8 @@
             <div style="position: sticky;top: 0;z-index: 9990;background: #fff;height: auto;padding: 5px;">
                 <input id="history-filter" class="form-control" type="text" placeholder="搜尋歷史紀錄..."
                     oninput="searchHistory($(this).val())">
-                <div id="suggestedSearch">
-
-                </div>
+                <div id="suggestedSearch"></div>
+                <p id="datalen">共0筆資料</p>
             </div>
             <p></p>
             <div class="list-group" id="historyList">
