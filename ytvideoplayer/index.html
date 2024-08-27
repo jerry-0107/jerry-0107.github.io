@@ -154,7 +154,11 @@
         var nowplays = [0, 0]
         var nextCommentToken = null
         var channelId
+
+        var ac = { state: false, count: 0 }
+
         // var batteryData = []
+
 
         function UrlParam(url, name) {
             try {
@@ -481,7 +485,7 @@
                 if (isStudyVideo) {
                     $("#exitFullscreenBtn").remove()
                     new bootstrap.Modal('#study-modal', {}).show()
-                    $("#fscToolbar-container-left").html(`<span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>`)
+                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: 1.5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span>`)
                 }
 
             }
@@ -517,6 +521,17 @@
             }
         }
 
+
+        function toggleAc() {
+            ac.state = !ac.state
+            if (ac.state == false) {
+                ac.count = 0
+            } else {
+                ac.count = 3660
+            }
+            $("#ac").html(`冷氣狀態: ${ac.state ? "開" : "關"}`)
+            updateAc()
+        }
 
         function getHIstoryListFromBackup() {
             function _diffHistory(r) {
@@ -772,6 +787,15 @@
                 m = dat.getMinutes() > 9 ? dat.getMinutes() : "0" + dat.getMinutes()
             $("#timeBar").html(`<span style="font-size: .75rem;">${h}:${m}</span>`)
             setTimeout("updateTime()", 10000)
+        }
+
+        function updateAc() {
+            console.log("[update ac]", ac)
+            if (ac.state) {
+                ac.count = ac.count - 60
+            }
+            $("#ac").html(!ac.state ? "沒有開冷氣" : `冷氣將於 ${ac.count / 60}分鐘後關閉`)
+            setTimeout("updateAc()", 60000)
         }
 
         function diffHistory() {
