@@ -530,7 +530,6 @@
                 ac.count = 3660
             }
             $("#ac").html(`冷氣狀態: ${ac.state ? "開" : "關"}`)
-            updateAc()
         }
 
         function getHIstoryListFromBackup() {
@@ -793,10 +792,12 @@
             console.log("[update ac]", ac)
             if (ac.state) {
                 ac.count = ac.count - 60
+                if (ac.count <= 0) ac.state = false
             }
             $("#ac").html(!ac.state ? "沒有開冷氣" : `冷氣將於 ${ac.count / 60}分鐘後關閉`)
             setTimeout("updateAc()", 60000)
         }
+
 
         function diffHistory() {
             var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []
@@ -988,6 +989,7 @@
                 }
             }
             updateTime()
+            updateAc()
             diffHistory()
             renderSuggestedSearch(5)
             updateHistoryList(nowplays)
@@ -1080,7 +1082,7 @@
                 </div>
                 <div class="modal-body">
                     <p id="study-modal-body">檢測到Study With Me 影片，請<a href="#"
-                            onclick="openFullscreen()">進入全螢幕</a>來保證更好的體驗.<br>(順帶一提，Study With Me 影片無法調整快慢.)</p>
+                            onclick="openFullscreen()">進入全螢幕</a>來保證更好的體驗.<br>順帶一提，Study With Me 影片無法調整快慢 :)</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
