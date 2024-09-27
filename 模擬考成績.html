@@ -1,5 +1,6 @@
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 <style>
-    table,
     td,
     tr {
         border: 1px #000 solid;
@@ -9,13 +10,15 @@
         border: 1px #FF0000 solid;
     }
 
-    td {
-        color: #eeeeee;
-        transition: 1.5s;
+    td,
+    th {
+        color: #FFF;
+        transition: 3s;
     }
 
-    td:hover {
-        color: #888;
+    td:hover,
+    th:hover {
+        color: #000;
     }
 
     * {
@@ -28,10 +31,10 @@
 <div class="text-center b mt-4 mb-3 mb-sm-0">
     ※ <b class="text-red">國文科</b>總分計算方式 =（國綜得分 × 0.5）＋國寫得分
 </div>
-<div class="table-shadow table-wrapper table-responsive no-striped" style="border: 5px solid #000; ">
+<div class="table-shadow table-wrapper table-responsive no-striped">
     <table class="table-style-1">
         <tbody>
-            <tr>
+            <tr class="table-striped">
                 <th rowspan="2">
                     答題卷下載
                 </th>
@@ -540,4 +543,33 @@
                 </td>
             </tr>
         </tbody>
-        <script>prompt("輸入密碼");alert('密碼錯誤')</script>
+        <script>
+            //prompt("輸入密碼");
+
+            // $(".table-striped").on("mouseenter", function () {
+            //     alert("hi")
+            // })
+            const delay = (delayInms) => {
+                return new Promise(resolve => setTimeout(resolve, delayInms));
+            };
+
+            window.onkeydown = async function (e) {
+                $(".table-striped").css("color", "#000")
+
+                console.log(e)
+                if (e.code === "Space") {
+                    $("td").css("color", "#000")
+                    $(".bg-primary").css("color", "#000")
+                    $("tbody").css("color", "#000")
+                    $("tr").css("color", "#000")
+                    $("th").css("color", "#000")
+
+                    await delay(3000);
+                    $(".bg-primary").css("color", "#FFF")
+                    $("th").css("color", "#FFF")
+                    $("td").css("color", "#fff")
+                    $("tbody").css("color", "#fff")
+                    $("tr").css("color", "#fff")
+                }
+            }
+        </script>
