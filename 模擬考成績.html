@@ -1,0 +1,543 @@
+<style>
+    table,
+    td,
+    tr {
+        border: 1px #000 solid;
+    }
+
+    th {
+        border: 1px #FF0000 solid;
+    }
+
+    td {
+        color: #FFF;
+        transition: 1.5s;
+    }
+
+    td:hover {
+        color: #000;
+    }
+
+    * {
+        overflow: hidden;
+        user-select: none;
+    }
+</style>
+
+<h3 class="text-center mb-4">學生測驗成績單</h3>
+<div class="text-center b mt-4 mb-3 mb-sm-0">
+    ※ <b class="text-red">國文科</b>總分計算方式 =（國綜得分 × 0.5）＋國寫得分
+</div>
+<div class="table-shadow table-wrapper table-responsive no-striped" style="border: 5px solid #000; ">
+    <table class="table-style-1">
+        <tbody>
+            <tr>
+                <th rowspan="2">
+                    答題卷下載
+                </th>
+                <th rowspan="2">
+                    科目
+                </th>
+                <th rowspan="2">
+                    選擇題分數
+                </th>
+                <th rowspan="2">
+                    混合題分數
+                </th>
+                <th colspan="4">
+                    國寫、英文非選擇題得分 / 自然、社會分科成績
+                </th>
+                <th rowspan="2">
+                    違規扣分
+                </th>
+                <th rowspan="2">
+                    各科得分
+                </th>
+                <th rowspan="2">
+                    級距
+                </th>
+                <th rowspan="2">
+                    各科<br>
+                    級分
+                </th>
+                <th rowspan="2">
+                    各科<br>
+                    校排
+                </th>
+                <th rowspan="2">
+                    各科<br>
+                    總排
+                </th>
+
+                <th rowspan="2">
+                    轉換分科<br>
+                    60級分
+                </th>
+            </tr>
+
+            <tr>
+                <th class="bg-primary">
+                    非選擇
+                </th>
+                <th class="bg-primary">
+                    第一題
+                </th>
+                <th class="bg-primary">
+                    第二題
+                </th>
+                <th class="bg-primary">
+                    合計
+                </th>
+            </tr>
+            <tr class="table-striped">
+
+                <td rowspan="2">
+                    <a name="image" data-fancybox="images01" data-caption="國文">
+                        DOWNLOAD
+                    </a>
+                </td>
+                <div class="hidden">
+                    <a name="image" data-fancybox="images01" data-caption="國寫"></a>
+                </div>
+                <div class="hidden">
+                    <a name="image" data-fancybox="images01" data-caption="國寫"></a>
+                </div>
+                <div class="hidden">
+                    <a name="image" data-fancybox="images01" data-caption="國文"></a>
+                </div>
+                <th rowspan="2" class="bg-primary">
+                    國文
+                </th>
+                <td colspan="2">
+                    國綜
+                </td>
+                <td>
+                    國寫
+                </td>
+                <td>
+                    14.00
+                </td>
+                <td>
+                    14.00
+                </td>
+                <td>
+                    28.00
+                </td>
+                <td rowspan="2">
+                    0.00
+                </td>
+                <td rowspan="2">
+                    67.20
+                </td>
+                <td rowspan="2">
+                    5.40
+                </td>
+
+                <td rowspan="2">
+
+                    <b class="text-red">13</b>
+                </td>
+                <td rowspan="2">
+                    6
+                </td>
+                <td rowspan="2">
+                    14346
+                </td>
+                <td rowspan="2">
+                    <b class="text-red">50</b>
+                </td>
+            </tr>
+
+            <tr class="table-striped">
+                <td>
+                    60.40
+                </td>
+                <td>
+                    18.00
+                </td>
+                <td>
+                    整體等第
+                </td>
+                <td>
+                    B
+                </td>
+                <td>
+                    B
+                </td>
+                <td>
+                    良
+                </td>
+            </tr>
+
+            <tr>
+
+                <td>
+                    <a name="image" data-fancybox="images02" data-caption="英文">
+                        DOWNLOAD
+                    </a>
+                </td>
+                <div class="hidden">
+                    <a name="image" data-fancybox="images02" data-caption="英文"></a>
+                </div>
+                <th class="bg-primary">
+                    英文
+                </th>
+                <td>
+                    57.00
+                </td>
+                <td>
+                    10.00
+                </td>
+                <td>-</td>
+                <td>
+                    5.50
+                </td>
+                <td>
+                    10.00
+                </td>
+                <td>
+                    15.50
+                </td>
+                <td>
+                    0.00
+                </td>
+                <td>
+                    82.50
+                </td>
+                <td>
+                    6.10
+                </td>
+                <td>
+                    <b class="text-red"> 14</b>
+                </td>
+                <td>
+                    3
+                </td>
+                <td>
+                    4249
+                </td>
+                <td>
+                    <b class="text-red"> 55</b>
+                </td>
+            </tr>
+
+            <tr class="table-striped">
+
+                <td>
+                    <a name="image" data-fancybox="images20" data-caption="數學 A">
+                        DOWNLOAD
+                    </a>
+                </td>
+                <div class="hidden">
+                    <a name="image" data-fancybox="images20" data-caption="數學 A"></a>
+                </div>
+                <th class="bg-primary">
+                    數學 A
+                </th>
+                <td>
+                    40.00
+                </td>
+                <td>
+                    3.00
+                </td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>
+                    0.00
+                </td>
+                <td>
+                    43.00
+                </td>
+                <td>
+                    5.57
+                </td>
+                <td>
+                    <b class="text-red"> 8</b>
+                </td>
+                <td>
+                    65
+                </td>
+                <td>
+                    27995
+                </td>
+                <td>
+                    <b class="text-red"> 31</b>
+                </td>
+            </tr>
+
+            <tr>
+
+                <td>
+                    <a name="image" data-fancybox="images21" data-caption="數學 B">
+                        DOWNLOAD
+                    </a>
+                </td>
+                <div class="hidden">
+                    <a name="image" data-fancybox="images21" data-caption="數學 B"></a>
+                </div>
+                <th class="bg-primary">
+                    數學 B
+                </th>
+                <td>
+                    40.00
+                </td>
+                <td>
+                    3.00
+                </td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>
+                    0.00
+                </td>
+                <td>
+                    43.00
+                </td>
+                <td>
+                    5.57
+                </td>
+                <td>
+                    <b class="text-red">8</b>
+                </td>
+                <td>
+                    65
+                </td>
+                <td>
+                    27995
+                </td>
+                <td>
+                    <b class="text-red">31</b>
+                </td>
+            </tr>
+
+            <tr class="table-striped">
+
+                <td rowspan="2">
+                    <a name="image" data-fancybox="images12" data-caption="自然">
+                        DOWNLOAD
+                    </a>
+                </td>
+                <div class="hidden">
+                    <a name="image" data-fancybox="images12" data-caption="自然"></a>
+                </div>
+                <th rowspan="2" class="bg-primary">
+                    自然
+                </th>
+                <td rowspan="2">
+                    50.40
+                </td>
+                <td rowspan="2">
+                    34.80
+                </td>
+                <td>
+                    物理
+                </td>
+                <td>
+                    化學
+                </td>
+                <td>
+                    生物
+                </td>
+                <td>
+                    地球科學
+                </td>
+                <td rowspan="2">
+                    0.00
+                </td>
+                <td rowspan="2">
+                    85.20
+                </td>
+                <td rowspan="2">
+                    6.99
+                </td>
+                <td rowspan="2">
+                    <b class="text-red">13</b>
+                </td>
+                <td rowspan="2">
+                    3
+                </td>
+                <td rowspan="2">
+                    2436
+                </td>
+                <td rowspan="2">
+                    <b class="text-red">49</b>
+                </td>
+            </tr>
+
+            <tr class="table-striped">
+                <td>
+                    11.20
+                </td>
+                <td>
+                    22.00
+                </td>
+                <td>
+                    24.60
+
+                </td>
+                <td>
+                    27.40
+                </td>
+            </tr>
+
+            <tr>
+
+                <td rowspan="2">
+                    <a name="image" data-fancybox="images13" data-caption="社會">
+                        DOWNLOAD
+                    </a>
+                </td>
+                <div class="hidden">
+                    <a name="image" data-fancybox="images13" data-caption="社會"></a>
+                </div>
+                <th rowspan="2" class="bg-primary">
+                    社會
+                </th>
+                <td rowspan="2">
+                    60.00
+                </td>
+                <td rowspan="2">
+                    33.00
+                </td>
+                <td>
+                    歷史
+                </td>
+                <td>
+                    地理
+                </td>
+                <td>
+                    公民與社會
+                </td>
+                <td>-</td>
+                <td rowspan="2">
+                    0.00
+                </td>
+                <td rowspan="2">
+                    93.00
+                </td>
+                <td rowspan="2">
+                    8.08
+                </td>
+                <td rowspan="2">
+                    <b class="text-red">12</b>
+                </td>
+                <td rowspan="2">
+                    7
+                </td>
+                <td rowspan="2">
+                    7490
+                </td>
+                <td rowspan="2">
+                    <b class="text-red">47</b>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    26.00
+                </td>
+                <td>
+                    33.00
+                </td>
+                <td>
+                    34.00
+                </td>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <th colspan="2">
+                    級分排名
+                </th>
+                <th colspan="2">
+                    班名次/班人數
+                </th>
+                <th colspan="2">
+                    校名次/校人數
+                </th>
+                <th colspan="3">
+                    總名次/總人數
+                </th>
+                <th colspan="3">
+                    總分
+                </th>
+                <th colspan="3">
+                    總級分
+                </th>
+            </tr>
+
+            <tr class="table-striped">
+                <td colspan="2">
+                    自然組<br>(國.英.數 A.自) </td>
+                <td colspan="2">
+                    2 / 46
+                </td>
+                <td colspan="2">
+                    4 / 471
+                </td>
+                <td colspan="3">
+                    5370 / 64988
+                </td>
+                <td colspan="3">
+                    277.90
+                </td>
+                <td colspan="3">
+                    48
+                </td>
+            </tr>
+            <tr class="">
+                <td colspan="2">
+                    社會A組<br>(國.英.數 A.社) </td>
+                <td colspan="2">
+                    2 / 46
+                </td>
+                <td colspan="2">
+                    4 / 471
+                </td>
+                <td colspan="3">
+                    4905 / 65256
+                </td>
+                <td colspan="3">
+                    285.70
+                </td>
+                <td colspan="3">
+                    47
+                </td>
+            </tr>
+            <tr class="table-striped">
+                <td colspan="2">
+                    社會B組<br />(國.英.數 B.社) </td>
+                <td colspan="2">
+                    2 / 46
+                </td>
+                <td colspan="2">
+                    4 / 471
+                </td>
+                <td colspan="3">
+                    4905 / 65256
+                </td>
+                <td colspan="3">
+                    285.70
+                </td>
+                <td colspan="3">
+                    47
+                </td>
+            </tr>
+
+
+            <tr class="table-striped">
+                <td colspan="15" style="text-align: left">
+                    <b>註</b>：「<b class="text-red">全體總名次</b>」若與收到的成績單不同，為成績處理的學校分批加入，造成母群變動，進而改變名次，並非有誤，最新排名請以本學習平台顯示為主。
+                </td>
+
+            </tr>
+            <tr class="table-striped">
+                <td colspan="15" style="text-align: left">
+                    <b>註</b>：※各科「<b class="text-red">答題卷</b>」未簽名，扣該考科1級分
+                </td>
+            </tr>
+        </tbody>
+        <script>prompt("輸入密碼")</script>
