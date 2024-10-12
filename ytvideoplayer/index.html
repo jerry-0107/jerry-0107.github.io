@@ -977,7 +977,7 @@
         function removeTheRecentVideo() {
             var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo")).id
             var data = getItemFromHistoryList(videoId)
-            localStorage.setItem("YTplayerPausedVideo", "[]")
+            localStorage.setItem("YTplayerPausedVideo", "")
 
         }
 
