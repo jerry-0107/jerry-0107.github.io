@@ -144,6 +144,7 @@
         </div>
     </div>
 
+
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
 
@@ -629,6 +630,8 @@
         function clearInput(k) {
             if (document.getElementById("ytlink").value !== "") {
                 if (confirm("確定要清除輸入嗎?") || k) document.getElementById("ytlink").value = ""
+            } else {
+                new bootstrap.Modal('#del-modal', {}).show()
             }
         }
 
@@ -971,6 +974,12 @@
         }
 
 
+        function removeTheRecentVideo() {
+            var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo")).id
+            var data = getItemFromHistoryList(videoId)
+            localStorage.setItem("YTplayerPausedVideo", "[]")
+
+        }
 
         function renderSuggestVideo(id) {
             var data = getItemFromHistoryList(id)
@@ -1081,6 +1090,29 @@
                         onclick="window.location.search = '';">關閉</button>
                     <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
                         id="data-warning-modal-gobtn">繼續</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " tabindex="-1" id="del-modal">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="del-modal-title">刪除</h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body">
+                    <p id="del-modal-body">
+                        <button class="btn btn-secondary" onclick="location.search=''">移除目前播放的影片</button>
+                    <p></p>
+                    <button class="btn btn-primary"
+                        onclick="removeTheRecentVideo();location.reload()">移除目前影片的觀看進度</button>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
+
                 </div>
             </div>
         </div>
