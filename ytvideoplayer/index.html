@@ -492,7 +492,7 @@
                 if (isStudyVideo) {
                     $("#exitFullscreenBtn").remove()
                     new bootstrap.Modal('#study-modal', {}).show()
-                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span><span class="badge bg-primary " style="margin-left: .5rem;color:#000;" onclick="toggleWater()" id="water">請喝水</span>`)
+                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span><span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleWater()" id="water">請喝水</span>`)
                 }
 
             }
@@ -823,7 +823,7 @@
                 water.count -= 60
             }
             if (water.count < 120) {
-                $("#water").attr("class", "badge bg-warning")
+                $("#water").attr("class", "badge bg-warning text-dark")
             } else {
                 $("#water").attr("class", "badge bg-primary")
             }
