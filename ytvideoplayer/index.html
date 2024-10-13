@@ -157,6 +157,7 @@
         var channelId
 
         var ac = { state: false, count: 0 }
+        var water = { times: 0, fill: false, count: 0 }
 
         // var batteryData = []
 
@@ -491,7 +492,7 @@
                 if (isStudyVideo) {
                     $("#exitFullscreenBtn").remove()
                     new bootstrap.Modal('#study-modal', {}).show()
-                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: 1.5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span>`)
+                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span><span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleWater()" id="water">請喝水</span>`)
                 }
 
             }
@@ -533,9 +534,20 @@
             if (ac.state == false) {
                 ac.count = 0
             } else {
-                ac.count = 3660
+                ac.count = 3600
             }
             $("#ac").html(`冷氣狀態: ${ac.state ? "開" : "關"}`)
+        }
+        function toggleWater() {
+            if ($("#water").html() == "請裝水") {
+                water.fill = false;
+                $("#water").html(`good! ${water.times}`)
+                return
+            }
+            water.count = 1200
+            water.times = water.times + 1
+            // water.fill = (water.times % 3 == 0 ? true : false)
+            $("#water").html(`good! ${water.times}`)
         }
 
         function getHIstoryListFromBackup() {
@@ -805,6 +817,19 @@
             $("#ac").html(!ac.state ? "沒有開冷氣" : `冷氣將於 ${ac.count / 60}分鐘後關閉`)
             setTimeout("updateAc()", 60000)
         }
+        function updateWater() {
+            console.log("[update water]", water)
+            if (water.count >= 60) {
+                water.count -= 60
+            }
+            if (water.count < 120) {
+                $("#water").attr("class", "badge bg-warning")
+            } else {
+                $("#water").attr("class", "badge bg-primary")
+            }
+            $("#water").html(water.fill ? `請裝水 ${water.times}` : water.count >= 0 ? `喝水 倒數${water.count / 60}分鐘 ${water.times}` : `請喝水 ${water.times}`)
+            setTimeout("updateWater()", 60000)
+        }
 
 
         function diffHistory() {
@@ -1037,6 +1062,7 @@
             }
             updateTime()
             updateAc()
+            updateWater()
             diffHistory()
             renderSuggestedSearch(5)
             updateHistoryList(nowplays)
