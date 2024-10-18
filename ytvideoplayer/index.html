@@ -157,7 +157,7 @@
         var channelId
 
         var ac = { state: false, count: 0 }
-        var water = { times: 0, fill: false, count: 0 }
+        var water = { times: 1200, fill: false, count: 0 }
 
         // var batteryData = []
 
@@ -544,10 +544,10 @@
                 $("#water").html(`good! ${water.times}`)
                 return
             }
-            water.count += 1200
+            water.count += 300
             water.times = water.times + 1
             // water.fill = (water.times % 3 == 0 ? true : false)
-            $("#water").html(`good! ${water.times}`)
+            $("#water").attr("class", "bg-success badge text-light").html(`good! ${water.times}`)
         }
 
         function getHIstoryListFromBackup() {
