@@ -443,7 +443,7 @@
                         if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
                         updateChannelFrame(r)
                     })
-                    .catch(e => console.warn(e))
+                    .catch(e => { console.warn(e); $("#video").html("<h1>:( <br/>影片讀取失敗</h1>") })
                 // } else {
                 //   if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
                 // }
@@ -539,15 +539,15 @@
             $("#ac").html(`冷氣狀態: ${ac.state ? "開" : "關"}`)
         }
         function toggleWater() {
-            if ($("#water").html() == "請裝水") {
-                water.fill = false;
-                $("#water").html(`good! ${water.times}`)
+            if ($("#water").html().includes("good! ") || $("#water").html().includes("達到每分鐘增加上限")) {
+
+                $("#water").html(`達到每分鐘增加上限 ${water.times}`)
                 return
             }
-            water.count += 300
+            water.count += 600
             water.times = water.times + 1
             // water.fill = (water.times % 3 == 0 ? true : false)
-            $("#water").attr("class", "bg-success badge text-light").html(`good! ${water.times}`)
+            $("#water").attr("class", "bg-success badge text-light").html(`good! ${water.times} (+10 minutes)`)
         }
 
         function getHIstoryListFromBackup() {
@@ -822,8 +822,11 @@
             if (water.count >= 60) {
                 water.count -= 60
             }
-            if (water.count < 120) {
+
+            else if (water.count > 60 && water.count <= 150) {
                 $("#water").attr("class", "badge bg-warning text-dark")
+            } else if (water.count <= 60) {
+                $("#water").attr("class", "badge bg-danger")
             } else {
                 $("#water").attr("class", "badge bg-primary")
             }
