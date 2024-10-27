@@ -823,7 +823,7 @@
                 water.count -= 60
             }
 
-            else if (water.count > 60 && water.count <= 150) {
+            if (water.count > 60 && water.count <= 150) {
                 $("#water").attr("class", "badge bg-warning text-dark")
             } else if (water.count <= 60) {
                 $("#water").attr("class", "badge bg-danger")
