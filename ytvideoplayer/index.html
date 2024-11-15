@@ -392,7 +392,7 @@
             console.log(data)
             data = data.reverse()
             for (let i = 0; i < data.length; i++) {
-                htmlTxt = htmlTxt + `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=${data[i].type}" class="list-group-item list-group-item-action ${data[i].id === nowplays[1] ? "active" : ""}"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? " (" + data[i].playlistVideoCounts + "部影片)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}<br/>${data[i].id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a>`
+                htmlTxt = htmlTxt + `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=${data[i].type}&hsearch=${encodeURI($("#history-filter").val()).replace("+", "-add-")}" class="list-group-item list-group-item-action ${data[i].id === nowplays[1] ? "active" : ""}"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? " (" + data[i].playlistVideoCounts + "部影片)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}<br/>${data[i].id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a>`
             }
             document.getElementById("historyList").innerHTML = htmlTxt
         }
@@ -986,17 +986,36 @@
             } else {
 
 
-                var search = s.toLowerCase()
-                $("#history-filter").val(s)
-                var data = getItemFromHistoryList("*")
-                var newd = []
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].name.toLowerCase().includes(search) || data[i].channel.toLowerCase().includes(search)) {
-                        newd.push(data[i])
+                if (os.includes("+影片") || os.includes("+播放清單") || os.includes(" 影片") || os.includes(" 播放清單")) {
+                    if ($("#history-filter").val()) {
+                        console.log($("#history-filter").val())
+                        //   $("#history-filter").val($("#history-filter").val() + s.replace("!!", "").replace("!", "").replace("VI", "+影片").replace("PL", "+播放清單"))
+                        var search = os.toLowerCase()
+
+                        var data = getItemFromHistoryList("*")
+                        var newd = []
+                        for (let i = 0; i < data.length; i++) {
+                            if ((data[i].name.toLowerCase().includes(search.split("+")[0]) || data[i].name.toLowerCase().includes(search.split(" ")[0]) || data[i].channel.toLowerCase().includes(search.split("+")[0])) && data[i].type === (os.includes("影片") ? "video" : "playlist")) {
+                                newd.push(data[i])
+                            }
+                        }
+                        updateHistoryList(nowplays, newd)
+
                     }
                 }
-                updateHistoryList(nowplays, newd)
+                else {
 
+                    var search = s.toLowerCase()
+                    $("#history-filter").val(s)
+                    var data = getItemFromHistoryList("*")
+                    var newd = []
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].name.toLowerCase().includes(search) || data[i].channel.toLowerCase().includes(search)) {
+                            newd.push(data[i])
+                        }
+                    }
+                    updateHistoryList(nowplays, newd)
+                }
             }
 
         }
@@ -1071,6 +1090,16 @@
             updateHistoryList(nowplays)
 
             $("#accountFrame").attr('src', location.origin + location.pathname + "channels.html?framed=true")
+            if (UrlParam(location.href, "hsearch")) {
+                console.log(UrlParam(location.href, "hsearch"))
+                if (UrlParam(location.href, "hsearch").includes("-add-")) {
+                    searchHistory(UrlParam(location.href, "hsearch").replace("-add-", "+"))
+                    searchHistory("")  // it SHOULD be here, or the history rendering will CRASH !!!
+                } else {
+                    searchHistory(UrlParam(location.href, "hsearch"))
+
+                }
+            }
         }
 
 
