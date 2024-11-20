@@ -1068,9 +1068,10 @@
         document.getElementById("submit").onclick = handleClick
         document.onkeydown = handleKeyboard
         document.getElementById("fullsc").onclick = openFullscreen
-        window.onblur = function () {
+        window.onblur = async function () {
             if (localStorage.getItem('YTplayerSettings.PlayOnBackground') == 'true') {
                 try {
+                    await delay(0.5)
                     console.log("[BLUR] trying to play...")
                     player.playVideo()
                 } catch (e) { console.log("[BLUR] perhaps there is no video playing (failed to play)", e) }
