@@ -68,7 +68,7 @@
             aria-controls="offcanvasExample"><i class="bi bi-person-circle"></i></button>
         <div class="p-1"></div>
         <div class="input-group">
-            <input class="form-control" placeholder="輸入YT 影片連結" id="ytlink">
+            <input class="form-control border-warning" placeholder="輸入YT 影片連結" id="ytlink">
             <button class="btn btn-outline-danger" type="button" id="clear"><i class="bi bi-trash"></i>
             </button>
         </div>
@@ -641,7 +641,7 @@
         }
         function clearInput(k) {
             if (document.getElementById("ytlink").value !== "") {
-                if (confirm("確定要清除輸入嗎?") || k) document.getElementById("ytlink").value = ""
+                document.getElementById("ytlink").value = ""
             } else {
                 new bootstrap.Modal('#del-modal', {}).show()
             }
@@ -1068,13 +1068,22 @@
         document.getElementById("submit").onclick = handleClick
         document.onkeydown = handleKeyboard
         document.getElementById("fullsc").onclick = openFullscreen
+        window.onfocus = function () {
+            document.title = "YT影片播放器"
+        }
         window.onblur = async function () {
             if (localStorage.getItem('YTplayerSettings.PlayOnBackground') == 'true') {
                 try {
+                    document.title = "[背景播放處理中] YT影片播放器"
                     await delay(0.5)
                     console.log("[BLUR] trying to play...")
                     player.playVideo()
-                } catch (e) { console.log("[BLUR] perhaps there is no video playing (failed to play)", e) }
+                    document.title = "[背景播放中] YT影片播放器"
+                } catch (e) {
+                    console.log("[BLUR] perhaps there is no video playing (failed to play)", e)
+                    document.title = "[背景播放失敗] YT影片播放器"
+
+                }
             }
         }
         window.onload = function () {
@@ -1112,10 +1121,18 @@
             if (localStorage.getItem("YTplayerSettings.PlayOnBackground") == null) {
                 localStorage.setItem("YTplayerSettings.PlayOnBackground", "true")
                 $("#flexSwitchCheckChecked").attr("checked", "checked")
+                $("#ytlink").attr("placeholder", "[背景播放已開啟] 輸入YT 影片連結")
+                $("#ytlink").addClass("border-warning")
+
             } else if (localStorage.getItem("YTplayerSettings.PlayOnBackground") == "true") {
                 $("#flexSwitchCheckChecked").attr("checked", "checked")
+                $("#ytlink").attr("placeholder", "[背景播放已開啟] 輸入YT 影片連結")
+                $("#ytlink").addClass("border-warning")
+
             } else {
                 $("#flexSwitchCheckChecked").removeAttr("checked")
+                $("#ytlink").removeClass("border-warning")
+
             }
         }
 
@@ -1263,9 +1280,22 @@
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onchange="
                     localStorage.setItem('YTplayerSettings.PlayOnBackground',this.checked)
-                    
+                    if(this.checked){
+                $('#ytlink').attr('placeholder', '[背景播放已開啟] 輸入YT 影片連結')
+                $('#ytlink').addClass('border-warning')
+
+                    }else{
+                $('#ytlink').attr('placeholder', '輸入YT 影片連結')
+                $('#ytlink').removeClass('border-warning')
+
+
+                    }
                     ">
                 <label class="form-check-label" for="flexSwitchCheckChecked">嘗試在背景播放</label>
+
+            </div>
+            <div class="alert alert-warning" role="alert">
+                注意: 部分裝置可能無法使用
             </div>
             <p class="h5">觀看紀錄</p>
 
