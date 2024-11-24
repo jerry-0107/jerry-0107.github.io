@@ -90,6 +90,11 @@
                     type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
                     播放清單</button>
             </li>
+            <li class="nav-item">
+                <button class="nav-link text-danger"
+                    onclick="if(confirm('要清除目前的內容嗎?')){$('#ChannelVIdeoList').html('');$('#ChannelPlayList').html('')}">
+                    清除查詢內容</button>
+            </li>
         </ul>
     </div>
     <div class="tab-content" id="myTabContent">

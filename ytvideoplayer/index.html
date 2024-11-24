@@ -1068,24 +1068,26 @@
         document.getElementById("submit").onclick = handleClick
         document.onkeydown = handleKeyboard
         document.getElementById("fullsc").onclick = openFullscreen
-        window.onfocus = function () {
-            document.title = "YT影片播放器"
-        }
-        window.onblur = async function () {
-            if (localStorage.getItem('YTplayerSettings.PlayOnBackground') == 'true') {
-                try {
-                    document.title = "[背景播放處理中] YT影片播放器"
-                    await delay(0.5)
-                    console.log("[BLUR] trying to play...")
-                    player.playVideo()
-                    document.title = "[背景播放中] YT影片播放器"
-                } catch (e) {
-                    console.log("[BLUR] perhaps there is no video playing (failed to play)", e)
-                    document.title = "[背景播放失敗] YT影片播放器"
 
+        document.addEventListener("visibilitychange", async function () {
+            if (document.hidden) {
+                if (localStorage.getItem('YTplayerSettings.PlayOnBackground') == 'true') {
+                    try {
+                        document.title = "[背景播放處理中] YT影片播放器"
+                        await delay(0.3)
+                        console.log("[INVISIBLE] trying to play...")
+                        player.playVideo()
+                        document.title = "[背景播放中] YT影片播放器"
+                    } catch (e) {
+                        console.log("[INVISIBLE] perhaps there is no video playing (failed to play)", e)
+                        document.title = "[背景播放失敗] YT影片播放器"
+
+                    }
                 }
+            } else {
+                document.title = "YT影片播放器"
             }
-        }
+        })
         window.onload = function () {
             $("#video").css("height", "100%")
             $("#fullscToolBar").hide()
@@ -1133,6 +1135,10 @@
                 $("#flexSwitchCheckChecked").removeAttr("checked")
                 $("#ytlink").removeClass("border-warning")
 
+            }
+            if (UrlParam(location.href, "input")) {
+                $("#ytlink").val(UrlParam(location.href, "input"))
+                updateVideoFrame()
             }
         }
 
