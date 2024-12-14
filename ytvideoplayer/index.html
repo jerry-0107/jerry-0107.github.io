@@ -211,7 +211,7 @@
 
         function onPlaybackRateChange(e) {
             console.log(e)
-            if (e.data !== 1) {
+            if (Number(e.data) !== 1) {
                 $("#setbge-2").html(`<span class="text-info" style="font-size: .75rem;">${e.data}X</span>`)
             } else {
                 $("#setbge-2").html(``)
@@ -233,7 +233,7 @@
             }
 
             e.target.setPlaybackRate(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
-            $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")).toFixed(2));
+            $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
             onPlaybackRateChange({ data: localStorage.getItem("YTplayerSettings.DefaultPlaySpeed") })
             await saveVideoProgress()
         }
@@ -1149,7 +1149,7 @@
                 localStorage.setItem("YTplayerSettings.DefaultPlaySpeed", 1)
 
             }
-            $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")).toFixed(2));
+            $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
 
 
 
