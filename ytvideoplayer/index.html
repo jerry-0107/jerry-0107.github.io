@@ -331,8 +331,12 @@
                     if (inputData.includes("playlist")) {
                         return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
                     }
-                    return [UrlParam(inputData, "v"), "video"]
 
+                    if (UrlParam(inputData, "v")) return [UrlParam(inputData, "v"), "video"]
+                    else {
+                        var n = inputData.split("/")
+                        return [n[n.length - 1], "video"]
+                    }
                 }
                 else if (inputData.includes("youtu.be") || (inputData.includes("youtube.com") && inputData.includes("/live"))) {
 
