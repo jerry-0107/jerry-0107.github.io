@@ -68,7 +68,7 @@
             aria-controls="offcanvasExample"><i class="bi bi-person-circle"></i></button>
         <div class="p-1"></div>
         <div class="input-group">
-            <input class="form-control border-warning" placeholder="輸入YT 影片連結" id="ytlink">
+            <input class="form-control border-warning" placeholder="[LOADING...]" id="ytlink">
             <button class="btn btn-outline-danger" type="button" id="clear"><i class="bi bi-trash"></i>
             </button>
         </div>
@@ -148,7 +148,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
 
-        const whitelist = ["study", "謝博凱", "物理", "蔡任圃", "吳旭明", "數學", "化學", "study with me", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習"]
+        const whitelist = ["study", "謝博凱", "超模", "蔡任圃", "吳旭明", "數學", "化學", "study with me", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習"]
         const blacklist = ["猫", "貓"]
 
 
@@ -551,7 +551,7 @@
             $("#ac").html(`冷氣狀態: ${ac.state ? "開" : "關"}`)
         }
         function toggleWater() {
-            if ($("#water").html().includes("good! ") || $("#water").html().includes("達到每分鐘增加上限")) {
+            if ($("#water").html().includes("good! ")) {
 
                 $("#water").html(`達到每分鐘增加上限 ${water.times}`)
                 return
@@ -1146,7 +1146,7 @@
             } else {
                 $("#flexSwitchCheckChecked").removeAttr("checked")
                 $("#ytlink").removeClass("border-warning")
-
+                $("#ytlink").attr("placeholder", "輸入YT 影片連結")
             }
 
             if (!localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")) {
