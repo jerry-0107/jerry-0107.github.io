@@ -97,9 +97,15 @@
                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#comment-modal"
                         style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
                         onclick="getComments(null,true)">留言</button>
-                    <button class="btn btn-sm btn-outline-danger"
+                    <button class="btn btn-sm btn-outline-warning"
                         style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                        onclick="toggleVideoPlay()">暫停/繼續</button>
+                        onclick="player_backward(5)"><i class="bi bi-rewind-fill"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                        onclick="toggleVideoPlay()" id="fscplaystatIcon"><i class="bi bi-pause-fill"></i></button>
+                    <button class="btn btn-sm btn-outline-warning"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                        onclick="player_forward(5)"><i class="bi bi-fast-forward-fill"></i></button>
                 </div>
                 <div style="float: right;color: #fff;padding-right: 1.5rem;" onclick="switchtoolbar()">
                     <div id="stateBar" style="display: inline-block;" class="pe-1">
@@ -186,13 +192,21 @@
         async function updateStateBar(icon, _delay) {
             if (icon === "") {
                 $("#stateBar").html(``)
+                $("#fscplaystatIcon").html(`<i class="bi bi-pause-fill"></i>`)
                 return true
             }
             if (icon.includes("'") || icon.includes('"') || icon.includes("`")) return
             if (icon === "spinner") {
                 $("#stateBar").html(`<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>`)
+                $("#fscplaystatIcon").html(`<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>`)
+
             } else {
+                console.log(icon)
                 $("#stateBar").html(`<i class="bi ${icon}" style="vertical-align: middle  !important;"></i>`)
+
+                if (icon === "bi-play-circle-fill") {
+                    $("#fscplaystatIcon").html(`<i class="bi bi-play-fill"></i>`)
+                }
             }
             if (_delay) {
                 await delay(_delay)
@@ -249,7 +263,7 @@
                 //console.log("[user paused] saving watching progress:", player.getCurrentTime())
                 saveVideoProgress()
                 //localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
-                updateStateBar("bi-pause-circle-fill")
+                updateStateBar("bi-play-circle-fill")
             } else if (e.data === 3) {
                 updateStateBar("spinner")
             } else {
@@ -697,8 +711,12 @@
             try {
                 if (player.getPlayerState() === 2) {
                     player.playVideo()
+                    $("#fscplaystatIcon").html(`<i class="bi bi-pause-fill"></i>`)
+
                 } else {
                     player.pauseVideo()
+                    $("#fscplaystatIcon").html(`<i class="bi bi-play-fill"></i>`)
+
                 }
             } catch (e) {
                 console.log(e)
