@@ -97,15 +97,18 @@
                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#comment-modal"
                         style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
                         onclick="getComments(null,true)">留言</button>
-                    <button class="btn btn-sm btn-outline-warning"
-                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                        onclick="player_backward(5)"><i class="bi bi-rewind-fill"></i></button>
-                    <button class="btn btn-sm btn-outline-secondary"
-                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                        onclick="toggleVideoPlay()" id="fscplaystatIcon"><i class="bi bi-pause-fill"></i></button>
-                    <button class="btn btn-sm btn-outline-warning"
-                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                        onclick="player_forward(5)"><i class="bi bi-fast-forward-fill"></i></button>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-warning"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                            onclick="player_backward(5)"><i class="bi bi-rewind-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-warning"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                            onclick="toggleVideoPlay()" id="fscplaystatIcon"><i class="bi bi-pause-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-warning"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                            onclick="player_forward(5)"><i class="bi bi-fast-forward-fill"></i></button>
+                    </div>
+
                 </div>
                 <div style="float: right;color: #fff;padding-right: 1.5rem;" onclick="switchtoolbar()">
                     <div id="stateBar" style="display: inline-block;" class="pe-1">
@@ -241,19 +244,23 @@
         async function onPlayerReady(e) {
             // 為確保瀏覽器上可以自動播放，要把影片調成靜音
             //  e.target.mute().playVideo();
+            var isStudyVideo = getItemFromHistoryList(nowplays[1]).name.toLowerCase().includes("study")
+
             console.log("YT Video init Success!", e)
             $("#stateBar").html(``)
             $("#setbge-2").html(``)
             $("#setbge-1").html(``)
             $("#setbge-icon").html(``)
-            if (!localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")) {
-                localStorage.setItem("YTplayerSettings.DefaultPlaySpeed", 1)
+            if (!isStudyVideo) {
+                if (!localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")) {
+                    localStorage.setItem("YTplayerSettings.DefaultPlaySpeed", 1)
+                }
+                e.target.setPlaybackRate(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
+                $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
+                onPlaybackRateChange({ data: localStorage.getItem("YTplayerSettings.DefaultPlaySpeed") })
             }
-
-            e.target.setPlaybackRate(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
-            $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
-            onPlaybackRateChange({ data: localStorage.getItem("YTplayerSettings.DefaultPlaySpeed") })
             await saveVideoProgress()
+
         }
         function onPlayerStateChange(e) {
             console.log(e.target.getCurrentTime())
@@ -441,6 +448,35 @@
                 }
                 updateHistoryList(nowplays)
             }
+        }
+
+        function renderInputBarPlaceHolder(isBgPlaying, defaultPlaySpeed) {
+            var txt = "輸入YT 影片連結"
+            console.log(isBgPlaying, defaultPlaySpeed)
+            if (isBgPlaying == "true" && defaultPlaySpeed !== "1" && defaultPlaySpeed !== null) {
+                txt = `[背景播放已開啟,預設速度${defaultPlaySpeed}]` + txt;
+                $("#ytlink").addClass("border-warning")
+
+            } else {
+                if (isBgPlaying == "true") {
+                    txt = "[背景播放已開啟] " + txt;
+                    $("#ytlink").addClass("border-warning")
+
+                }
+                else if (defaultPlaySpeed !== "1" && defaultPlaySpeed !== null) {
+                    txt = `[預設速度${defaultPlaySpeed}]` + txt
+                    $("#ytlink").removeClass("border-warning")
+
+                }
+                else {
+                    $("#ytlink").removeClass("border-warning")
+
+                }
+
+            }
+
+            $("#ytlink").attr("placeholder", txt)
+
         }
 
         function updateChannelFrame(data) {
@@ -1157,26 +1193,25 @@
             if (localStorage.getItem("YTplayerSettings.PlayOnBackground") == null) {
                 localStorage.setItem("YTplayerSettings.PlayOnBackground", "true")
                 $("#flexSwitchCheckChecked").attr("checked", "checked")
-                $("#ytlink").attr("placeholder", "[背景播放已開啟] 輸入YT 影片連結")
+
                 $("#ytlink").addClass("border-warning")
 
             } else if (localStorage.getItem("YTplayerSettings.PlayOnBackground") == "true") {
                 $("#flexSwitchCheckChecked").attr("checked", "checked")
-                $("#ytlink").attr("placeholder", "[背景播放已開啟] 輸入YT 影片連結")
-                $("#ytlink").addClass("border-warning")
+
 
             } else {
                 $("#flexSwitchCheckChecked").removeAttr("checked")
                 $("#ytlink").removeClass("border-warning")
-                $("#ytlink").attr("placeholder", "輸入YT 影片連結")
+
             }
 
             if (!localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")) {
                 localStorage.setItem("YTplayerSettings.DefaultPlaySpeed", 1)
-
             }
             $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
 
+            renderInputBarPlaceHolder(localStorage.getItem("YTplayerSettings.PlayOnBackground"), localStorage.getItem("YTplayerSettings.DefaultPlaySpeed"))
 
 
             if (UrlParam(location.href, "input")) {
@@ -1329,16 +1364,8 @@
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onchange="
                     localStorage.setItem('YTplayerSettings.PlayOnBackground',this.checked)
-                    if(this.checked){
-                $('#ytlink').attr('placeholder', '[背景播放已開啟] 輸入YT 影片連結')
-                $('#ytlink').addClass('border-warning')
+                                renderInputBarPlaceHolder(localStorage.getItem('YTplayerSettings.PlayOnBackground'), localStorage.getItem('YTplayerSettings.DefaultPlaySpeed'))
 
-                    }else{
-                $('#ytlink').attr('placeholder', '輸入YT 影片連結')
-                $('#ytlink').removeClass('border-warning')
-
-
-                    }
                     ">
                 <label class="form-check-label" for="flexSwitchCheckChecked">嘗試在背景播放</label>
 
@@ -1350,9 +1377,12 @@
             <input type="range" class="form-range" min="0.25" max="2" step="0.05" id="customRange3" oninput="
             $('#defaultPlaySpeed').text(Number(this.value));
             localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
-            
-            ">
+            renderInputBarPlaceHolder(localStorage.getItem('YTplayerSettings.PlayOnBackground'), localStorage.getItem('YTplayerSettings.DefaultPlaySpeed'))
 
+            ">
+            <div class="alert alert-info" role="alert">
+                不適用於Study With Me影片
+            </div>
             <p class="h5">觀看紀錄</p>
 
 
