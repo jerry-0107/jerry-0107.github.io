@@ -110,7 +110,43 @@
                     </div>
                     <button class="btn btn-sm btn-outline-warning"
                         style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                        onclick="player.setPlaybackRate(2)">2x</button>
+                        data-playrates="1.25,1.5,1.75,2" data-playratenow="1.25" data-playratenext="1.5"
+                        data-flag="false" onclick="
+                        var plar = $(this).attr('data-playrates').split(',')
+                        var plarnow = $(this).attr('data-playratenow')
+                        var plarnext = $(this).attr('data-playratenext')
+
+                        if($(this).attr('data-flag') ==='true'){
+                             $(this).text(`1.25x`)
+                            $(this).attr('data-flag','false')
+                        }else{
+                            $(this).text(`${plarnext}x`)
+                        }
+                        player.setPlaybackRate(Number(plarnow))
+            
+                        if(plar.indexOf(plarnow)+1<plar.length){
+                            $(this).attr('data-playratenow',plar[plar.indexOf(plarnow)+1])
+                            $(this).attr('data-flag','false')
+                        
+                        }else{
+                            $(this).attr('data-playratenow','1.25')
+                            $(this).attr('data-flag','true')
+                        
+                        }
+                      if(plar.indexOf(plarnow)+2<plar.length){
+                            $(this).attr('data-playratenext',plar[plar.indexOf(plarnow)+2])
+                            $(this).attr('data-flag','false')
+                    
+                        }else{
+                            $(this).attr('data-playratenext','1.5')
+                            $(this).attr('data-flag','true')
+
+                      }
+
+                       
+                    
+                        
+                        ">1.25x</button>
 
                 </div>
                 <div style="float: right;color: #fff;padding-right: 1.5rem;" onclick="switchtoolbar()">
