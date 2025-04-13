@@ -543,14 +543,14 @@
                     var YTplayerPausedVideo = JSON.parse(localStorage.getItem("YTplayerPausedVideo"))
                     if (YTplayerPausedVideo.id === theid) {
                         console.log("s35tyvib", YTplayerPausedVideo)
-                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo.pausedAt)}"></iframe>`
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo.pausedAt)}"></iframe>`
 
                     } else {
-                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
 
                     }
                 } else {
-                    document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
+                    document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
 
                 }
 
@@ -1351,7 +1351,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
-                        onclick='document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${nowplays[0] === "video" ? nowplays[1] : "?list=" + nowplays[1]}${nowplays[0] === "video" ? "?" : "&"}rel=0&enablejsapi=1"></iframe>` '>這不是Study
+                        onclick='document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${nowplays[0] === "video" ? nowplays[1] : "?list=" + nowplays[1]}${nowplays[0] === "video" ? "?" : "&"}rel=0&enablejsapi=1"></iframe>` '>這不是Study
                         With Me 影片</button>
                     <button type="button" class="btn btn-success" onclick="openFullscreen()">確定</button>
                 </div>
