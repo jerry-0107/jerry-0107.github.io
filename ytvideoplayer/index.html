@@ -161,6 +161,11 @@
                         <h5 class="modal-title" id="comment-modal-title">留言</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-success"
+                            onclick="getComments(nextCommentToken)">讀取留言</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
+                    </div>
                     <div class="modal-body">
                         <p id="comment-modal-p"></p>
                         <div id="comments-container">請按下按鈕，開始讀取留言</div>
