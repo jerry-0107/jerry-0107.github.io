@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT 影片播放器</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-avatar@latest/dist/avatar.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .text-success-c {
+            color: #3eff10 !important;
+        }
+
+        .sharecode-container {
+            font-size: 1.2rem;
+            border-radius: 5px;
+            display: inline-block;
+            margin-left: .5rem;
+            padding: .5rem;
+            width: 2.5rem;
+            text-align: center;
+        }
+
+        .select-none {
+            user-select: none !important;
+        }
+    </style>
+</head>
+
+<body class="p-1">
+    <div class="flex pb-1">
+
+        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample2"
+            aria-controls="offcanvasExample"><i class="bi bi-list"></i></button>
+        <div class="p-1"></div>
+
+        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+            aria-controls="offcanvasExample"><i class="bi bi-person-circle"></i></button>
+        <div class="p-1"></div>
+        <div class="input-group">
+            <input class="form-control border-warning" placeholder="[LOADING...]" id="ytlink">
+            <button class="btn btn-outline-danger" type="button" id="clear"><i class="bi bi-trash"></i>
+            </button>
+        </div>
+        <div class="p-1"></div>
+        <button class="btn btn-primary" id="submit"><i class="bi bi-search"></i></button>
+
+        <div class="p-1"></div>
+        <button class="btn btn-outline-dark" id="fullsc"><i class="bi bi-fullscreen"></i></button>
+    </div>
+    <div class="flex" id="fullscreenContainer" style="height: 100%;width: 100%;flex-direction: column;">
+        <div id="toolbar-u-container" onclick="switchtoolbar()"></div>
+
+        <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 98%;">
+            <h1>影片會顯示在這裡</h1>
+            <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
+        </div>
+        <div id="toolbar-b-container" onclick="switchtoolbar()">
+            <div id="fullscToolBar" onclick="switchtoolbar()" data-dir="b" class="p-1"
+                style="width: 100%;user-select: none;">
+                <div id="fscToolbar-container-left" style="float: left;">
+                    <button class="btn-sm btn-secondary btn" onclick="WexitFullscreen()" id="exitFullscreenBtn"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;margin-left: 1.5rem;"><i
+                            class="bi bi-fullscreen-exit"></i> 離開全螢幕</button>
+
+
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#comment-modal"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                        onclick="getComments(null,true)">留言</button>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-warning"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                            onclick="player_backward(5)"><i class="bi bi-rewind-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-warning"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                            onclick="toggleVideoPlay()" id="fscplaystatIcon"><i class="bi bi-pause-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-warning"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                            onclick="player_forward(5)"><i class="bi bi-fast-forward-fill"></i></button>
+                    </div>
+                    <button class="btn btn-sm btn-outline-warning"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                        data-playrates="1,1.25,1.5,1.75,2" data-playratenow="1.25" data-flag="false" onclick="
+                        var plar = $(this).attr('data-playrates').split(',')
+                        var plarnow = $(this).attr('data-playratenow')
+                        
+                            $(this).text(`${plarnow!=='1'?plarnow+'x':'原速度'}`)
+                        
+                        player.setPlaybackRate(Number(plarnow))
+                        
+                        if(plar[plar.indexOf(plarnow)+1] !== undefined){
+                            $(this).attr('data-playratenow',plar[plar.indexOf(plarnow)+1])
+                            $(this).attr('data-flag','false')
+                        
+                        }else{
+                            $(this).attr('data-playratenow','1')
+                            $(this).attr('data-flag','true')
+                        }                
+                        ">原速度</button>
+
+                </div>
+                <div style="float: right;color: #fff;padding-right: 1.5rem;" onclick="switchtoolbar()">
+                    <div id="stateBar" style="display: inline-block;" class="pe-1">
+                        <div class="spinner-border spinner-border-sm" role="status"
+                            style="vertical-align: middle  !important;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <!-- <div id="saving-stateBar" style="display: inline-block;" class="pe-1"><span
+                        class="text-danger">尚未儲存進度</span></div>
+               -->
+                    <div id="timeBar" style="display: inline-block;" class="pe-1"></div>
+                    <div id="batteryBar" style="display: inline-block;" class="pe-1"></div>
+                    <div id="videoSettingBar" style="display: inline-block;" class="pe-1">
+                        <div style="display: flex;align-items: baseline;">
+                            <div id="setbge-icon" class="pe-1"></div>
+                            <div id="setbge-1" class="pe-1"></div>
+                            <div id="setbge-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade " tabindex="-1" id="comment-modal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="comment-modal-title">留言</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-success"
+                            onclick="getComments(nextCommentToken)">讀取留言</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="comment-modal-p"></p>
+                        <div id="comments-container">請按下按鈕，開始讀取留言</div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success"
+                            onclick="getComments(nextCommentToken)">讀取留言</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+
+        const whitelist = ["study", "謝博凱", "超模", "蔡任圃", "吳旭明", "數學", "化學", "study with me", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習"]
+        const blacklist = ["猫", "貓"]
+
+
+        var nowplays = [0, 0]
+        var nextCommentToken = null
+        var channelId
+
+        var ac = { state: false, count: 0 }
+        var water = { times: 0, fill: false, count: 1200 }
+
+        // var batteryData = []
+
+
+        function UrlParam(url, name) {
+            try {
+                var url = new URL(url),
+                    result = url.searchParams.get(name);
+                return result
+            } catch (e) {
+                console.warn(e)
+                return null
+            }
+        }
+        var player;
+        function delay(n) {
+            return new Promise(function (resolve) {
+                setTimeout(resolve, n * 1000);
+            });
+        }
+
+        async function updateStateBar(icon, _delay) {
+            if (icon === "") {
+                $("#stateBar").html(``)
+                $("#fscplaystatIcon").html(`<i class="bi bi-pause-fill"></i>`)
+                return true
+            }
+            if (icon.includes("'") || icon.includes('"') || icon.includes("`")) return
+            if (icon === "spinner") {
+                $("#stateBar").html(`<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>`)
+                $("#fscplaystatIcon").html(`<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>`)
+
+            } else {
+                console.log(icon)
+                $("#stateBar").html(`<i class="bi ${icon}" style="vertical-align: middle  !important;"></i>`)
+
+                if (icon === "bi-play-circle-fill") {
+                    $("#fscplaystatIcon").html(`<i class="bi bi-play-fill"></i>`)
+                }
+            }
+            if (_delay) {
+                await delay(_delay)
+                $("#stateBar").html(``)
+            }
+            return true
+        }
+
+        function onPlaybackQualityChange(e) {
+
+            console.log(e.data)
+            var icon = ''
+
+            if (e.data === "hd2160") { icon = `<i class="bi bi-badge-4k-fill" style="vertical-align: middle !important;"></i>` }
+            else if (e.data.includes("hd") && !e.data.includes("720")) { icon = `<i class="bi bi-badge-hd-fill" style="vertical-align: middle !important;"></i>` }
+
+            //  if (quality) $("#setbge-1").html(`<span class="badge bg-primary" style="font-size: .65rem;">${quality}</span>`)
+            $("#setbge-icon").html(icon)
+        }
+
+        function onPlaybackRateChange(e) {
+            console.log(e)
+            if (Number(e.data) !== 1) {
+                $("#setbge-2").html(`<span class="text-info" style="font-size: .75rem;">${e.data}X</span>`)
+            } else {
+                $("#setbge-2").html(``)
+
+            }
+
+        }
+
+        async function onPlayerReady(e) {
+            // 為確保瀏覽器上可以自動播放，要把影片調成靜音
+            //  e.target.mute().playVideo();
+            var isStudyVideo = getItemFromHistoryList(nowplays[1]).name.toLowerCase().includes("study")
+
+            console.log("YT Video init Success!", e)
+            $("#stateBar").html(``)
+            $("#setbge-2").html(``)
+            $("#setbge-1").html(``)
+            $("#setbge-icon").html(``)
+            if (!isStudyVideo) {
+                if (!localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")) {
+                    localStorage.setItem("YTplayerSettings.DefaultPlaySpeed", 1)
+                }
+                e.target.setPlaybackRate(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
+                $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
+                onPlaybackRateChange({ data: localStorage.getItem("YTplayerSettings.DefaultPlaySpeed") })
+            }
+            await saveVideoProgress()
+
+        }
+        function onPlayerStateChange(e) {
+            console.log(e.target.getCurrentTime())
+            // $("#stateBar").html(`${e.data === 2 ? `<i class="bi" style="vertical-align: middle  !important;"></i>` : ``} ${e.data === 3 ? `<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>` : ``}`)
+
+            if (e.data === 2) {
+                //console.log("[user paused] saving watching progress:", player.getCurrentTime())
+                saveVideoProgress()
+                //localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
+                updateStateBar("bi-play-circle-fill")
+            } else if (e.data === 3) {
+                updateStateBar("spinner")
+            } else {
+                updateStateBar("")
+            }
+        }
+
+
+        async function saveVideoProgress() {
+            console.log("[cron process] saving watching progress:", player.getCurrentTime(), "index:", player.playerInfo.playlistIndex + 1)
+            if (nowplays[0] == "playlist") {
+                localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: player.playerInfo.playlistIndex + 1, pausedAt: player.getCurrentTime() }))
+            } else {
+                localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
+
+            }
+            // $("#saving-stateBar").html(`<span class="text-success-c animate__flash">進度儲存成功</span>`)
+            //await delay(1)
+            $("#saving-stateBar").html(``)
+
+            setTimeout(saveVideoProgress, 30000)
+        }
+
+
+
+        function isVideoinWhiteList(o, hideAlert) {
+            console.log("isVideoinWhiteList", o, hideAlert)
+            var title = o.name.toLowerCase()
+            var channel = o.channel.toLowerCase()
+
+            var _title = o.name
+            var _channel = o.channel
+            for (let i = 0; i < blacklist.length; i++) {
+                if (title.includes(blacklist[i]) || channel.includes(blacklist[i])) {
+                    console.log("alert!!!!!")
+                    if (!hideAlert) {
+                        $("#data-warning-modal-title").text(`你無法觀看來自 ${_channel} 的影片`)
+                        $("#data-warning-modal-body").html(`以下影片<b>包含黑名單中的字詞:"${blacklist[i]}"</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>`)
+                        $("#data-warning-modal-gobtn").hide()
+                        const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                        myModal2.show()
+                        document.getElementById("video").innerHTML = `<h3>來自 ${_channel} 的影片已經遭到封鎖</h3>`
+                    }
+                    return false
+                }
+            }
+            for (let i = 0; i < whitelist.length; i++) {
+                if (title.includes(whitelist[i]) || channel.includes(whitelist[i])) {
+                    return true
+                }
+            }
+            console.log("alert!!!!!")
+            if (!hideAlert) {
+
+                $("#data-warning-modal-title").text(`要繼續觀看來自 ${_channel} 的影片嗎?`)
+                $("#data-warning-modal-body").html(`以下影片<b>未經驗證</b>: <br/>${_title}  <br/><img src='${o.thumbnails}'/><br/>繼續觀看可能存在風險，我們建議您不要觀看。`)
+
+                const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                myModal2.show()
+            }
+            return [true, false]
+        }
+
+
+        function getVideoOrPlaylistId(inputData) {
+            if (inputData.includes("/short")) {
+                console.log("alert!!!!!")
+                $("#data-warning-modal-title").text(`無法解析YouTube Shorts`)
+                $("#data-warning-modal-body").html(`出於安全考慮，系統已經停止解析YouTube Shorts`)
+                $("#data-warning-modal-gobtn").hide()
+                const myModal2 = new bootstrap.Modal('#data-warning-modal', {})
+                myModal2.show()
+                return null
+            }
+            if (!inputData.includes("youtube.com/post")) {
+                if (UrlParam(inputData, "v") && UrlParam(inputData, "list") && UrlParam(inputData, "index")) {
+                    console.log("/", [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")])
+                    return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
+                }
+                if (inputData.includes("youtube.com") && (inputData.includes("/watch") || inputData.includes("/playlist"))) {
+
+                    var output = inputData
+                    if (inputData.includes("playlist")) {
+                        return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
+                    }
+
+                    if (UrlParam(inputData, "v")) return [UrlParam(inputData, "v"), "video"]
+                    else {
+                        var n = inputData.split("/")
+                        return [n[n.length - 1], "video"]
+                    }
+                }
+                else if (inputData.includes("youtu.be") || (inputData.includes("youtube.com") && inputData.includes("/live"))) {
+
+                    var output = inputData
+                    if (inputData.includes("playlist")) {
+                        return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
+                    }
+                    output = inputData.replace("www.", "")
+                    output = output.replace("https://", "")
+                    output = output.replace("youtu.be/", "")
+                    output = output.replace("youtube.com/", "")
+                    output = output.replace("live", "")
+                    output = output.replace("/", "")
+                    output = output.replace("m.", "")//for m.youtube.com
+
+                    console.log(output)
+                    var nextSearchCharAt = output.indexOf("?")
+                    if (nextSearchCharAt === -1) return [output, "video"]
+                    return [output.slice(0, nextSearchCharAt), "video"]
+                }
+            } else {
+                console.log("invaild link")
+                return null
+            }
+        }
+
+
+
+        function isIdinHistorylist(id) {
+            if (JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].id === id) return true
+                }
+                return false
+            }
+            return false
+        }
+
+        function getItemFromHistoryList(id) {
+            if (id === "*") return JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))
+
+            if (JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].id === id) return data[i]
+                }
+                return false
+            }
+            return false
+        }
+
+        function updateHistoryList(nowplays, dataset) {
+            console.log(nowplays)
+            var data = dataset ? dataset : (JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) ? JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) : []),
+                htmlTxt = "";
+            document.getElementById("datalen").innerText = "共" + data.length + "筆資料"
+
+            if (!data || data.length < 1) {
+                document.getElementById("historyList").innerHTML = `<a href="#" class="list-group-item list-group-item-action">無資料</a>`
+                return
+            }
+            console.log(data)
+            data = data.reverse()
+            for (let i = 0; i < data.length; i++) {
+                htmlTxt = htmlTxt + `<a href="${location.origin + location.pathname}?id=${data[i].id}&type=${data[i].type}&hsearch=${encodeURI($("#history-filter").val()).replace("+", "-add-")}" class="list-group-item list-group-item-action ${data[i].id === nowplays[1] ? "active" : ""}"><img src="${data[i].thumbnails}"/><br/>${data[i].name}${data[i].type === "playlist" ? " (" + data[i].playlistVideoCounts + "部影片)" : ""}<br/><i class="bi bi-person-circle"></i>&nbsp;${data[i].channel}<br/>${data[i].id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a>`
+            }
+            document.getElementById("historyList").innerHTML = htmlTxt
+        }
+
+        function dumpLocalData(id, type, data) {
+            console.log(id, type, data)
+            if (data.items.length < 1) {
+                return
+            } else {
+                if (!localStorage.getItem("YTplayerHistory_SWM")) {
+                    localStorage.setItem("YTplayerHistory_SWM", JSON.stringify(
+                        [{ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount }]
+                    ))
+                } else {
+                    var lastData = JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))
+                    lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount })
+                    localStorage.setItem("YTplayerHistory_SWM", JSON.stringify(lastData))
+                }
+                updateHistoryList(nowplays)
+            }
+        }
+
+        function renderInputBarPlaceHolder(isBgPlaying, defaultPlaySpeed) {
+            var txt = "輸入YT 影片連結"
+            console.log(isBgPlaying, defaultPlaySpeed)
+            if (isBgPlaying == "true" && defaultPlaySpeed !== "1" && defaultPlaySpeed !== null) {
+                txt = `[背景播放已開啟,預設速度${defaultPlaySpeed}]` + txt;
+                $("#ytlink").addClass("border-warning")
+
+            } else {
+                if (isBgPlaying == "true") {
+                    txt = "[背景播放已開啟] " + txt;
+                    $("#ytlink").addClass("border-warning")
+
+                }
+                else if (defaultPlaySpeed !== "1" && defaultPlaySpeed !== null) {
+                    txt = `[預設速度${defaultPlaySpeed}]` + txt
+                    $("#ytlink").removeClass("border-warning")
+
+                }
+                else {
+                    $("#ytlink").removeClass("border-warning")
+
+                }
+
+            }
+
+            $("#ytlink").attr("placeholder", txt)
+
+        }
+
+        function updateChannelFrame(data) {
+            channelId = data.items[0].snippet.channelId
+            console.log(channelId, "set!")
+            const iframe = document.getElementById('accountFrame').contentWindow;
+
+            var str = data.items[0].snippet.channelId
+            iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': str }), location.origin)
+            console.log(str, 'post!')
+
+        }
+
+        function updateVideoFrame(type, id, index) {
+
+            async function renderSc(_type, _id, _index) {
+                var theid = _id,
+                    thekind = _type,
+                    theindex = _index
+                console.log(theid, thekind, theindex)
+                // if (!isIdinHistorylist(_id)) {
+                var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+                await fetch(`https://www.googleapis.com/youtube/v3/${_type}s?part=snippet,contentDetails&id=${_id}&key=${apiKey}`, {
+                    method: "GET"
+                }).then(r => r.json())
+                    .then(r => {
+                        if (!isIdinHistorylist(_id)) dumpLocalData(_id, _type, r);
+                        if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
+                        updateChannelFrame(r)
+                    })
+                    .catch(e => { console.warn(e); $("#video").html("<h1>:( <br/>影片讀取失敗</h1>") })
+                // } else {
+                //   if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
+                // }
+
+                var isStudyVideo = getItemFromHistoryList(theid).name.toLowerCase().includes("study")
+
+                console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}?rel=0${Number(_index) ? "&index=" + _index : ""}`)
+
+
+
+
+                if (localStorage.getItem("YTplayerPausedVideo")) {
+
+                    var YTplayerPausedVideo = JSON.parse(localStorage.getItem("YTplayerPausedVideo"))
+                    if (YTplayerPausedVideo.id === theid) {
+                        console.log("s35tyvib", YTplayerPausedVideo)
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo.pausedAt)}"></iframe>`
+
+                    } else {
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
+
+                    }
+                } else {
+                    document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
+
+                }
+
+
+
+                console.log(document.getElementById("player"))
+                player = new YT.Player('player', {
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange,
+                        'onPlaybackQualityChange': onPlaybackQualityChange,
+                        'onPlaybackRateChange': onPlaybackRateChange
+                    },
+                    playerVars: {
+                        controls: '0',
+
+                    },
+
+                });
+
+                document.getElementById("ytlink").value = ""
+                console.log("init: ", theid, player)
+
+                if (isStudyVideo) {
+                    $("#exitFullscreenBtn").remove()
+                    new bootstrap.Modal('#study-modal', {}).show()
+                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span><span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleWater()" id="water">請喝水</span>`)
+                }
+
+            }
+
+            if (type && id) {
+                try {
+                    nowplays = [type, id]
+                    renderSc(type, id, index)
+                    updateHistoryList(nowplays)
+
+                } catch (e) {
+                    console.error(e)
+                    const myModal = new bootstrap.Modal('#invailddata-modal', {})
+                    myModal.show()
+                }
+            } else {
+                var inputData = document.getElementById("ytlink").value
+                console.log(getVideoOrPlaylistId(inputData))
+                try {
+                    var theid = getVideoOrPlaylistId(inputData)[0],
+                        thekind = getVideoOrPlaylistId(inputData)[1],
+                        theindex = getVideoOrPlaylistId(inputData)[2]
+
+                    nowplays = [thekind, theid]
+                    updateHistoryList(nowplays)
+                    renderSc(thekind, theid, theindex)
+
+                } catch (e) {
+                    console.error(e)
+                    const myModal = new bootstrap.Modal('#invailddata-modal', {})
+                    myModal.show()
+                }
+            }
+        }
+
+
+        function toggleAc() {
+            ac.state = !ac.state
+            if (ac.state == false) {
+                ac.count = 0
+            } else {
+                ac.count = 3600
+            }
+            $("#ac").html(`冷氣狀態: ${ac.state ? "開" : "關"}`)
+        }
+        function toggleWater() {
+            if ($("#water").html().includes("good! ")) {
+
+                $("#water").html(`達到每分鐘增加上限 ${water.times}`)
+                return
+            }
+            water.count += 600
+            water.times = water.times + 1
+            // water.fill = (water.times % 3 == 0 ? true : false)
+            $("#water").attr("class", "bg-success badge text-light").html(`good! ${water.times} (+10 minutes)`)
+        }
+
+        function getHIstoryListFromBackup() {
+            function _diffHistory(r) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) ? JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) : []
+                if (r.length < 1) {
+                    $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (代碼可能無效或過期)</span>`)
+                    return
+                }
+                var mnum = 0
+                for (let i = 0; i < r.length; i++) {
+                    console.log(r[i], r[i].id, isIdinHistorylist(r[i].id))
+                    if (!isIdinHistorylist(r[i].id)) {
+                        data.push(r[i])
+                        mnum++
+                    } else {
+                        continue
+                    }
+                }
+                localStorage.setItem("YTplayerHistory_SWM", JSON.stringify(data))
+                updateHistoryList(nowplays)
+                $("#data-receive-modal-text").html(`紀錄已經更新，你可以關閉此視窗 (增加了 ${mnum} 筆資料)`)
+            }
+
+            $("#data-receive-modal-text").html(`<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> 正在讀取資料...`)
+            fetch("https://data-saver-vz81.onrender.com/get", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ uid: document.getElementById("data-receive-input").value })
+            }).then(r => r.json())
+                .then(r => {
+                    console.log(r)
+                    if (!r.obj) {
+                        $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (代碼可能無效或過期)</span>`)
+                        //  console.log(JSON.parse(r.obj))
+                        return
+                    } else {
+                        $("#data-receive-modal-text").html(`正在處理來自代碼的 ${JSON.parse(JSON.parse(r.obj)).length} 筆資料...`)
+                        _diffHistory(JSON.parse(JSON.parse(r.obj)))
+                    }
+                }).catch(e => {
+                    console.log(e)
+                    $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (連線問題，無法取得資料)</span>`)
+                })
+        }
+        function uploadHistory() {
+            var code = "LOADING"
+            var htmlStr = ``
+            for (let i = 0; i < code.length; i++) {
+                htmlStr += `<div class="sharecode-container bg-dark text-white">${code[i]}</div>`
+            }
+            $("#sharecode").html(htmlStr)
+            fetch("https://data-saver-vz81.onrender.com/put", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ obj: JSON.stringify(localStorage.getItem(`YTplayerHistory_SWM`)) })
+            }).then(r => r.json())
+                .then(r => {
+                    console.log(r)
+                    var code = ""
+                    if (r.success) {
+                        code = r.rantxt.toString()
+                    } else {
+                        code = "發生錯誤"
+                    }
+                    var htmlStr = ``
+                    for (let i = 0; i < code.length; i++) {
+                        htmlStr += `<div class="sharecode-container bg-dark text-white">${code[i]}</div>`
+                    }
+                    // if (Number(code)) {
+                    //     htmlStr += `<button class="sharecode-container bg-dark text-white bi bi-clipboard"> </button>`
+                    // }
+                    $("#sharecode").html(htmlStr)
+                })
+                .catch(err => {
+                    var code = "發生錯誤"
+                    var htmlStr = ``
+                    for (let i = 0; i < code.length; i++) {
+                        htmlStr += `<div class="sharecode-container bg-dark text-white">${code[i]}</div>`
+                    }
+                    $("#sharecode").html(htmlStr)
+                })
+        }
+
+        function handleClick(e) {
+            updateVideoFrame()
+        }
+        function clearInput(k) {
+            if (document.getElementById("ytlink").value !== "") {
+                document.getElementById("ytlink").value = ""
+            } else {
+                new bootstrap.Modal('#del-modal', {}).show()
+            }
+        }
+
+        function switchtoolbar() {
+            if ($("#fullscToolBar").attr("data-dir") === "b") {
+                $("#fullscToolBar").appendTo($("#toolbar-u-container"))
+                $("#toolbar-b-container").html("")
+                $("#fullscToolBar").attr({ "data-dir": "u" })
+            } else {
+                $("#fullscToolBar").appendTo($("#toolbar-b-container"))
+                $("#toolbar-u-container").html("")
+                $("#fullscToolBar").attr({ "data-dir": "b" })
+            }
+        }
+
+        async function player_backward(secs) {
+            try {
+                player.seekTo(player.getCurrentTime() - secs)
+                await updateStateBar("bi-caret-left-square-fill", 1)
+
+            } catch (error) {
+                console.warn(error)
+            }
+        }
+        async function player_forward(secs) {
+            try {
+                player.seekTo(player.getCurrentTime() + secs)
+                await updateStateBar("bi-caret-right-square-fill", 1)
+            } catch (error) {
+                console.warn(error)
+            }
+        }
+
+        function toggleVideoPlay() {
+            try {
+                if (player.getPlayerState() === 2) {
+                    player.playVideo()
+                    $("#fscplaystatIcon").html(`<i class="bi bi-pause-fill"></i>`)
+
+                } else {
+                    player.pauseVideo()
+                    $("#fscplaystatIcon").html(`<i class="bi bi-play-fill"></i>`)
+
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        function toggleMute() {
+            try {
+                if (player.isMuted()) {
+                    player.unMute()
+                } else {
+                    player.mute()
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        async function handleKeyboard(e) {
+            if (e.keyCode === 13) { handleClick() }
+            else if (e.keyCode === 70) { openFullscreen() } //F
+            else if (e.keyCode === 27) { e.preventDefault(); WexitFullscreen() } //esc
+            else if (e.keyCode === 37) { await player_backward(10) } // <-
+            else if (e.keyCode === 39) { await player_forward(10) } // ->
+            else if (e.keyCode === 32) { toggleVideoPlay() } //space
+            else if (e.keyCode === 77) { toggleMute() } //M
+
+        }
+        function openFullscreen() {
+            var elem = document.getElementById("fullscreenContainer");
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+
+            $("#video").css("height", "98%")
+            $("#fullscToolBar").show()
+
+        }
+        function WexitFullscreen() {
+            document.exitFullscreen()
+            $("#video").css("height", "100%")
+            $("#fullscToolBar").hide()
+
+        }
+
+        navigator.getBattery().then((battery) => {
+
+            // function countBatteryRemainTime() {
+            //     if (batteryData.length < 1) return "-1"
+            //     if (batteryData[-1].charging) return "-2"
+            //     var flag1, flag2 = batteryData.length - 1;
+            //     for (let i = 0; i < batteryData.length; i++) {
+            //         if (batteryData[i].charging) {
+            //             flag1 = i + 1
+            //         }
+            //     }
+            //     if (flag1 >= flag2) return "-3"
+            //     return (batteryData[flag2].level - batteryData[flag1].level) / ((batteryData[flag2].time - batteryData[flag1].time) / 1000)
+            // }
+
+            function renderBatteryBar(level, charging) {
+                var htmlStr = ""
+                var colorClass = "";
+                var batteryClass = ""
+                if (level >= 0.7) {
+                    colorClass = "text-success-c"
+                    batteryClass = "bi-battery-full"
+                }
+                else if (0.4 < level && level < 0.7) {
+                    colorClass = "text-warning"
+                    batteryClass = "bi-battery-half"
+                }
+                else {
+                    colorClass = "text-danger"
+                    batteryClass = "bi-battery"
+                }
+
+                if (charging) {
+                    htmlStr = `<i class="bi bi-battery-charging ${colorClass}" style="vertical-align: middle !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}%  ${(battery.level >= 0.95 && charging ? "充電完成" : "")}</span>`
+                } else {
+                    htmlStr = `<i class="bi ${batteryClass} ${colorClass}" style="vertical-align: middle  !important;"></i> <span class="${colorClass}" style="font-size: .75rem;">${Math.round(level * 100)}% ${(battery.level <= 0.2 && !charging ? "請充電" : "")}</span>`
+                }
+                //htmlStr = htmlStr +  //+ countBatteryRemainTime()
+                $("#batteryBar").html(htmlStr)
+
+                //   batteryData.push({ level, charging, time: new Date() })
+                // console.log(countBatteryRemainTime())
+            }
+
+
+            function updateAllBatteryInfo() {
+                updateChargeInfo();
+                updateLevelInfo();
+            }
+            updateAllBatteryInfo();
+
+            battery.addEventListener("chargingchange", () => {
+                updateChargeInfo();
+            });
+            function updateChargeInfo() {
+                console.log(`Battery charging? ${battery.charging ? "Yes" : "No"}`);
+                renderBatteryBar(battery.level, battery.charging)
+            }
+
+            battery.addEventListener("levelchange", () => {
+                updateLevelInfo();
+            });
+            function updateLevelInfo() {
+                console.log(`Battery level: ${battery.level * 100}%`);
+                renderBatteryBar(battery.level, battery.charging)
+            }
+        });
+
+        function updateTime() {
+            var dat = new Date(),
+                h = dat.getHours() > 9 ? dat.getHours() : "0" + dat.getHours(),
+                m = dat.getMinutes() > 9 ? dat.getMinutes() : "0" + dat.getMinutes()
+            $("#timeBar").html(`<span style="font-size: .75rem;">${h}:${m}</span>`)
+            setTimeout("updateTime()", 10000)
+        }
+
+        function updateAc() {
+            console.log("[update ac]", ac)
+            if (ac.state) {
+                ac.count = ac.count - 60
+                if (ac.count <= 0) ac.state = false
+            }
+            $("#ac").html(!ac.state ? "沒有開冷氣" : `冷氣將於 ${ac.count / 60}分鐘後關閉`)
+            setTimeout("updateAc()", 60000)
+        }
+        function updateWater() {
+            console.log("[update water]", water)
+            if (water.count >= 60) {
+                water.count -= 60
+            }
+
+            if (water.count > 60 && water.count <= 150) {
+                $("#water").attr("class", "badge bg-warning text-dark")
+            } else if (water.count <= 60) {
+                $("#water").attr("class", "badge bg-danger")
+            } else {
+                $("#water").attr("class", "badge bg-primary")
+            }
+            $("#water").html(water.fill ? `請裝水 ${water.times}` : water.count >= 0 ? `喝水 倒數${water.count / 60}分鐘 ${water.times}` : `請喝水 ${water.times}`)
+            setTimeout("updateWater()", 60000)
+        }
+
+
+        function diffHistory() {
+            var data = JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) ? JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) : []
+            if (data.length < 1) return
+            var idlist = []
+
+            for (let i = 0; i < data.length; i++) {
+                if (idlist.includes(data[i].id)) {
+                    delete data[i]
+                } else {
+                    idlist.push(data[i].id)
+                }
+            }
+            data = data.filter(item => item !== null)
+            //console.log(data, JSON.stringify(data))
+            localStorage.setItem("YTplayerHistory_SWM", JSON.stringify(data))
+        }
+
+        function getComments(next, frombtn) {
+            function processComments(comments) {
+                if (comments.length < 1) {
+                    document.getElementById("comments-container").innerText = "沒有任何留言"
+                }
+                try {
+                    comments.forEach(comment => {
+                        const commentsContainer = document.getElementById("comments-container")
+                        const commentText = comment.snippet.topLevelComment.snippet.textDisplay;
+                        const commentAuthor = comment.snippet.topLevelComment.snippet.authorDisplayName;
+                        const commentAuthorPhoto = comment.snippet.topLevelComment.snippet.authorProfileImageUrl
+                        const commentElement = document.createElement('div');
+                        commentElement.innerHTML = `<img src="${commentAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${commentAuthor}:</strong> ${commentText}`;
+                        commentsContainer.appendChild(commentElement);
+                        console.log(comment.snippet.topLevelComment.snippet)
+                        // Display replies if any
+                        if (comment.replies) {
+                            const repliesContainer = document.createElement('div');
+                            repliesContainer.style.marginLeft = '20px';
+                            comment.replies.comments.forEach(reply => {
+                                const replyText = reply.snippet.textDisplay;
+                                const replyAuthor = reply.snippet.authorDisplayName;
+                                const replyElement = document.createElement('p');
+                                const replyAuthorPhoto = reply.snippet.authorProfileImageUrl
+                                replyElement.innerHTML = `<img src="${replyAuthorPhoto}" style="display:inline" class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" /> <strong>${replyAuthor}:</strong> ${replyText}`;
+                                repliesContainer.appendChild(replyElement);
+                            });
+                            commentsContainer.appendChild(repliesContainer);
+                        }
+                    });
+                } catch (e) {
+                    console.warn(e)
+                    $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效<br/>如果影片正在緩衝，請等待緩衝結束。")
+
+                }
+            }
+
+            console.log(player)
+            if (frombtn && $("#comments-container")) {
+                $(".modal-backdrop").appendTo("#fullscreenContainer")
+                return
+            }
+            try {
+                $(".modal-backdrop").appendTo("#fullscreenContainer")
+                if (!next) $("#comments-container").html("")
+                $("#comment-modal-p").html(`${player.videoTitle} 的留言`)
+
+                var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+
+                var url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${player.playerInfo.videoData.video_id}&key=${apiKey}`
+
+                if (nextCommentToken) {
+                    url += `&pageToken=${nextCommentToken}`;
+                }
+
+                fetch(url, {
+                    method: "GET"
+                }).then(r => r.json())
+                    .then(r => {
+                        processComments(r.items);
+                        nextCommentToken = r.nextPageToken
+                    })
+                    .catch(e => {
+                        $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效<br/>如果影片正在緩衝，請等待緩衝結束。")
+                    })
+            }
+            catch (error) {
+                $("#comment-modal-p").html("無法查看留言<br/>請選擇有效的影片。你可能沒有觀看影片、輸入了播放清單，或影片連結無效<br/>如果影片正在緩衝，請等待緩衝結束。")
+
+            }
+
+        }
+
+        function rendertop3channels() {
+            var channels = [], times = []
+            var data = getItemFromHistoryList("*")
+            for (let i = 0; i < data.length; i++) {
+                if (!channels.includes(data[i].channel)) {
+                    channels.push(data[i].channel)
+                    times.push(1)
+                } else {
+                    times[channels.indexOf(data[i].channel)]++
+                }
+            }
+
+            console.log(channels, times)
+        }
+
+        function renderSuggestedSearch(n) {
+            var txt = ""
+            for (let i = 0; i < n; i++) {
+                try {
+                    txt = txt + `<span class="badge text-bg-primary me-1 select-none" onclick="searchHistory('${whitelist[i]}')">${whitelist[i]}</span>`
+                } catch { }
+            }
+            txt = txt + "<br/>"
+            txt = txt + `<span class="badge text-bg-warning me-1 select-none" onclick="searchHistory('!!VI')">影片</span>`
+            txt = txt + `<span class="badge text-bg-warning me-1 select-none" onclick="searchHistory('!!PL')">播放清單</span>`
+            txt = txt + `<span class="badge text-bg-danger me-1 select-none" onclick="searchHistory('')">清除搜尋</span>`
+
+
+            $("#suggestedSearch").html(txt)
+        }
+
+        function searchHistory(s) {
+            var os = $("#history-filter").val()
+
+            if (s.slice(0, 2) === "!!") {
+                if (!os.includes("+影片") && !os.includes("+播放清單")) {
+                    if ($("#history-filter").val()) {
+                        $("#history-filter").val($("#history-filter").val() + s.replace("!!", "").replace("!", "").replace("VI", "+影片").replace("PL", "+播放清單"))
+                        var search = os.toLowerCase()
+
+                        var data = getItemFromHistoryList("*")
+                        var newd = []
+                        for (let i = 0; i < data.length; i++) {
+                            if ((data[i].name.toLowerCase().includes(search) || data[i].channel.toLowerCase().includes(search)) && data[i].type === (s.includes("VI") ? "video" : "playlist")) {
+                                newd.push(data[i])
+                            }
+                        }
+                        updateHistoryList(nowplays, newd)
+
+                    }
+                    else {
+                        $("#datalen").text("請先輸入關鍵字才能使用過濾器")
+                    }
+                } else {
+                    $("#datalen").text("無法處理雙重過濾，請清除過濾器")
+                }
+
+
+            } else {
+
+
+                if (os.includes("+影片") || os.includes("+播放清單") || os.includes(" 影片") || os.includes(" 播放清單")) {
+                    if ($("#history-filter").val()) {
+                        console.log($("#history-filter").val())
+                        //   $("#history-filter").val($("#history-filter").val() + s.replace("!!", "").replace("!", "").replace("VI", "+影片").replace("PL", "+播放清單"))
+                        var search = os.toLowerCase()
+
+                        var data = getItemFromHistoryList("*")
+                        var newd = []
+                        for (let i = 0; i < data.length; i++) {
+                            if ((data[i].name.toLowerCase().includes(search.split("+")[0]) || data[i].name.toLowerCase().includes(search.split(" ")[0]) || data[i].channel.toLowerCase().includes(search.split("+")[0])) && data[i].type === (os.includes("影片") ? "video" : "playlist")) {
+                                newd.push(data[i])
+                            }
+                        }
+                        updateHistoryList(nowplays, newd)
+
+                    }
+                }
+                else {
+
+                    var search = s.toLowerCase()
+                    $("#history-filter").val(s)
+                    var data = getItemFromHistoryList("*")
+                    var newd = []
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].name.toLowerCase().includes(search) || data[i].channel.toLowerCase().includes(search)) {
+                            newd.push(data[i])
+                        }
+                    }
+                    updateHistoryList(nowplays, newd)
+                }
+            }
+
+        }
+
+
+        function removeTheRecentVideo() {
+            var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo")).id
+            var data = getItemFromHistoryList(videoId)
+            localStorage.setItem("YTplayerPausedVideo", "")
+
+        }
+
+        function renderSuggestVideo(id) {
+            var data = getItemFromHistoryList(id)
+            console.log(data, "/////")
+            $("#video").html(`<div class="list-group"><h3>上次暫停的影片</h3><a href = "${location.origin + location.pathname}?id=${data.id}&type=${data.type}" class= "list-group-item list-group-item-action" ><img src="${data.thumbnails}"/><br/>${data.name}${data.type === "playlist" ? " (" + data.playlistVideoCounts + "部影片)" : ""} <br /> <i class="bi bi-person-circle"></i> &nbsp;${data.channel} <br />${data.id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a></div>`)
+        }
+
+        document.getElementById("clear").onclick = clearInput
+        document.getElementById("clear").ondblclick = function () {
+            clearInput(true)
+        }
+
+        window.addEventListener(
+            "message",
+            (event) => {
+
+
+                if (event.origin !== location.origin) return;
+
+                console.log(event)
+                try {
+                    var data = JSON.parse(event.data)
+                    console.log("received! data:", data)
+                    if (Boolean(data)) {
+                        if (data.method === "updateVideoFrame") {
+                            var constructedUrl = location.origin + "?" + data.data
+                            updateVideoFrame(UrlParam(constructedUrl, "type"), UrlParam(constructedUrl, "id"), UrlParam(constructedUrl, "index"))
+                            $("#toggleCloseOC1").click()
+                        }
+                    }
+                } catch (e) {
+
+                }
+            },
+            false,
+        );
+
+
+        document.getElementById("submit").onclick = handleClick
+        document.onkeydown = handleKeyboard
+        document.getElementById("fullsc").onclick = openFullscreen
+
+        document.addEventListener("visibilitychange", async function () {
+            if (document.hidden) {
+                if (localStorage.getItem('YTplayerSettings.PlayOnBackground') == 'true') {
+                    try {
+                        document.title = "[背景播放處理中] YT影片播放器"
+                        await delay(0.3)
+                        console.log("[INVISIBLE] trying to play...")
+                        player.playVideo()
+                        document.title = "[背景播放中] YT影片播放器"
+                    } catch (e) {
+                        console.log("[INVISIBLE] perhaps there is no video playing (failed to play)", e)
+                        document.title = "[背景播放失敗] YT影片播放器"
+
+                    }
+                }
+            } else {
+                document.title = "YT影片播放器"
+            }
+        })
+        window.onload = function () {
+            $("#video").css("height", "100%")
+            $("#fullscToolBar").hide()
+            if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
+                document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
+                updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"), UrlParam(location.href, "index"))
+            } else if (localStorage.getItem("YTplayerPausedVideo")) {
+                var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo")).id
+                var theVid = getItemFromHistoryList(videoId)
+                console.log(videoId)
+                if (isVideoinWhiteList(theVid, true) === true) {
+                    renderSuggestVideo(videoId)
+                }
+            }
+            updateTime()
+            updateAc()
+            updateWater()
+            diffHistory()
+            renderSuggestedSearch(5)
+            updateHistoryList(nowplays)
+
+            $("#accountFrame").attr('src', location.origin + location.pathname + "channels.html?framed=true")
+            if (UrlParam(location.href, "hsearch")) {
+                console.log(UrlParam(location.href, "hsearch"))
+                if (UrlParam(location.href, "hsearch").includes("-add-")) {
+                    searchHistory(UrlParam(location.href, "hsearch").replace("-add-", "+"))
+                    searchHistory("")  // it SHOULD be here, or the history rendering will CRASH !!!
+                } else {
+                    searchHistory(UrlParam(location.href, "hsearch"))
+
+                }
+            }
+            if (localStorage.getItem("YTplayerSettings.PlayOnBackground") == null) {
+                localStorage.setItem("YTplayerSettings.PlayOnBackground", "true")
+                $("#flexSwitchCheckChecked").attr("checked", "checked")
+
+                $("#ytlink").addClass("border-warning")
+
+            } else if (localStorage.getItem("YTplayerSettings.PlayOnBackground") == "true") {
+                $("#flexSwitchCheckChecked").attr("checked", "checked")
+
+
+            } else {
+                $("#flexSwitchCheckChecked").removeAttr("checked")
+                $("#ytlink").removeClass("border-warning")
+
+            }
+
+            if (!localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")) {
+                localStorage.setItem("YTplayerSettings.DefaultPlaySpeed", 1)
+            }
+            $('#defaultPlaySpeed').text(Number(localStorage.getItem("YTplayerSettings.DefaultPlaySpeed")));
+
+            renderInputBarPlaceHolder(localStorage.getItem("YTplayerSettings.PlayOnBackground"), localStorage.getItem("YTplayerSettings.DefaultPlaySpeed"))
+
+
+            if (UrlParam(location.href, "input")) {
+                $("#ytlink").val(UrlParam(location.href, "input"))
+                updateVideoFrame()
+            }
+        }
+
+
+        function iframeonload() {
+            console.log("iframe loaded!")
+            if (channelId) {
+                //  console.log(data)
+                const iframe = document.getElementById('accountFrame').contentWindow;
+                iframe.postMessage(JSON.stringify({ 'method': "updateChannelFrame", 'data': channelId }), location.origin)
+                console.log(channelId, 'post on load!')
+            }
+        }
+    </script>
+
+
+
+    <div class="modal fade" tabindex="-1" id="invailddata-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">資料讀取失敗</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>請檢查影片連結是否錯誤!!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " tabindex="-1" id="data-warning-modal" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="data-warning-modal-title"></h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body">
+                    <p id="data-warning-modal-body"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        onclick="window.location.search = '';">關閉</button>
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
+                        id="data-warning-modal-gobtn">繼續</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " tabindex="-1" id="del-modal">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="del-modal-title">刪除</h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body">
+                    <p id="del-modal-body">
+                        <button class="btn btn-secondary" onclick="location.search=''">移除目前播放的影片</button>
+                    <p></p>
+                    <button class="btn btn-primary"
+                        onclick="removeTheRecentVideo();location.reload()">移除目前影片的觀看進度</button>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade " tabindex="-1" id="data-receive-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="data-receive-modal-title">接收其他裝置的紀錄</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="data-receive-modal-body">請輸入分享代碼:</p>
+                    <input type="number" name="" id="data-receive-input" class="form-control">
+                    <p id="data-receive-modal-text"></p>
+                    <p id="data-receive-modal-text2"></p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-warning" onclick="getHIstoryListFromBackup()">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade " tabindex="-1" id="study-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="study-modal-title">檢測到Study With Me 影片</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="study-modal-body">檢測到Study With Me 影片，請<a href="#"
+                            onclick="openFullscreen()">進入全螢幕</a>來保證更好的體驗.<br>順帶一提，Study With Me 影片無法調整快慢 :)</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
+                        onclick='document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${nowplays[0] === "video" ? nowplays[1] : "?list=" + nowplays[1]}${nowplays[0] === "video" ? "?" : "&"}rel=0&enablejsapi=1"></iframe>` '>這不是Study
+                        With Me 影片</button>
+                    <button type="button" class="btn btn-success" onclick="openFullscreen()">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">查詢頻道</h5>
+            <button type="button" id="toggleCloseOC1" class="btn-close" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body" style="overflow: hidden;">
+            <iframe onload="iframeonload()" id="accountFrame"></iframe>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample2" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">觀看紀錄與設定</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+
+        <div class="offcanvas-body" style="padding-top: 0;">
+            <p class="h5">設定</p>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onchange="
+                    localStorage.setItem('YTplayerSettings.PlayOnBackground',this.checked)
+                                renderInputBarPlaceHolder(localStorage.getItem('YTplayerSettings.PlayOnBackground'), localStorage.getItem('YTplayerSettings.DefaultPlaySpeed'))
+
+                    ">
+                <label class="form-check-label" for="flexSwitchCheckChecked">嘗試在背景播放</label>
+
+            </div>
+            <div class="alert alert-warning" role="alert">
+                注意: 部分裝置可能無法使用
+            </div>
+            <label for="customRange3" class="form-label">預設播放速度: <span id="defaultPlaySpeed"></span> (套用到下一部影片)</label>
+            <input type="range" class="form-range" min="0.25" max="2" step="0.05" id="customRange3" oninput="
+            $('#defaultPlaySpeed').text(Number(this.value));
+            localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
+            renderInputBarPlaceHolder(localStorage.getItem('YTplayerSettings.PlayOnBackground'), localStorage.getItem('YTplayerSettings.DefaultPlaySpeed'))
+
+            ">
+            <div class="alert alert-info" role="alert">
+                不適用於Study With Me影片
+            </div>
+            <p class="h5">觀看紀錄</p>
+
+
+            <button class="btn btn-outline-danger"
+                onclick="if(confirm('確定要清除嗎?\n這項操作無法恢復!!')){localStorage.setItem('YTplayerHistory_SWM','[]');updateHistoryList()}"><i
+                    class="bi bi-trash"></i> 清除</button>
+            <button class="btn btn-primary bi bi-share" onclick="uploadHistory()"> 分享</button>
+            <button class="btn btn-primary bi bi-cloud-arrow-down" data-bs-dismiss="offcanvas"
+                data-bs-target="#data-receive-modal" data-bs-toggle="modal">
+                接收</button>
+
+            <p></p>
+            <div id="sharecode"></div>
+            <p></p>
+            <div style="position: sticky;top: 0;z-index: 9990;background: #fff;height: auto;padding: 5px;">
+                <input id="history-filter" class="form-control" type="text" placeholder="搜尋歷史紀錄..."
+                    oninput="searchHistory($(this).val())">
+                <div id="suggestedSearch"></div>
+                <p id="datalen">共0筆資料</p>
+            </div>
+            <p></p>
+            <div class="list-group" id="historyList">
+                <a href="#" class="list-group-item list-group-item-action">無資料</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
