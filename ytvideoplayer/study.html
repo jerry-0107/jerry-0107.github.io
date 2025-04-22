@@ -82,7 +82,7 @@
         <div id="toolbar-u-container" onclick="switchtoolbar()"></div>
 
         <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 98%;">
-            <h1>影片會顯示在這裡</h1>
+            <h1>Study With Me<br/>影片會顯示在這裡</h1>
             <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
         </div>
         <div id="toolbar-b-container" onclick="switchtoolbar()">
@@ -415,8 +415,8 @@
 
 
         function isIdinHistorylist(id) {
-            if (JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))) {
-                var data = JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))
+            if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].id === id) return true
                 }
@@ -426,10 +426,10 @@
         }
 
         function getItemFromHistoryList(id) {
-            if (id === "*") return JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))
+            if (id === "*") return JSON.parse(localStorage.getItem("YTplayerHistory"))
 
-            if (JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))) {
-                var data = JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))
+            if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].id === id) return data[i]
                 }
@@ -440,7 +440,7 @@
 
         function updateHistoryList(nowplays, dataset) {
             console.log(nowplays)
-            var data = dataset ? dataset : (JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) ? JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) : []),
+            var data = dataset ? dataset : (JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []),
                 htmlTxt = "";
             document.getElementById("datalen").innerText = "共" + data.length + "筆資料"
 
@@ -461,14 +461,14 @@
             if (data.items.length < 1) {
                 return
             } else {
-                if (!localStorage.getItem("YTplayerHistory_SWM")) {
-                    localStorage.setItem("YTplayerHistory_SWM", JSON.stringify(
+                if (!localStorage.getItem("YTplayerHistory")) {
+                    localStorage.setItem("YTplayerHistory", JSON.stringify(
                         [{ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount }]
                     ))
                 } else {
-                    var lastData = JSON.parse(localStorage.getItem("YTplayerHistory_SWM"))
+                    var lastData = JSON.parse(localStorage.getItem("YTplayerHistory"))
                     lastData.push({ id, type, name: data.items[0].snippet.title, channel: data.items[0].snippet.channelTitle, thumbnails: data.items[0].snippet.thumbnails.medium.url, playlistVideoCounts: data.items[0].contentDetails.itemCount })
-                    localStorage.setItem("YTplayerHistory_SWM", JSON.stringify(lastData))
+                    localStorage.setItem("YTplayerHistory", JSON.stringify(lastData))
                 }
                 updateHistoryList(nowplays)
             }
@@ -642,7 +642,7 @@
 
         function getHIstoryListFromBackup() {
             function _diffHistory(r) {
-                var data = JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) ? JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) : []
+                var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []
                 if (r.length < 1) {
                     $("#data-receive-modal-text").html(`<span class="text-danger">無法從代碼中解析資料 (代碼可能無效或過期)</span>`)
                     return
@@ -657,7 +657,7 @@
                         continue
                     }
                 }
-                localStorage.setItem("YTplayerHistory_SWM", JSON.stringify(data))
+                localStorage.setItem("YTplayerHistory", JSON.stringify(data))
                 updateHistoryList(nowplays)
                 $("#data-receive-modal-text").html(`紀錄已經更新，你可以關閉此視窗 (增加了 ${mnum} 筆資料)`)
             }
@@ -697,7 +697,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ obj: JSON.stringify(localStorage.getItem(`YTplayerHistory_SWM`)) })
+                body: JSON.stringify({ obj: JSON.stringify(localStorage.getItem(`YTplayerHistory`)) })
             }).then(r => r.json())
                 .then(r => {
                     console.log(r)
@@ -930,7 +930,7 @@
 
 
         function diffHistory() {
-            var data = JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) ? JSON.parse(localStorage.getItem("YTplayerHistory_SWM")) : []
+            var data = JSON.parse(localStorage.getItem("YTplayerHistory")) ? JSON.parse(localStorage.getItem("YTplayerHistory")) : []
             if (data.length < 1) return
             var idlist = []
 
@@ -943,7 +943,7 @@
             }
             data = data.filter(item => item !== null)
             //console.log(data, JSON.stringify(data))
-            localStorage.setItem("YTplayerHistory_SWM", JSON.stringify(data))
+            localStorage.setItem("YTplayerHistory", JSON.stringify(data))
         }
 
         function getComments(next, frombtn) {
@@ -1167,19 +1167,19 @@
             if (document.hidden) {
                 if (localStorage.getItem('YTplayerSettings.PlayOnBackground') == 'true') {
                     try {
-                        document.title = "[背景播放處理中] YT影片播放器"
+                        document.title = "[背景播放處理中] Study With me影片播放器"
                         await delay(0.3)
                         console.log("[INVISIBLE] trying to play...")
                         player.playVideo()
-                        document.title = "[背景播放中] YT影片播放器"
+                        document.title = "[背景播放中] Study With me影片播放器"
                     } catch (e) {
                         console.log("[INVISIBLE] perhaps there is no video playing (failed to play)", e)
-                        document.title = "[背景播放失敗] YT影片播放器"
+                        document.title = "[背景播放失敗] Study With me影片播放器"
 
                     }
                 }
             } else {
-                document.title = "YT影片播放器"
+                document.title = "Study With me影片播放器"
             }
         })
         window.onload = function () {
@@ -1411,7 +1411,7 @@
 
 
             <button class="btn btn-outline-danger"
-                onclick="if(confirm('確定要清除嗎?\n這項操作無法恢復!!')){localStorage.setItem('YTplayerHistory_SWM','[]');updateHistoryList()}"><i
+                onclick="if(confirm('確定要清除嗎?\n這項操作無法恢復!!')){localStorage.setItem('YTplayerHistory','[]');updateHistoryList()}"><i
                     class="bi bi-trash"></i> 清除</button>
             <button class="btn btn-primary bi bi-share" onclick="uploadHistory()"> 分享</button>
             <button class="btn btn-primary bi bi-cloud-arrow-down" data-bs-dismiss="offcanvas"
