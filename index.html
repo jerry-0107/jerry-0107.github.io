@@ -477,7 +477,7 @@
         }
 
         function renderInputBarPlaceHolder(isBgPlaying, defaultPlaySpeed) {
-            var txt = "輸入YT 影片連結"
+            var txt = "[Study With Me] 輸入YT 影片連結"
             console.log(isBgPlaying, defaultPlaySpeed)
             if (isBgPlaying == "true" && defaultPlaySpeed !== "1" && defaultPlaySpeed !== null) {
                 txt = `[背景播放已開啟,預設速度${defaultPlaySpeed}]` + txt;
@@ -1127,7 +1127,7 @@
         function renderSuggestVideo(id) {
             var data = getItemFromHistoryList(id)
             console.log(data, "/////")
-            $("#video").html(`<div class="list-group"><h3>上次暫停的影片</h3><a href = "${location.origin + location.pathname}?id=${data.id}&type=${data.type}" class= "list-group-item list-group-item-action" ><img src="${data.thumbnails}"/><br/>${data.name}${data.type === "playlist" ? " (" + data.playlistVideoCounts + "部影片)" : ""} <br /> <i class="bi bi-person-circle"></i> &nbsp;${data.channel} <br />${data.id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a></div>`)
+            $("#video").html(`<div class="list-group"><h3>Study With Me<br/>上次暫停的影片</h3><a href = "${location.origin + location.pathname}?id=${data.id}&type=${data.type}" class= "list-group-item list-group-item-action" ><img src="${data.thumbnails}"/><br/>${data.name}${data.type === "playlist" ? " (" + data.playlistVideoCounts + "部影片)" : ""} <br /> <i class="bi bi-person-circle"></i> &nbsp;${data.channel} <br />${data.id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a></div>`)
         }
 
         document.getElementById("clear").onclick = clearInput
