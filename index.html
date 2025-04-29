@@ -62,12 +62,13 @@
 <body class="p-1">
     <div class="flex pb-1">
 
-        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample2"
-            aria-controls="offcanvasExample"><i class="bi bi-list"></i></button>
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasExample2" aria-controls="offcanvasExample"><i class="bi bi-list"></i></button>
         <div class="p-1"></div>
 
-        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
-            aria-controls="offcanvasExample"><i class="bi bi-person-circle"></i></button>
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"><i
+                class="bi bi-person-circle"></i></button>
         <div class="p-1"></div>
         <div class="input-group">
             <input class="form-control border-warning" placeholder="[LOADING...]Study With Me Vudeo Player" id="ytlink">
@@ -75,7 +76,7 @@
             </button>
         </div>
         <div class="p-1"></div>
-        <button class="btn btn-primary" id="submit"><i class="bi bi-search"></i></button>
+        <button class="btn btn-outline-primary" id="submit"><i class="bi bi-search"></i></button>
 
         <div class="p-1"></div>
         <button class="btn btn-outline-dark" id="fullsc"><i class="bi bi-fullscreen"></i></button>
@@ -187,7 +188,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
 
-        const whitelist = ["Sean Study", "study with japan", "Merve", "5-Hour", "Lo-Fi", "數學", "化學", "study with me", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習"]
+        const whitelist = ["Sean Study", "study with japan", "Merve", "5-Hour", "Lo-Fi", "study", "謝博凱", "化學", "蔡任圃", "吳旭明", "超模", "數學", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習", "blackpenredpen", "黑筆紅筆"]
         const blacklist = ["猫", "貓"]
 
 
@@ -545,7 +546,7 @@
 
 
 
-                if (localStorage.getItem("YTplayerPausedVideo_SWM_SWM")) {
+                if (localStorage.getItem("YTplayerPausedVideo_SWM")) {
 
                     var YTplayerPausedVideo_SWM = JSON.parse(localStorage.getItem("YTplayerPausedVideo_SWM"))
                     if (YTplayerPausedVideo_SWM.id === theid) {
