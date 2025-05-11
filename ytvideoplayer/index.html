@@ -365,9 +365,14 @@
                 return null
             }
             if (!inputData.includes("youtube.com/post")) {
+
                 if (UrlParam(inputData, "v") && UrlParam(inputData, "list") && UrlParam(inputData, "index")) {
                     console.log("/", [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")])
                     return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
+                }
+                if (UrlParam(inputData, "v") && UrlParam(inputData, "list") && !UrlParam(inputData, "index")) {
+                    console.log("/", [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")])
+                    return [UrlParam(inputData, "list"), "playlist", 1]
                 }
                 if (inputData.includes("youtube.com") && (inputData.includes("/watch") || inputData.includes("/playlist"))) {
 
