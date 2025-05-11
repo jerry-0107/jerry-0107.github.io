@@ -1404,16 +1404,24 @@
             <div class="alert alert-warning" role="alert">
                 注意: 部分裝置可能無法使用
             </div>
-            <label for="customRange3" class="form-label">預設播放速度: <span id="defaultPlaySpeed"></span> (套用到下一部影片)</label>
-            <input type="range" class="form-range" min="0.25" max="2" step="0.05" id="customRange3" oninput="
+            <div hidden><label for="customRange3" class="form-label">預設播放速度: <span id="defaultPlaySpeed"></span>
+                    (套用到下一部影片)</label>
+                <input type="range" class="form-range" min="0.25" max="2" step="0.05" id="customRange3" oninput="
             $('#defaultPlaySpeed').text(Number(this.value));
             localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
             renderInputBarPlaceHolder(localStorage.getItem('YTplayerSettings.PlayOnBackground'), localStorage.getItem('YTplayerSettings.DefaultPlaySpeed'))
-
             ">
-            <div class="alert alert-info" role="alert">
-                不適用於Study With Me影片
+                <div class="alert alert-info" role="alert">
+                    不適用於Study With Me影片
+                </div>
             </div>
+
+            <label for="customRange3" class="form-label">音量: <span id="playerVolume"></span> </label>
+            <input type="range" class="form-range" min="0" max="100" step="0.5" id="customRange4" oninput="
+                        $('#playerVolume').text(Number(this.value));
+                       // localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
+                        player.setVolume(Number(this.value))
+                        ">
             <p class="h5">模式選擇</p>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                 <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
