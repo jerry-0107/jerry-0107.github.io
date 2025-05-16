@@ -296,7 +296,7 @@
             if (e.data === 2) {
                 //console.log("[user paused] saving watching progress:", player.getCurrentTime())
                 saveVideoProgress()
-                //localStorage.setItem("YTplayerPausedVideo_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
+                //localStorage.setItem("YTplayerPausedVideo_Phys_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
                 updateStateBar("bi-play-circle-fill")
             } else if (e.data === 3) {
                 updateStateBar("spinner")
@@ -309,9 +309,9 @@
         async function saveVideoProgress() {
             console.log("[cron process] saving watching progress:", player.getCurrentTime(), "index:", player.playerInfo.playlistIndex + 1)
             if (nowplays[0] == "playlist") {
-                localStorage.setItem("YTplayerPausedVideo_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: player.playerInfo.playlistIndex + 1, pausedAt: player.getCurrentTime() }))
+                localStorage.setItem("YTplayerPausedVideo_Phys_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: player.playerInfo.playlistIndex + 1, pausedAt: player.getCurrentTime() }))
             } else {
-                localStorage.setItem("YTplayerPausedVideo_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
+                localStorage.setItem("YTplayerPausedVideo_Phys_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
 
             }
             // $("#saving-stateBar").html(`<span class="text-success-c animate__flash">進度儲存成功</span>`)
@@ -550,12 +550,12 @@
 
 
 
-                if (localStorage.getItem("YTplayerPausedVideo_SWM")) {
+                if (localStorage.getItem("YTplayerPausedVideo_Phys_SWM")) {
 
-                    var YTplayerPausedVideo_SWM = JSON.parse(localStorage.getItem("YTplayerPausedVideo_SWM"))
-                    if (YTplayerPausedVideo_SWM.id === theid) {
-                        console.log("s35tyvib", YTplayerPausedVideo_SWM)
-                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo_SWM.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo_SWM.pausedAt)}"></iframe>`
+                    var YTplayerPausedVideo_Phys_SWM = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Phys_SWM"))
+                    if (YTplayerPausedVideo_Phys_SWM.id === theid) {
+                        console.log("s35tyvib", YTplayerPausedVideo_Phys_SWM)
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo_Phys_SWM.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo_Phys_SWM.pausedAt)}"></iframe>`
 
                     } else {
                         document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
@@ -1123,9 +1123,9 @@
 
 
         function removeTheRecentVideo() {
-            var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_SWM")).id
+            var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Phys_SWM")).id
             var data = getItemFromHistoryList(videoId)
-            localStorage.setItem("YTplayerPausedVideo_SWM", "")
+            localStorage.setItem("YTplayerPausedVideo_Phys_SWM", "")
 
         }
 
@@ -1195,8 +1195,8 @@
             if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
                 updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"), UrlParam(location.href, "index"))
-            } else if (localStorage.getItem("YTplayerPausedVideo_SWM")) {
-                var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_SWM")).id
+            } else if (localStorage.getItem("YTplayerPausedVideo_Phys_SWM")) {
+                var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Phys_SWM")).id
                 var theVid = getItemFromHistoryList(videoId)
                 console.log(videoId)
                 if (isVideoinWhiteList(theVid, true) === true) {
@@ -1424,14 +1424,28 @@
                         ">
             <p class="h5">模式選擇</p>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                <label class="btn btn-outline-primary" for="btnradio1">Study With Me</label>
+                <input type="radio" class="btn-check" name="btnradio7" id="btnradio7" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="btnradio7">Study With Me</label>
 
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+                <input type="radio" class="btn-check" name="btnradio7" id="btnradio9" autocomplete="off"
                     onchange="window.location.href = '/ytvideoplayer'">
-                <label class="btn btn-outline-primary" for="btnradio2">一般</label>
+                <label class="btn btn-outline-primary" for="btnradio9">一般</label>
 
             </div>
+            <p>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
+                    onchange="window.location.href = '/ytvideoplayer/math'">
+                <label class="btn btn-outline-primary" for="btnradio1">數學</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+                    onchange="window.location.href = '/ytvideoplayer/phys'">
+                <label class="btn btn-outline-primary" for="btnradio2">物理</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
+                    onchange="window.location.href = '/ytvideoplayer/chem'">
+                <label class="btn btn-outline-primary" for="btnradio3">化學</label>
+
+            </div>
+            </p>
             <p></p>
             <p class="h5">觀看紀錄</p>
 
