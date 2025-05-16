@@ -288,7 +288,7 @@
             if (e.data === 2) {
                 //console.log("[user paused] saving watching progress:", player.getCurrentTime())
                 saveVideoProgress()
-                //localStorage.setItem("YTplayerPausedVideo_Chem_Math", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
+                //localStorage.setItem("YTplayerPausedVideo_Chem", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
                 updateStateBar("bi-play-circle-fill")
             } else if (e.data === 3) {
                 updateStateBar("spinner")
@@ -301,9 +301,9 @@
         async function saveVideoProgress() {
             console.log("[cron process] saving watching progress:", player.getCurrentTime(), "index:", player.playerInfo.playlistIndex + 1)
             if (nowplays[0] == "playlist") {
-                localStorage.setItem("YTplayerPausedVideo_Chem_Math", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: player.playerInfo.playlistIndex + 1, pausedAt: player.getCurrentTime() }))
+                localStorage.setItem("YTplayerPausedVideo_Chem", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: player.playerInfo.playlistIndex + 1, pausedAt: player.getCurrentTime() }))
             } else {
-                localStorage.setItem("YTplayerPausedVideo_Chem_Math", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
+                localStorage.setItem("YTplayerPausedVideo_Chem", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
 
             }
             // $("#saving-stateBar").html(`<span class="text-success-c animate__flash">進度儲存成功</span>`)
@@ -543,12 +543,12 @@
 
 
 
-                if (localStorage.getItem("YTplayerPausedVideo_Chem_Math")) {
+                if (localStorage.getItem("YTplayerPausedVideo_Chem")) {
 
-                    var YTplayerPausedVideo_Chem_Math = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Chem_Math"))
-                    if (YTplayerPausedVideo_Chem_Math.id === theid) {
-                        console.log("s35tyvib", YTplayerPausedVideo_Chem_Math)
-                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo_Chem_Math.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo_Chem_Math.pausedAt)}"></iframe>`
+                    var YTplayerPausedVideo_Chem = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Chem"))
+                    if (YTplayerPausedVideo_Chem.id === theid) {
+                        console.log("s35tyvib", YTplayerPausedVideo_Chem)
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo_Chem.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo_Chem.pausedAt)}"></iframe>`
 
                     } else {
                         document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
@@ -1116,9 +1116,9 @@
 
 
         function removeTheRecentVideo() {
-            var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Chem_Math")).id
+            var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Chem")).id
             var data = getItemFromHistoryList(videoId)
-            localStorage.setItem("YTplayerPausedVideo_Chem_Math", "")
+            localStorage.setItem("YTplayerPausedVideo_Chem", "")
 
         }
 
@@ -1188,8 +1188,8 @@
             if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
                 updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"), UrlParam(location.href, "index"))
-            } else if (localStorage.getItem("YTplayerPausedVideo_Chem_Math")) {
-                var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Chem_Math")).id
+            } else if (localStorage.getItem("YTplayerPausedVideo_Chem")) {
+                var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Chem")).id
                 var theVid = getItemFromHistoryList(videoId)
                 console.log(videoId)
                 if (isVideoinWhiteList(theVid, true) === true) {
@@ -1409,7 +1409,8 @@
             </div>
             <p class="h5">模式選擇</p>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="btnradio7" id="btnradio7" autocomplete="off">
+                <input type="radio" class="btn-check" name="btnradio7" id="btnradio7" autocomplete="off"
+                    onchange="window.location.href = '/ytvideoplayer/study'">
                 <label class="btn btn-outline-primary" for="btnradio7">Study With Me</label>
 
                 <input type="radio" class="btn-check" name="btnradio7" id="btnradio9" autocomplete="off"

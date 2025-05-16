@@ -177,6 +177,7 @@
         }
 
         function getItemFromHistoryList(id) {
+            
             if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
                 var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
                 for (let i = 0; i < data.length; i++) {

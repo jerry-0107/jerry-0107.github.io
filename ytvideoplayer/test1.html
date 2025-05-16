@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Comments and Replies</title>
+</head>
+
+<body>
+    <h1>YouTube Comments and Replies</h1>
+    <div id="comments"></div>
+    <button id="loadMore" style="display: none;">Load More</button>
+
+    <script>
+        var apiKey = "AIzaSyAl7XYyhd63o1yFYvMgIAXC6XXRNwYk-aY"
+        const videoId = 'dQw4w9WgXcQ';
+        const commentsContainer = document.getElementById('comments');
+        const loadMoreButton = document.getElementById('loadMore');
+        let nextPageToken = '';
+
+        async function fetchComments(pageToken = '') {
+            let url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=10`;
+            if (pageToken) {
+                url += `&pageToken=${pageToken}`;
+            }
+            const response = await fetch(url);
+            const data = await response.json();
+            displayComments(data.items);
+            nextPageToken = data.nextPageToken || '';
+            loadMoreButton.style.display = nextPageToken ? 'block' : 'none';
+        }
+
+        function displayComments(comments) {
+            comments.forEach(comment => {
+                const commentText = comment.snippet.topLevelComment.snippet.textDisplay;
+                const commentAuthor = comment.snippet.topLevelComment.snippet.authorDisplayName;
+                const commentAuthorPhoto = comment.snippet.topLevelComment.snippet.authorProfileImageUrl
+                const commentElement = document.createElement('div');
+                commentElement.innerHTML = `<img src="${commentAuthorPhoto}" style="display:inline"/> <p><strong>${commentAuthor}:</strong> ${commentText}</p>`;
+                commentsContainer.appendChild(commentElement);
+                console.log(comment.snippet.topLevelComment.snippet)
+                // Display replies if any
+                if (comment.replies) {
+                    const repliesContainer = document.createElement('div');
+                    repliesContainer.style.marginLeft = '20px';
+                    comment.replies.comments.forEach(reply => {
+                        const replyText = reply.snippet.textDisplay;
+                        const replyAuthor = reply.snippet.authorDisplayName;
+                        const replyElement = document.createElement('p');
+                        replyElement.innerHTML = `<img src="${commentAuthorPhoto}" style="display:inline"/> <strong>${replyAuthor}:</strong> ${replyText}`;
+                        repliesContainer.appendChild(replyElement);
+                    });
+                    commentsContainer.appendChild(repliesContainer);
+                }
+            });
+        }
+
+        loadMoreButton.addEventListener('click', () => {
+            fetchComments(nextPageToken);
+        });
+
+        fetchComments();
+    </script>
+
+    <img src="${commentAuthorPhoto}" style="display:inline"
+        class="avatar avatar-16 avatar-md-24 avatar-lg-32 avatar-xl-64 avatar-xxl-128 text-primary rounded-circle" />
+    <strong>${commentAuthor}:</strong> ${commentText}
+</body>
+
+</html>
