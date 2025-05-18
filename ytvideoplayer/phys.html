@@ -82,7 +82,7 @@
         <div id="toolbar-u-container" onclick="switchtoolbar()"></div>
 
         <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 98%;">
-            <h1>影片會顯示在這裡</h1>
+            <h3>物理<br />影片會顯示在這裡</h3>
             <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
         </div>
         <div id="toolbar-b-container" onclick="switchtoolbar()">
@@ -180,7 +180,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
 
-        const whitelist = ["study", "謝博凱", "化學", "蔡任圃", "吳旭明", "數學", "超模", "study with me", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習", "blackpenredpen", "黑筆紅筆"]
+        const whitelist = ["study", "謝博凱", "化學", "蔡任圃", "吳旭明", "數學", "超模", "study with me", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習", "blackpenredpen", "黑筆紅筆", "均一"]
         const blacklist = ["猫", "貓"]
 
 
@@ -1125,7 +1125,7 @@
         function renderSuggestVideo(id) {
             var data = getItemFromHistoryList(id)
             console.log(data, "/////")
-            $("#video").html(`<div class="list-group"><h3>上次暫停的影片</h3><a href = "${location.origin + location.pathname}?id=${data.id}&type=${data.type}" class= "list-group-item list-group-item-action" ><img src="${data.thumbnails}"/><br/>${data.name}${data.type === "playlist" ? " (" + data.playlistVideoCounts + "部影片)" : ""} <br /> <i class="bi bi-person-circle"></i> &nbsp;${data.channel} <br />${data.id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a></div>`)
+            $("#video").html(`<div class="list-group"><h3>物理<br/>上次暫停的影片</h3><a href = "${location.origin + location.pathname}?id=${data.id}&type=${data.type}" class= "list-group-item list-group-item-action" ><img src="${data.thumbnails}"/><br/>${data.name}${data.type === "playlist" ? " (" + data.playlistVideoCounts + "部影片)" : ""} <br /> <i class="bi bi-person-circle"></i> &nbsp;${data.channel} <br />${data.id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a></div>`)
         }
 
         document.getElementById("clear").onclick = clearInput
