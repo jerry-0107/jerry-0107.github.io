@@ -161,13 +161,16 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="comment-modal-title">留言</h5>
+                        <h5 class="modal-title" id="comment-modal-title">留言與音量控制</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success"
-                            onclick="getComments(nextCommentToken)">讀取留言</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">關閉</button>
+                        音量:<span class="playerVolumefsc">-</span><input type="range" class="form-range" min="0"
+                            max="100" value="100" step="0.5" id="customRangevfsc" oninput="
+                                            $('.playerVolumefsc').text(Number(this.value));
+                                           // localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
+                                            player.setVolume(Number(this.value))
+                                            ">
                     </div>
                     <div class="modal-body">
                         <p id="comment-modal-p"></p>
@@ -589,7 +592,9 @@
                 if (isStudyVideo) {
                     $("#exitFullscreenBtn").remove()
                     new bootstrap.Modal('#study-modal', {}).show()
-                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span><span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleWater()" id="water">請喝水</span>`)
+                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span><span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleWater()" id="water">請喝水</span>
+                                <span data-bs-toggle="modal" data-bs-target="#comment-modal" class="form-label badge bg-dark" data-bs->音量: <span class="playerVolumefsc">-</span> </span>
+                    `)
                 }
 
             }
@@ -1417,7 +1422,7 @@
             </div>
 
             <label for="customRange3" class="form-label">音量: <span id="playerVolume"></span> </label>
-            <input type="range" class="form-range" min="0" max="100" step="0.5" id="customRange4" oninput="
+            <input type="range" class="form-range" min="0" max="100" step="0.5" id="customRange4" value="100" oninput="
                         $('#playerVolume').text(Number(this.value));
                        // localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
                         player.setVolume(Number(this.value))
