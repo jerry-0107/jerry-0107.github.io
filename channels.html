@@ -459,13 +459,13 @@
             }
             if (UrlParam(location.href, "account")) {
                 if (UrlParam(location.href, "account") == "數學") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-success text-white rounded-5">數</span>數學`)
+                    $("#accountAvater").html(`<div style=''><span class="avatar avatar-32 bg-success text-white rounded-5">數</span> 數學<span style='color:#a3cfbb'> - 已登入</span></div>`)
                 }
                 if (UrlParam(location.href, "account") == "化學") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span>化學`)
+                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span> 化學<span style='color:#ffe69c'> - 已登入</span>`)
                 }
                 if (UrlParam(location.href, "account") == "物理") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span>物理`)
+                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span> 物理<span style='color:#a6e9d5'> - 已登入</span>`)
                 }
             }
         }
