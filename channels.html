@@ -45,7 +45,7 @@
         }
 
         .sticky {
-            z-index: 999000;
+            z-index: 999;
             position: sticky;
             position: -webkit-sticky;
             top: 0;
@@ -58,7 +58,7 @@
 </head>
 
 <body class="p-1">
-    <div id="accountAvater" class="pb-2">
+    <div id="accountAvater" class="pb-2 accountAvater">
         <span class="avatar avatar-32 text-white rounded-5" style="background-color: #8540f5;"><i
                 class="bi bi-person-fill"></i></span> 尚未登入<span style='color:#c5b3e6'> - 沒有所屬團隊</span>
     </div>
@@ -370,9 +370,14 @@
             );
         }
 
+        var _postdata = ''
         function postMsg(str) {
             console.log(str, 'post!')
-            window.parent.postMessage(JSON.stringify({ 'method': "updateVideoFrame", 'data': str }), location.origin)
+            new bootstrap.Modal('#data-alert-modal', {}).show()
+            _postdata = str
+        }
+        function postMsg_AlertCallback() {
+            window.parent.postMessage(JSON.stringify({ 'method': "updateVideoFrame", 'data': _postdata }), location.origin)
             new bootstrap.Modal('#data-receive-modal', {}).show()
         }
 
@@ -461,16 +466,16 @@
             }
             if (UrlParam(location.href, "account")) {
                 if (UrlParam(location.href, "account") == "數學") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-success text-white rounded-5">數</span> 數學<span style='color:#a3cfbb'> - 已登入 (math@math.edu)</span>`)
+                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-success text-white rounded-5">數</span> 數學<span style='color:#a3cfbb'> - 已登入 (math@math.edu)</span>`)
                 }
                 if (UrlParam(location.href, "account") == "化學") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span> 化學<span style='color:#ffcd39'> - 已登入 (chem-notes@chem.edu)</span>`)
+                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span> 化學<span style='color:#ffcd39'> - 已登入 (chem-notes@chem.edu)</span>`)
                 }
                 if (UrlParam(location.href, "account") == "物理") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span> 物理<span style='color:#a6e9d5'> - 已登入 (phy.note@physics.edu)</span>`)
+                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span> 物理<span style='color:#a6e9d5'> - 已登入 (phy.note@physics.edu)</span>`)
                 }
                 if (UrlParam(location.href, "account") == "SWM") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 text-white rounded-5" style="background-color: #8540f5;">S</span> Study With Me 管理中心<span style='color:#c5b3e6'> - 已登入 (swm-team@tech.edu)</span>`)
+                    $(".accountAvater").html(`<span class="avatar avatar-32 text-white rounded-5" style="background-color: #8540f5;">S</span> Study With Me 管理中心<span style='color:#c5b3e6'> - 已登入 (swm-team@tech.edu)</span>`)
                 }
             }
         }
@@ -486,10 +491,34 @@
                 </div>
                 <div class="modal-body">
                     <p id="data-receive-modal-body">影片已經於主視窗中開啟，可以關閉本頁面.</p>
+                    <p>使用以下帳號觀看:</p>
+                    <div class="accountAvater"></div>
                 </div>
                 <div class="modal-footer">
 
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " tabindex="-1" id="data-alert-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="data-alert-modal-title">要用這個帳號觀看嗎?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="data-alert-modal-body">你目前登入的帳號:<br />
+                    <div class="accountAvater"></div>
+                    </p>
+                    <p>如果不想使用這個帳號，請從左上角選單切換帳號</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        onclick='postMsg_AlertCallback()'>確定</button>
                 </div>
             </div>
         </div>
