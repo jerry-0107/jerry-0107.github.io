@@ -59,7 +59,10 @@
 </head>
 
 <body class="p-1">
-    <div id="accountAvater" class="pb-2"></div>
+    <div id="accountAvater" class="pb-2">
+        <span class="avatar avatar-32 text-white rounded-5" style="background-color: #8540f5;"><i
+                class="bi bi-person-fill"></i></span> 尚未登入<span style='color:#c5b3e6'> - 沒有所屬團隊</span>
+    </div>
     <div class="flex pb-1">
         <button id="back" class="btn btn-secondary bi bi-arrow-left-circle-fill" type="button"
             onclick="location.href = location.href.replace('/channels','').replace('.html','')"></button>
@@ -459,13 +462,13 @@
             }
             if (UrlParam(location.href, "account")) {
                 if (UrlParam(location.href, "account") == "數學") {
-                    $("#accountAvater").html(`<div style=''><span class="avatar avatar-32 bg-success text-white rounded-5">數</span> 數學<span style='color:#a3cfbb'> - 已登入</span></div>`)
+                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-success text-white rounded-5">數</span> 數學<span style='color:#a3cfbb'> - 已登入 (math@math.edu)</span>`)
                 }
                 if (UrlParam(location.href, "account") == "化學") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span> 化學<span style='color:#ffe69c'> - 已登入</span>`)
+                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span> 化學<span style='color:#ffe69c'> - 已登入 (chem-notes@chem.edu)</span>`)
                 }
                 if (UrlParam(location.href, "account") == "物理") {
-                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span> 物理<span style='color:#a6e9d5'> - 已登入</span>`)
+                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span> 物理<span style='color:#a6e9d5'> - 已登入 (phy-note@physics.edu)</span>`)
                 }
             }
         }
