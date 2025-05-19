@@ -819,6 +819,9 @@
             $("#fullscToolBar").show()
 
         }
+        document.getElementById("fullscreenContainer").onfullscreenchange = function () {
+            WexitFullscreen()
+        }
         function WexitFullscreen() {
             document.exitFullscreen()
             $("#video").css("height", "100%")

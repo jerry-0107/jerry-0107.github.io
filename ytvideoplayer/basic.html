@@ -177,7 +177,7 @@
         }
 
         function getItemFromHistoryList(id) {
-            
+
             if (JSON.parse(localStorage.getItem("YTplayerHistory"))) {
                 var data = JSON.parse(localStorage.getItem("YTplayerHistory"))
                 for (let i = 0; i < data.length; i++) {
@@ -306,6 +306,10 @@
             $("#fullscToolBar").show()
 
         }
+        document.getElementById("fullscreenContainer").onfullscreenchange = function () {
+            WexitFullscreen()
+        }
+
         function WexitFullscreen() {
             document.exitFullscreen()
             $("#video").css("height", "100%")

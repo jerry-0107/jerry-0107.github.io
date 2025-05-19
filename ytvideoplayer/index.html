@@ -825,6 +825,9 @@
             $("#fullscToolBar").hide()
 
         }
+        document.getElementById("fullscreenContainer").onfullscreenchange = function () {
+            WexitFullscreen()
+        }
 
         navigator.getBattery().then((battery) => {
 
@@ -1428,7 +1431,7 @@
                 <label class="btn btn-outline-info" for="btnradio2">物理</label>
                 <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
                     onchange="window.location.href = '/ytvideoplayer/chem'">
-                <label class="btn btn-outline-warning for=" btnradio3">化學</label>
+                <label class="btn btn-outline-warning" for="btnradio3">化學</label>
 
             </div>
             <p class="h5">觀看紀錄</p>

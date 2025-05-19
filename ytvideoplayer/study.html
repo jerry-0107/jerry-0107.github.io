@@ -837,6 +837,9 @@
             $("#fullscToolBar").hide()
 
         }
+        document.getElementById("fullscreenContainer").onfullscreenchange = function () {
+            WexitFullscreen()
+        }
 
         navigator.getBattery().then((battery) => {
 
