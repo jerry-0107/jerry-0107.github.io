@@ -15,6 +15,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-avatar@latest/dist/avatar.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-avatar@latest/dist/avatar.min.css" rel="stylesheet">
+
     <style>
         iframe {
             width: 100%;
@@ -57,6 +59,7 @@
 </head>
 
 <body class="p-1">
+    <div id="accountAvater" class="pb-2"></div>
     <div class="flex pb-1">
         <button id="back" class="btn btn-secondary bi bi-arrow-left-circle-fill" type="button"
             onclick="location.href = location.href.replace('/channels','').replace('.html','')"></button>
@@ -453,6 +456,17 @@
             if (UrlParam(location.href, "qid")) {
                 processDataFromRequest(UrlParam(location.href, "qid"))
 
+            }
+            if (UrlParam(location.href, "account")) {
+                if (UrlParam(location.href, "account") == "數學") {
+                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-success text-white rounded-5">數</span>數學`)
+                }
+                if (UrlParam(location.href, "account") == "化學") {
+                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span>化學`)
+                }
+                if (UrlParam(location.href, "account") == "物理") {
+                    $("#accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span>物理`)
+                }
             }
         }
     </script>
