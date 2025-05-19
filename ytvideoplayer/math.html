@@ -1203,7 +1203,7 @@
             renderSuggestedSearch(5)
             updateHistoryList(nowplays)
 
-            $("#accountFrame").attr('src', location.origin + "channels.html?framed=true")
+            $("#accountFrame").attr('src', location.origin + "/channels.html?framed=true&account=數學")
             if (UrlParam(location.href, "hsearch")) {
                 console.log(UrlParam(location.href, "hsearch"))
                 if (UrlParam(location.href, "hsearch").includes("-add-")) {
