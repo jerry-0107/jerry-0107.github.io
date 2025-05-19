@@ -307,7 +307,7 @@
 
         }
         document.getElementById("fullscreenContainer").onfullscreenchange = function () {
-            WexitFullscreen()
+            if (!document.fullscreenElement) WexitFullscreen()
         }
 
         function WexitFullscreen() {

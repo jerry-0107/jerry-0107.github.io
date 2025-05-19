@@ -826,7 +826,7 @@
 
         }
         document.getElementById("fullscreenContainer").onfullscreenchange = function () {
-            WexitFullscreen()
+            if (!document.fullscreenElement) WexitFullscreen()
         }
 
         navigator.getBattery().then((battery) => {
