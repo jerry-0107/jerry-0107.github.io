@@ -466,16 +466,16 @@
             }
             if (UrlParam(location.href, "account")) {
                 if (UrlParam(location.href, "account") == "數學") {
-                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-success text-white rounded-5">數</span> 數學<span style='color:#a3cfbb'> - 已登入 (math@math.edu)</span>`)
+                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-success text-white rounded-5">數</span> 數學<span style='color:#a3cfbb'> - 已登入 (note@math.edu)</span>`)
                 }
                 if (UrlParam(location.href, "account") == "化學") {
-                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span> 化學<span style='color:#ffcd39'> - 已登入 (chem-notes@chem.edu)</span>`)
+                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-warning text-white rounded-5">化</span> 化學<span style='color:#ffcd39'> - 已登入 (notes@chem.edu)</span>`)
                 }
                 if (UrlParam(location.href, "account") == "物理") {
-                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span> 物理<span style='color:#a6e9d5'> - 已登入 (phy.note@physics.edu)</span>`)
+                    $(".accountAvater").html(`<span class="avatar avatar-32 bg-info text-white rounded-5">物</span> 物理<span style='color:#a6e9d5'> - 已登入 (note@physics.edu)</span>`)
                 }
                 if (UrlParam(location.href, "account") == "SWM") {
-                    $(".accountAvater").html(`<span class="avatar avatar-32 text-white rounded-5" style="background-color: #8540f5;">S</span> Study With Me 管理中心<span style='color:#c5b3e6'> - 已登入 (swm-team@tech.edu)</span>`)
+                    $(".accountAvater").html(`<span class="avatar avatar-32 text-white rounded-5" style="background-color: #8540f5;">S</span> Study With Me 管理中心<span style='color:#c5b3e6'> - 已登入 (swm.team@tech.edu)</span>`)
                 }
             }
         }
@@ -492,7 +492,10 @@
                 <div class="modal-body">
                     <p id="data-receive-modal-body">影片已經於主視窗中開啟，可以關閉本頁面.</p>
                     <p>使用以下帳號觀看:</p>
-                    <div class="accountAvater"></div>
+                    <div class="pb-2 accountAvater">
+                        <span class="avatar avatar-32 text-white rounded-5" style="background-color: #8540f5;"><i
+                                class="bi bi-person-fill"></i></span> 尚未登入<span style='color:#c5b3e6'> - 沒有所屬團隊</span>
+                    </div>
                 </div>
                 <div class="modal-footer">
 
@@ -511,7 +514,10 @@
                 </div>
                 <div class="modal-body">
                     <p id="data-alert-modal-body">你目前登入的帳號:<br />
-                    <div class="accountAvater"></div>
+                    <div class="pb-2 accountAvater">
+                        <span class="avatar avatar-32 text-white rounded-5" style="background-color: #8540f5;"><i
+                                class="bi bi-person-fill"></i></span> 尚未登入<span style='color:#c5b3e6'> - 沒有所屬團隊</span>
+                    </div>
                     </p>
                     <p>如果不想使用這個帳號，請從左上角選單切換帳號</p>
                 </div>
