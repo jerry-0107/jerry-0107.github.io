@@ -1215,7 +1215,7 @@
             renderSuggestedSearch(5)
             updateHistoryList(nowplays)
 
-            $("#accountFrame").attr('src', location.origin + "/channels.html?framed=true")
+            $("#accountFrame").attr('src', location.origin + "/channels.html?framed=true&account=SWM")
             if (UrlParam(location.href, "hsearch")) {
                 console.log(UrlParam(location.href, "hsearch"))
                 if (UrlParam(location.href, "hsearch").includes("-add-")) {
@@ -1379,7 +1379,7 @@
 
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">查詢頻道</h5>
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">頻道與使用者</h5>
             <button type="button" id="toggleCloseOC1" class="btn-close" data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
         </div>
