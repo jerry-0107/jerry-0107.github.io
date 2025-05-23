@@ -913,7 +913,20 @@
             var dat = new Date(),
                 h = dat.getHours() > 9 ? dat.getHours() : "0" + dat.getHours(),
                 m = dat.getMinutes() > 9 ? dat.getMinutes() : "0" + dat.getMinutes()
-            $("#timeBar").html(`<span style="font-size: .75rem;">${h}:${m}</span>`)
+            if (Number(m) < 11) {
+                $("#timeBar").html(`<span style="font-size: .75rem;">${h}:${m}</span>`)
+
+            } else if (Number(m) < 20) {
+                $("#timeBar").html(`<span style="font-size: .75rem;"><span class="text-white-50">${h.slice(0)}</span>${h.slice(-1)}:${m}</span>`)
+            } else if (Number(m) < 30) {
+                $("#timeBar").html(`<span style="font-size: .75rem;"><span class="text-white-50">${h}</span>:${m}</span>`)
+
+            } else if (Number(m) < 45) {
+                $("#timeBar").html(`<span style="font-size: .75rem;"><span class="text-white-50">${h}:${m.slice(0, 1)}</span>${m.slice(-1)}</span>`)
+
+            } else {
+                $("#timeBar").html(`<span style="font-size: .75rem;"><span class="text-white-50">${h}:${m}</span></span>`)
+            }
             setTimeout("updateTime()", 10000)
         }
 
