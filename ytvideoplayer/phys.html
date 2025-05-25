@@ -261,6 +261,7 @@
         }
 
         async function onPlayerReady(e) {
+            document.title = `[物理] - ${player.videoTitle} - YT影片播放器`
             // 為確保瀏覽器上可以自動播放，要把影片調成靜音
             //  e.target.mute().playVideo();
             var isStudyVideo = getItemFromHistoryList(nowplays[1]).name.toLowerCase().includes("study")
@@ -536,6 +537,7 @@
                 //   if (!isVideoinWhiteList(getItemFromHistoryList(theid), false)) return
                 // }
 
+
                 var isStudyVideo = getItemFromHistoryList(theid).name.toLowerCase().includes("study")
 
                 console.log(`https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}?rel=0${Number(_index) ? "&index=" + _index : ""}`)
@@ -578,6 +580,7 @@
 
                 document.getElementById("ytlink").value = ""
                 console.log("init: ", theid, player)
+
 
                 if (isStudyVideo) {
                     $("#exitFullscreenBtn").remove()

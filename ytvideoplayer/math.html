@@ -263,6 +263,8 @@
         async function onPlayerReady(e) {
             // 為確保瀏覽器上可以自動播放，要把影片調成靜音
             //  e.target.mute().playVideo();
+            document.title = `[數學] - ${player.videoTitle} - YT影片播放器`
+
             var isStudyVideo = getItemFromHistoryList(nowplays[1]).name.toLowerCase().includes("study")
 
             console.log("YT Video init Success!", e)
