@@ -295,10 +295,11 @@
         function onPlayerStateChange(e) {
             console.log(e.target.getCurrentTime())
             // $("#stateBar").html(`${e.data === 2 ? `<i class="bi" style="vertical-align: middle  !important;"></i>` : ``} ${e.data === 3 ? `<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>` : ``}`)
-
             if (e.data === 2) {
                 //console.log("[user paused] saving watching progress:", player.getCurrentTime())
                 saveVideoProgress()
+                player.playVideo()
+
                 //localStorage.setItem("YTplayerPausedVideo_Phys_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
                 updateStateBar("bi-play-circle-fill")
             } else if (e.data === 3) {
