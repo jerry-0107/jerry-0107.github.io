@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YT 影片播放器</title>
+    <link rel="manifest" href="/manifest.json" />
+
+    <title>Study With Me 影片播放器</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
@@ -60,20 +62,21 @@
 <body class="p-1">
     <div class="flex pb-1">
 
-        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample2"
-            aria-controls="offcanvasExample"><i class="bi bi-list"></i></button>
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasExample2" aria-controls="offcanvasExample"><i class="bi bi-list"></i></button>
         <div class="p-1"></div>
 
-        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
-            aria-controls="offcanvasExample"><i class="bi bi-person-circle"></i></button>
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"><i
+                class="bi bi-person-circle"></i></button>
         <div class="p-1"></div>
         <div class="input-group">
-            <input class="form-control border-warning" placeholder="[LOADING...]" id="ytlink">
+            <input class="form-control border-warning" placeholder="[LOADING...]Study With Me Vudeo Player" id="ytlink">
             <button class="btn btn-outline-danger" type="button" id="clear"><i class="bi bi-trash"></i>
             </button>
         </div>
         <div class="p-1"></div>
-        <button class="btn btn-primary" id="submit"><i class="bi bi-search"></i></button>
+        <button class="btn btn-outline-primary" id="submit"><i class="bi bi-search"></i></button>
 
         <div class="p-1"></div>
         <button class="btn btn-outline-dark" id="fullsc"><i class="bi bi-fullscreen"></i></button>
@@ -82,7 +85,7 @@
         <div id="toolbar-u-container" onclick="switchtoolbar()"></div>
 
         <div id="video" class="embed-responsive embed-responsive-16by9 pb-1 center" style="height: 98%;">
-            <h3>影片會顯示在這裡</h3>
+            <h3>Study With Me<br />影片會顯示在這裡</h3>
             <h1 style="color: #fff;">請先離開全螢幕，並貼上影片連結</h1>
         </div>
         <div id="toolbar-b-container" onclick="switchtoolbar()">
@@ -158,8 +161,16 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="comment-modal-title">留言</h5>
+                        <h5 class="modal-title" id="comment-modal-title">留言與音量控制</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-footer">
+                        音量:<span class="playerVolumefsc">-</span><input type="range" class="form-range" min="0"
+                            max="100" value="100" step="0.5" id="customRangevfsc" oninput="
+                                            $('.playerVolumefsc').text(Number(this.value));
+                                           // localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
+                                            player.setVolume(Number(this.value))
+                                            ">
                     </div>
                     <div class="modal-body">
                         <p id="comment-modal-p"></p>
@@ -180,7 +191,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
 
-        const whitelist = ["study", "謝博凱", "化學", "蔡任圃", "吳旭明", "數學", "超模", "study with me", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習", "blackpenredpen", "黑筆紅筆", "均一"]
+        const whitelist = ["study", "Sean Study", "study with japan", "Merve", "Lo-Fi", "謝博凱", "化學", "蔡任圃", "吳旭明", "超模", "數學", "生物", "地球科學", "國文", "廖士翔", "複習講義", "線上教學", "線上學習", "blackpenredpen", "黑筆紅筆", "均一"]
         const blacklist = ["猫", "貓"]
 
 
@@ -284,11 +295,12 @@
         function onPlayerStateChange(e) {
             console.log(e.target.getCurrentTime())
             // $("#stateBar").html(`${e.data === 2 ? `<i class="bi" style="vertical-align: middle  !important;"></i>` : ``} ${e.data === 3 ? `<div class="spinner-border spinner-border-sm" role="status" style="vertical-align: middle  !important;"><span class="visually-hidden">Loading...</span></div>` : ``}`)
-
             if (e.data === 2) {
                 //console.log("[user paused] saving watching progress:", player.getCurrentTime())
                 saveVideoProgress()
-                //localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
+                player.playVideo()
+
+                //localStorage.setItem("YTplayerPausedVideo_Phys_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: e.target.getCurrentTime() }))
                 updateStateBar("bi-play-circle-fill")
             } else if (e.data === 3) {
                 updateStateBar("spinner")
@@ -301,9 +313,9 @@
         async function saveVideoProgress() {
             console.log("[cron process] saving watching progress:", player.getCurrentTime(), "index:", player.playerInfo.playlistIndex + 1)
             if (nowplays[0] == "playlist") {
-                localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: player.playerInfo.playlistIndex + 1, pausedAt: player.getCurrentTime() }))
+                localStorage.setItem("YTplayerPausedVideo_Phys_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: player.playerInfo.playlistIndex + 1, pausedAt: player.getCurrentTime() }))
             } else {
-                localStorage.setItem("YTplayerPausedVideo", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
+                localStorage.setItem("YTplayerPausedVideo_Phys_SWM", JSON.stringify({ type: nowplays[0], id: nowplays[1], index: nowplays[2], pausedAt: player.getCurrentTime() }))
 
             }
             // $("#saving-stateBar").html(`<span class="text-success-c animate__flash">進度儲存成功</span>`)
@@ -365,7 +377,6 @@
                 return null
             }
             if (!inputData.includes("youtube.com/post")) {
-
                 if (UrlParam(inputData, "v") && UrlParam(inputData, "list") && UrlParam(inputData, "index")) {
                     console.log("/", [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")])
                     return [UrlParam(inputData, "list"), "playlist", UrlParam(inputData, "index")]
@@ -475,7 +486,7 @@
         }
 
         function renderInputBarPlaceHolder(isBgPlaying, defaultPlaySpeed) {
-            var txt = "輸入YT 影片連結"
+            var txt = "[Study With Me] 輸入YT 影片連結"
             console.log(isBgPlaying, defaultPlaySpeed)
             if (isBgPlaying == "true" && defaultPlaySpeed !== "1" && defaultPlaySpeed !== null) {
                 txt = `[背景播放已開啟,預設速度${defaultPlaySpeed}]` + txt;
@@ -543,19 +554,19 @@
 
 
 
-                if (localStorage.getItem("YTplayerPausedVideo")) {
+                if (localStorage.getItem("YTplayerPausedVideo_Phys_SWM")) {
 
-                    var YTplayerPausedVideo = JSON.parse(localStorage.getItem("YTplayerPausedVideo"))
-                    if (YTplayerPausedVideo.id === theid) {
-                        console.log("s35tyvib", YTplayerPausedVideo)
-                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo.pausedAt)}"></iframe>`
+                    var YTplayerPausedVideo_Phys_SWM = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Phys_SWM"))
+                    if (YTplayerPausedVideo_Phys_SWM.id === theid) {
+                        console.log("s35tyvib", YTplayerPausedVideo_Phys_SWM)
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0&index=${YTplayerPausedVideo_Phys_SWM.index}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1&start=${Math.round(YTplayerPausedVideo_Phys_SWM.pausedAt)}"></iframe>`
 
                     } else {
-                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
+                        document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
 
                     }
                 } else {
-                    document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
+                    document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${thekind === "video" ? theid : "?list=" + theid}${thekind === "video" ? "?" : "&"}rel=0${Number(_index) ? "&index=" + _index : ""}${isStudyVideo ? "&controls=0" : ""}&enablejsapi=1"></iframe>`
 
                 }
 
@@ -582,7 +593,9 @@
                 if (isStudyVideo) {
                     $("#exitFullscreenBtn").remove()
                     new bootstrap.Modal('#study-modal', {}).show()
-                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span><span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleWater()" id="water">請喝水</span>`)
+                    $("#fscToolbar-container-left").html(` <span class="badge bg-success " style="margin-left: 1.5rem;" onclick="player_forward(530)">跳過休息時間</span>  <span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleAc()" id="ac">冷氣狀態</span><span class="badge bg-primary " style="margin-left: .5rem;" onclick="toggleWater()" id="water">請喝水</span>
+                                <span data-bs-toggle="modal" data-bs-target="#comment-modal" class="form-label badge bg-dark" data-bs->音量: <span class="playerVolumefsc">-</span> </span>
+                    `)
                 }
 
             }
@@ -819,14 +832,14 @@
             $("#fullscToolBar").show()
 
         }
-        document.getElementById("fullscreenContainer").onfullscreenchange = function () {
-            if (!document.fullscreenElement) WexitFullscreen()
-        }
         function WexitFullscreen() {
             document.exitFullscreen()
             $("#video").css("height", "100%")
             $("#fullscToolBar").hide()
 
+        }
+        document.getElementById("fullscreenContainer").onfullscreenchange = function () {
+            if (!document.fullscreenElement) WexitFullscreen()
         }
 
         navigator.getBattery().then((battery) => {
@@ -1132,16 +1145,16 @@
 
 
         function removeTheRecentVideo() {
-            var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo")).id
+            var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Phys_SWM")).id
             var data = getItemFromHistoryList(videoId)
-            localStorage.setItem("YTplayerPausedVideo", "")
+            localStorage.setItem("YTplayerPausedVideo_Phys_SWM", "")
 
         }
 
         function renderSuggestVideo(id) {
             var data = getItemFromHistoryList(id)
             console.log(data, "/////")
-            $("#video").html(`<div class="list-group"><h3>上次暫停的影片</h3><a href = "${location.origin + location.pathname}?id=${data.id}&type=${data.type}" class= "list-group-item list-group-item-action" ><img src="${data.thumbnails}"/><br/>${data.name}${data.type === "playlist" ? " (" + data.playlistVideoCounts + "部影片)" : ""} <br /> <i class="bi bi-person-circle"></i> &nbsp;${data.channel} <br />${data.id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a></div>`)
+            $("#video").html(`<div class="list-group"><h3>Study With Me<br/>上次暫停的影片</h3><a href = "${location.origin + location.pathname}?id=${data.id}&type=${data.type}" class= "list-group-item list-group-item-action" ><img src="${data.thumbnails}"/><br/>${data.name}${data.type === "playlist" ? " (" + data.playlistVideoCounts + "部影片)" : ""} <br /> <i class="bi bi-person-circle"></i> &nbsp;${data.channel} <br />${data.id === nowplays[1] ? "<i class='bi bi-youtube'></i> 播放中" : ""}</a></div>`)
         }
 
         document.getElementById("clear").onclick = clearInput
@@ -1183,19 +1196,19 @@
             if (document.hidden) {
                 if (localStorage.getItem('YTplayerSettings.PlayOnBackground') == 'true') {
                     try {
-                        document.title = "[背景播放處理中] YT影片播放器"
+                        document.title = "[背景播放處理中] Study With me影片播放器"
                         await delay(0.3)
                         console.log("[INVISIBLE] trying to play...")
                         player.playVideo()
-                        document.title = "[背景播放中] YT影片播放器"
+                        document.title = "[背景播放中] Study With me影片播放器"
                     } catch (e) {
                         console.log("[INVISIBLE] perhaps there is no video playing (failed to play)", e)
-                        document.title = "[背景播放失敗] YT影片播放器"
+                        document.title = "[背景播放失敗] Study With me影片播放器"
 
                     }
                 }
             } else {
-                document.title = "YT影片播放器"
+                document.title = "Study With me影片播放器"
             }
         })
         window.onload = function () {
@@ -1204,8 +1217,8 @@
             if (UrlParam(location.href, "type") && UrlParam(location.href, "id")) {
                 document.getElementById("video").innerHTML = "<h1>正在讀取影片</h1>"
                 updateVideoFrame(UrlParam(location.href, "type"), UrlParam(location.href, "id"), UrlParam(location.href, "index"))
-            } else if (localStorage.getItem("YTplayerPausedVideo")) {
-                var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo")).id
+            } else if (localStorage.getItem("YTplayerPausedVideo_Phys_SWM")) {
+                var videoId = JSON.parse(localStorage.getItem("YTplayerPausedVideo_Phys_SWM")).id
                 var theVid = getItemFromHistoryList(videoId)
                 console.log(videoId)
                 if (isVideoinWhiteList(theVid, true) === true) {
@@ -1219,7 +1232,7 @@
             renderSuggestedSearch(5)
             updateHistoryList(nowplays)
 
-            $("#accountFrame").attr('src', location.origin + "/channels.html?framed=true")
+            $("#accountFrame").attr('src', location.origin + "/channels.html?framed=true&account=SWM")
             if (UrlParam(location.href, "hsearch")) {
                 console.log(UrlParam(location.href, "hsearch"))
                 if (UrlParam(location.href, "hsearch").includes("-add-")) {
@@ -1372,7 +1385,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
-                        onclick='document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube-nocookie.com/embed/${nowplays[0] === "video" ? nowplays[1] : "?list=" + nowplays[1]}${nowplays[0] === "video" ? "?" : "&"}rel=0&enablejsapi=1"></iframe>` '>這不是Study
+                        onclick='document.getElementById("video").innerHTML = `<iframe id="player"  type="text/html" allowfullscreen src="https://www.youtube.com/embed/${nowplays[0] === "video" ? nowplays[1] : "?list=" + nowplays[1]}${nowplays[0] === "video" ? "?" : "&"}rel=0&enablejsapi=1"></iframe>` '>這不是Study
                         With Me 影片</button>
                     <button type="button" class="btn btn-success" onclick="openFullscreen()">確定</button>
                 </div>
@@ -1413,28 +1426,35 @@
             <div class="alert alert-warning" role="alert">
                 注意: 部分裝置可能無法使用
             </div>
-            <label for="customRange3" class="form-label">預設播放速度: <span id="defaultPlaySpeed"></span> (套用到下一部影片)</label>
-            <input type="range" class="form-range" min="0.25" max="2" step="0.05" id="customRange3" oninput="
+            <div hidden><label for="customRange3" class="form-label">預設播放速度: <span id="defaultPlaySpeed"></span>
+                    (套用到下一部影片)</label>
+                <input type="range" class="form-range" min="0.25" max="2" step="0.05" id="customRange3" oninput="
             $('#defaultPlaySpeed').text(Number(this.value));
             localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
             renderInputBarPlaceHolder(localStorage.getItem('YTplayerSettings.PlayOnBackground'), localStorage.getItem('YTplayerSettings.DefaultPlaySpeed'))
-
             ">
-            <div class="alert alert-info" role="alert">
-                不適用於Study With Me影片
+                <div class="alert alert-info" role="alert">
+                    不適用於Study With Me影片
+                </div>
             </div>
+
+            <label for="customRange3" class="form-label">音量: <span id="playerVolume"></span> </label>
+            <input type="range" class="form-range" min="0" max="100" step="0.5" id="customRange4" value="100" oninput="
+                        $('#playerVolume').text(Number(this.value));
+                       // localStorage.setItem('YTplayerSettings.DefaultPlaySpeed',this.value)
+                        player.setVolume(Number(this.value))
+                        ">
             <p class="h5">模式選擇</p>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="btnradio7" id="btnradio7" autocomplete="off"
-                    onchange="window.location.href = '/ytvideoplayer/study'">
+                <input type="radio" class="btn-check" name="btnradio7" id="btnradio7" autocomplete="off" checked>
                 <label class="btn btn-outline-primary" for="btnradio7">Study With Me</label>
 
-                <input type="radio" class="btn-check" name="btnradio7" id="btnradio9" autocomplete="off" checked>
+                <input type="radio" class="btn-check" name="btnradio7" id="btnradio9" autocomplete="off"
+                    onchange="window.location.href = '/ytvideoplayer'">
                 <label class="btn btn-outline-primary" for="btnradio9">一般</label>
 
             </div>
-            <p></p>
-
+            <p>
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                 <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
                     onchange="window.location.href = '/ytvideoplayer/math'">
@@ -1447,6 +1467,8 @@
                 <label class="btn btn-outline-warning" for="btnradio3">化學</label>
 
             </div>
+            </p>
+            <p></p>
             <p class="h5">觀看紀錄</p>
 
 
