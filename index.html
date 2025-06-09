@@ -819,14 +819,14 @@
             $("#fullscToolBar").show()
 
         }
+        document.getElementById("fullscreenContainer").onfullscreenchange = function () {
+            if (!document.fullscreenElement) WexitFullscreen()
+        }
         function WexitFullscreen() {
             document.exitFullscreen()
             $("#video").css("height", "100%")
             $("#fullscToolBar").hide()
 
-        }
-        document.getElementById("fullscreenContainer").onfullscreenchange = function () {
-            if (!document.fullscreenElement) WexitFullscreen()
         }
 
         navigator.getBattery().then((battery) => {
